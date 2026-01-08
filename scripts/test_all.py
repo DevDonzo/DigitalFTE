@@ -12,10 +12,10 @@ def run_command(cmd, name):
     return result.returncode == 0
 
 tests = [
-    ("python Setup_Verify.py", "Setup Verification"),
-    ("pytest tests/ -v", "Unit Tests"),
-    ("python scripts/weekly_audit.py", "CEO Briefing Generation"),
-    ("python -m py_compile watchers/*.py", "Python Syntax Check"),
+    ("python3 Setup_Verify.py", "Setup Verification"),
+    ("python3 -m pytest tests/ -v", "Unit Tests"),
+    ("python3 scripts/weekly_audit.py", "CEO Briefing Generation"),
+    ("python3 -m py_compile watchers/*.py", "Python Syntax Check"),
 ]
 
 passed = 0
