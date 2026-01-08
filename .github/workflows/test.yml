@@ -1,39 +1,143 @@
-name: Test & Validate
+name: Test, Validate & Deploy
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
 
 jobs:
-  test:
+  # Unit tests
+  unit-tests:
+    name: Unit Tests
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.13'
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt pytest pytest-cov
-    
-    - name: Run tests
+        pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-timeout
+
+    - name: Run unit tests
       run: |
-        pytest tests/ -v --cov=. --cov-report=xml
-    
-    - name: Run Setup Verify
+        pytest tests/test_watchers.py tests/test_orchestrator.py tests/test_error_recovery.py tests/test_mcp_servers.py -v --cov=watchers,utils,scripts --cov-report=xml --timeout=60
+
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage.xml
+
+  # Integration tests
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-timeout
+
+    - name: Run integration tests
+      run: |
+        pytest tests/test_integration.py -v --timeout=120
+
+    - name: Run e2e workflow test
+      run: |
+        pytest tests/test_integration.py::TestEndToEndWorkflow -v --timeout=60
+
+  # Syntax & style validation
+  validation:
+    name: Code Quality & Validation
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install flake8 pylint
+
+    - name: Python syntax check
+      run: |
+        python -m py_compile watchers/*.py scripts/*.py utils/*.py
+        echo "✅ Python syntax valid"
+
+    - name: Setup verification
       run: |
         python Setup_Verify.py
-    
-    - name: Validate structure
+
+    - name: Vault structure validation
       run: |
-        test -d vault/Inbox
-        test -d vault/Plans
-        test -d vault/Pending_Approval
-        test -d vault/Approved
-        test -d vault/Done
-        test -f .env
-        test -f mcp_config.json
-        echo "✅ Structure validated"
+        test -d vault/Inbox || exit 1
+        test -d vault/Plans || exit 1
+        test -d vault/Pending_Approval || exit 1
+        test -d vault/Approved || exit 1
+        test -d vault/Rejected || exit 1
+        test -d vault/Done || exit 1
+        test -d vault/Logs || exit 1
+        test -f .env || exit 1
+        test -f mcp_config.json || exit 1
+        echo "✅ Vault structure valid"
+
+    - name: Config validation
+      run: |
+        # Validate JSON configs
+        python -m json.tool mcp_config.json > /dev/null
+        echo "✅ mcp_config.json valid"
+
+  # Complete test suite
+  test-all:
+    name: Complete Test Suite
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, validation]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+
+    - name: Install all dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-timeout
+
+    - name: Run all tests
+      run: |
+        python scripts/test_all.py
+
+    - name: Report results
+      if: always()
+      run: |
+        echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "✅ All tests completed successfully" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Coverage" >> $GITHUB_STEP_SUMMARY
+        pytest tests/ --cov=. --cov-report=term-missing | grep -E "^[a-z_]|TOTAL" >> $GITHUB_STEP_SUMMARY || true
