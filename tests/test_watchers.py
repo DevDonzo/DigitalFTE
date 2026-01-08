@@ -2,7 +2,7 @@
 import pytest
 import json
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 def test_gmail_watcher_initialization():
     """Test watcher initializes correctly"""
@@ -36,7 +36,7 @@ def test_audit_logging(tmp_path):
     logs_dir.mkdir()
     
     log_entry = {
-        'timestamp': datetime.utcnow().isoformat() + 'Z',
+        'timestamp': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
         'action_type': 'email_received',
         'actor': 'watcher',
         'result': 'success'
