@@ -1,0 +1,7 @@
+{
+  "name": "'"${mcp}"'-mcp",
+  "version": "0.1.0",
+  "description": "'"${mcp^^}"' MCP Server for DigitalFTE",
+  "main": "index.js",
+  "type": "module"
+}

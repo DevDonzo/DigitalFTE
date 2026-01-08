@@ -1,0 +1,43 @@
+{
+  "name": "digital-fte",
+  "version": "0.1.0",
+  "description": "Personal AI Employee - Autonomous FTE using Claude Code + Obsidian",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "install:all": "npm install && pip install -r requirements.txt",
+    "start": "node scripts/orchestrator.js",
+    "start:watchers": "node scripts/start-watchers.js",
+    "test": "pytest tests/",
+    "lint": "eslint . && flake8 .",
+    "format": "prettier --write . && black .",
+    "dev": "nodemon scripts/orchestrator.js"
+  },
+  "keywords": [
+    "AI",
+    "automation",
+    "FTE",
+    "Claude",
+    "Obsidian"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "axios": "^1.6.2",
+    "node-fetch": "^3.3.2",
+    "chalk": "^5.3.0",
+    "winston": "^3.11.0",
+    "node-cron": "^3.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.1",
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=10.0.0"
+  }
+}

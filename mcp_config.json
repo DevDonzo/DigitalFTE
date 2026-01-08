@@ -1,0 +1,59 @@
+{
+  "servers": [
+    {
+      "name": "email",
+      "command": "node",
+      "args": ["/Users/hparacha/DigitalFTE/mcp_servers/email_mcp/index.js"],
+      "env": {
+        "GMAIL_API_KEY": "${GMAIL_CLIENT_ID}",
+        "GMAIL_API_SECRET": "${GMAIL_CLIENT_SECRET}",
+        "GMAIL_CREDENTIALS": "${GMAIL_CREDENTIALS_PATH}"
+      },
+      "description": "Send, draft, and search emails via Gmail API"
+    },
+    {
+      "name": "browser",
+      "command": "node",
+      "args": ["/Users/hparacha/DigitalFTE/mcp_servers/browser_mcp/index.js"],
+      "env": {
+        "HEADLESS": "true"
+      },
+      "description": "Navigate, click, fill forms, and take screenshots"
+    },
+    {
+      "name": "xero",
+      "command": "node",
+      "args": ["/Users/hparacha/DigitalFTE/mcp_servers/xero_mcp/index.js"],
+      "env": {
+        "XERO_CLIENT_ID": "${XERO_CLIENT_ID}",
+        "XERO_CLIENT_SECRET": "${XERO_CLIENT_SECRET}",
+        "XERO_REDIRECT_URI": "${XERO_REDIRECT_URI}",
+        "XERO_TENANT_ID": "${XERO_TENANT_ID}"
+      },
+      "description": "Accounting operations: fetch accounts, create invoices, log transactions"
+    },
+    {
+      "name": "meta_social",
+      "command": "node",
+      "args": ["/Users/hparacha/DigitalFTE/mcp_servers/meta_social_mcp/index.js"],
+      "env": {
+        "FACEBOOK_ACCESS_TOKEN": "${FACEBOOK_ACCESS_TOKEN}",
+        "INSTAGRAM_BUSINESS_ACCOUNT_ID": "${INSTAGRAM_BUSINESS_ACCOUNT_ID}"
+      },
+      "description": "Post to Facebook and Instagram, fetch engagement metrics"
+    },
+    {
+      "name": "twitter",
+      "command": "node",
+      "args": ["/Users/hparacha/DigitalFTE/mcp_servers/twitter_mcp/index.js"],
+      "env": {
+        "TWITTER_API_KEY": "${TWITTER_API_KEY}",
+        "TWITTER_API_SECRET": "${TWITTER_API_SECRET}",
+        "TWITTER_BEARER_TOKEN": "${TWITTER_BEARER_TOKEN}",
+        "TWITTER_ACCESS_TOKEN": "${TWITTER_ACCESS_TOKEN}",
+        "TWITTER_ACCESS_TOKEN_SECRET": "${TWITTER_ACCESS_TOKEN_SECRET}"
+      },
+      "description": "Post tweets, fetch metrics, reply to mentions"
+    }
+  ]
+}
