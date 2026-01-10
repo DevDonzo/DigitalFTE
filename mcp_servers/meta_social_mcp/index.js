@@ -87,102 +87,130 @@ const tools = [
   }
 ];
 
+const https = require('https');
+
+// Get credentials from environment
+const PAGE_ID = process.env.META_PAGE_ID;
+const ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
+
+// Helper to call Meta Graph API
+function callMetaAPI(endpoint, method = 'GET', data = null) {
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'graph.instagram.com',
+      path: `/${endpoint}?access_token=${ACCESS_TOKEN}`,
+      method: method,
+      headers: { 'Content-Type': 'application/json' }
+    };
+
+    const req = https.request(options, (res) => {
+      let body = '';
+      res.on('data', (chunk) => body += chunk);
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(body));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
+
+    req.on('error', reject);
+    if (data) req.write(JSON.stringify(data));
+    req.end();
+  });
+}
+
 /**
- * Process Meta Social MCP tools
+ * Process Meta Social MCP tools - Calls Graph API
  */
 async function processTool(name, args) {
   const timestamp = new Date().toISOString();
-  const postId = `post-${Date.now()}`;
 
   try {
     switch(name) {
       case 'post_to_facebook': {
+        const result = await callMetaAPI(
+          `${PAGE_ID}/feed`,
+          'POST',
+          {
+            message: args.message,
+            link: args.link || undefined,
+            published: args.published !== false
+          }
+        );
         return {
           status: 'posted',
-          post_id: postId,
+          post_id: result.id,
           platform: 'facebook',
           message: args.message,
-          image: args.image_url ? 'attached' : 'text_only',
-          published: args.published !== false,
-          url: `https://facebook.com/posts/${postId}`,
+          url: `https://facebook.com/${result.id}`,
           created_at: timestamp
         };
       }
 
       case 'post_to_instagram': {
+        const result = await callMetaAPI(
+          `${PAGE_ID}/media`,
+          'POST',
+          {
+            image_url: args.image_url,
+            caption: args.caption,
+            hashtags: args.hashtags || []
+          }
+        );
         return {
           status: 'posted',
-          post_id: postId,
+          post_id: result.id,
           platform: 'instagram',
           caption: args.caption,
-          image_count: 1,
-          hashtags: args.hashtags || [],
-          published: args.published !== false,
-          url: `https://instagram.com/p/${postId}`,
+          url: `https://instagram.com/p/${result.id}`,
           created_at: timestamp
         };
       }
 
       case 'get_engagement': {
+        const metric = args.post_id ? `${args.post_id}/insights` : `${PAGE_ID}/insights`;
+        const result = await callMetaAPI(metric);
         return {
           period: args.period || 'last_7_days',
           platform: args.account_type || 'facebook',
-          metrics: {
-            likes: 1240,
-            comments: 87,
-            shares: 45,
-            reach: 15000,
-            impressions: 25000,
-            engagement_rate: 0.045,
-            save_count: 320,
-            click_through_rate: 0.012
-          },
-          top_posts: [
-            { post_id: 'post-1', engagement_score: 1852, reach: 8500 },
-            { post_id: 'post-2', engagement_score: 1420, reach: 6200 }
-          ],
+          metrics: result.data || {},
           updated_at: timestamp
         };
       }
 
       case 'schedule_post': {
+        const scheduled = Math.floor(new Date(args.scheduled_time).getTime() / 1000);
+        const result = await callMetaAPI(
+          `${PAGE_ID}/feed`,
+          'POST',
+          {
+            message: args.content,
+            scheduled_publish_time: scheduled,
+            published: false
+          }
+        );
         return {
           status: 'scheduled',
-          post_id: postId,
+          post_id: result.id,
           platform: args.platform,
           scheduled_time: args.scheduled_time,
-          content_preview: args.content.substring(0, 100) + '...',
-          media_count: args.media_urls ? args.media_urls.length : 0,
           created_at: timestamp
         };
       }
 
       case 'get_audience_insights': {
+        const result = await callMetaAPI(`${PAGE_ID}/insights?metric=page_fans`);
         return {
           account_type: args.account_type,
-          total_followers: 45230,
-          growth_rate: 0.12,
-          demographics: {
-            age_groups: {
-              '18-24': 0.15,
-              '25-34': 0.35,
-              '35-44': 0.30,
-              '45-54': 0.15,
-              '55+': 0.05
-            },
-            gender: {
-              male: 0.55,
-              female: 0.45
-            },
-            top_locations: ['USA', 'Canada', 'UK', 'Australia'],
-            interests: ['Technology', 'Business', 'Marketing', 'Entrepreneurship']
-          },
-          peak_activity_hours: ['09:00', '14:00', '19:00'],
+          insights: result.data || [],
           updated_at: timestamp
         };
       }
 
       case 'delete_post': {
+        await callMetaAPI(args.post_id, 'DELETE');
         return {
           status: 'deleted',
           post_id: args.post_id,

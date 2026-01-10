@@ -9,11 +9,28 @@ This document defines the automation rules and escalation thresholds for your AI
 
 ## Automation Rules
 
-### Email Handling
-- Auto-reply to urgent emails from known contacts
-- Flag new contacts for human review
-- Archive after 48 hours
-- Use approved templates from Social_Media/content_library.md
+### Email Handling (Claude-Powered Drafting)
+
+**Known Contacts (Auto-Approve Replies)**:
+- boss@company.com
+- team@company.com
+- clients@company.com
+- support@company.com
+
+**Response Rules by Email Type**:
+- **Inquiry**: Professional tone, factual, <2 hour response target
+- **Complaint**: Empathetic, solution-focused, ALWAYS human approval required
+- **Invoice/Payment**: Factual, reference numbers, auto-approve if < $1000
+- **Meeting Request**: Confirmatory, check calendar, auto-approve
+- **New Contact**: Warm but cautious, ALWAYS human approval required
+
+**General Rules**:
+- Generate responses using Claude AI reasoning
+- Include AI disclosure: "This reply was drafted by AI, reviewed by [name]"
+- Archive processed emails after human approval
+- Log all responses to audit trail
+- Flag low confidence drafts (< 80%) for review
+- Always require approval for non-business topics
 
 ### Payments & Financial Actions
 - Auto-approve: Recurring bills < $50

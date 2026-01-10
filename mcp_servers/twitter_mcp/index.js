@@ -100,12 +100,49 @@ const tools = [
   }
 ];
 
+const https = require('https');
+
+// Get credentials from environment
+const BEARER_TOKEN = process.env.TWITTER_BEARER_TOKEN;
+const API_KEY = process.env.TWITTER_API_KEY;
+
+// Helper to call Twitter API v2
+function callTwitterAPI(endpoint, method = 'GET', data = null) {
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'api.twitter.com',
+      path: endpoint,
+      method: method,
+      headers: {
+        'Authorization': `Bearer ${BEARER_TOKEN}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'DigitalFTE-v1.0'
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let body = '';
+      res.on('data', (chunk) => body += chunk);
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(body));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
+
+    req.on('error', reject);
+    if (data) req.write(JSON.stringify(data));
+    req.end();
+  });
+}
+
 /**
- * Process Twitter MCP tools
+ * Process Twitter MCP tools - Calls Twitter API v2
  */
 async function processTool(name, args) {
   const timestamp = new Date().toISOString();
-  const tweetId = `${Date.now()}`;
 
   try {
     switch(name) {
@@ -113,45 +150,30 @@ async function processTool(name, args) {
         if (!args.text || args.text.length > 280) {
           return { error: 'Tweet must be 1-280 characters' };
         }
+        const result = await callTwitterAPI(
+          '/2/tweets',
+          'POST',
+          { text: args.text }
+        );
         return {
           status: 'posted',
-          tweet_id: tweetId,
+          tweet_id: result.data?.id,
           text: args.text,
-          url: `https://twitter.com/yourhandle/status/${tweetId}`,
-          created_at: timestamp,
-          reply_to: args.reply_to || null,
-          media_count: args.media_ids ? args.media_ids.length : 0
+          url: `https://twitter.com/i/web/status/${result.data?.id}`,
+          created_at: timestamp
         };
       }
 
       case 'get_metrics': {
         const metricType = args.metric_type || 'account';
         if (metricType === 'account') {
+          const result = await callTwitterAPI('/2/users/me?user.fields=public_metrics');
           return {
             metric_type: 'account',
             period: args.period,
-            followers: 12450,
-            following: 850,
-            tweet_count: 3420,
-            engagement_metrics: {
-              likes_received: 8930,
-              retweets_received: 2100,
-              replies_received: 1240,
-              bookmarks_received: 450
-            },
-            avg_engagement_rate: 0.0325,
-            updated_at: timestamp
-          };
-        } else if (metricType === 'tweet') {
-          return {
-            metric_type: 'tweet',
-            tweet_id: args.tweet_id,
-            likes: 245,
-            retweets: 89,
-            replies: 34,
-            bookmarks: 12,
-            impressions: 4500,
-            engagement_rate: 0.078,
+            followers: result.data?.public_metrics?.followers_count || 0,
+            following: result.data?.public_metrics?.following_count || 0,
+            tweet_count: result.data?.public_metrics?.tweet_count || 0,
             updated_at: timestamp
           };
         }
@@ -159,32 +181,23 @@ async function processTool(name, args) {
       }
 
       case 'search_tweets': {
+        const result = await callTwitterAPI(
+          `/2/tweets/search/recent?query=${encodeURIComponent(args.query)}&max_results=${args.max_results || 10}&tweet.fields=public_metrics`
+        );
         return {
           query: args.query,
-          results: [
-            {
-              id: '1234567890',
-              author: '@user1',
-              text: 'Sample tweet result about ' + args.query,
-              created_at: '2026-01-08T10:00:00Z',
-              likes: 120,
-              retweets: 45
-            },
-            {
-              id: '1234567891',
-              author: '@user2',
-              text: 'Another tweet about ' + args.query,
-              created_at: '2026-01-08T09:30:00Z',
-              likes: 89,
-              retweets: 34
-            }
-          ],
-          count: 2,
-          max_results: args.max_results || 10
+          results: result.data || [],
+          count: result.meta?.result_count || 0,
+          updated_at: timestamp
         };
       }
 
       case 'like_tweet': {
+        const result = await callTwitterAPI(
+          '/2/users/me/likes',
+          'POST',
+          { tweet_id: args.tweet_id }
+        );
         return {
           status: 'liked',
           tweet_id: args.tweet_id,
@@ -193,6 +206,11 @@ async function processTool(name, args) {
       }
 
       case 'retweet': {
+        const result = await callTwitterAPI(
+          '/2/users/me/retweets',
+          'POST',
+          { tweet_id: args.tweet_id }
+        );
         return {
           status: 'retweeted',
           tweet_id: args.tweet_id,
@@ -201,6 +219,10 @@ async function processTool(name, args) {
       }
 
       case 'delete_tweet': {
+        await callTwitterAPI(
+          `/2/tweets/${args.tweet_id}`,
+          'DELETE'
+        );
         return {
           status: 'deleted',
           tweet_id: args.tweet_id,

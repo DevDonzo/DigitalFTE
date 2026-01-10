@@ -10,6 +10,7 @@ class BaseWatcher(ABC):
     def __init__(self, vault_path: str, check_interval: int = 60):
         self.vault_path = Path(vault_path)
         self.inbox = self.vault_path / 'Inbox'
+        self.needs_action = self.vault_path / 'Needs_Action'
         self.check_interval = check_interval
         self.logger = logging.getLogger(self.__class__.__name__)
         self.processed_ids = set()
@@ -42,12 +43,13 @@ class BaseWatcher(ABC):
                               error=str(e))
             time.sleep(self.check_interval)
     
-    def log_action(self, action_type: str, result: str = 'pending', **kwargs):
+    def log_action(self, event_type: str, action_type: str = None, result: str = 'pending', **kwargs):
         """Log action to audit trail"""
         log_file = self.vault_path / 'Logs' / f'{datetime.now().strftime("%Y-%m-%d")}.json'
         log_entry = {
             'timestamp': datetime.utcnow().isoformat() + 'Z',
-            'action_type': action_type,
+            'event_type': event_type,
+            'action_type': action_type or self.__class__.__name__,
             'actor': 'watcher',
             'result': result,
             **kwargs

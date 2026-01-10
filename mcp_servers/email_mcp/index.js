@@ -8,6 +8,40 @@ const { StdioTransport } = require('@anthropic-sdk/mcp-sdk');
 const { spawn } = require('child_process');
 const path = require('path');
 
+// Simple in-memory cache with TTL (5 minutes for read operations)
+class Cache {
+  constructor(ttl = 300000) {
+    this.data = new Map();
+    this.ttl = ttl;
+  }
+
+  get(key) {
+    const entry = this.data.get(key);
+    if (!entry) return null;
+    if (Date.now() - entry.timestamp > this.ttl) {
+      this.data.delete(key);
+      return null;
+    }
+    return entry.value;
+  }
+
+  set(key, value) {
+    this.data.set(key, { value, timestamp: Date.now() });
+  }
+
+  clear(pattern) {
+    if (!pattern) {
+      this.data.clear();
+    } else {
+      for (const key of this.data.keys()) {
+        if (key.includes(pattern)) this.data.delete(key);
+      }
+    }
+  }
+}
+
+const cache = new Cache(300000); // 5 minute TTL
+
 const tools = [
   {
     name: 'send_email',
@@ -87,6 +121,7 @@ async function processTool(name, args) {
         if (!args.to || !args.subject || !args.body) {
           return { error: 'Missing required fields: to, subject, body' };
         }
+        cache.clear('get_emails'); // Invalidate email list cache
         return {
           status: 'sent',
           message_id: messageId,
@@ -104,7 +139,15 @@ async function processTool(name, args) {
       case 'get_emails': {
         const query = args.query || 'is:unread';
         const limit = args.limit || 10;
-        return {
+
+        // Check cache first (5 min TTL for read operations)
+        const cacheKey = `get_emails:${query}:${limit}`;
+        const cached = cache.get(cacheKey);
+        if (cached) {
+          return { ...cached, from_cache: true };
+        }
+
+        const result = {
           emails: [
             {
               id: 'EMAIL_001',
@@ -127,9 +170,13 @@ async function processTool(name, args) {
           count: 2,
           limit: limit
         };
+
+        cache.set(cacheKey, result);
+        return result;
       }
 
       case 'delete_email': {
+        cache.clear('get_emails'); // Invalidate email list cache
         return {
           status: 'deleted',
           message_id: args.message_id,
@@ -138,6 +185,7 @@ async function processTool(name, args) {
       }
 
       case 'mark_read': {
+        cache.clear('get_emails'); // Invalidate email list cache
         return {
           status: 'marked_read',
           message_id: args.message_id,
