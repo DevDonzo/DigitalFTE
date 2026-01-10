@@ -27,7 +27,7 @@ class EmailDrafter:
         self.processed_emails_file = self.vault / '.processed_emails'
         self.processed_emails = self._load_processed_emails()
         self.api_key = os.getenv('OPENAI_API_KEY')
-        self.model = "gpt-3.5-turbo"
+        self.model = "gpt-4o-mini"
         self.client = None
         self.client_type = None
 
@@ -37,7 +37,7 @@ class EmailDrafter:
                 from openai import OpenAI
                 self.client = OpenAI(api_key=self.api_key)
                 self.client_type = "openai"
-                logger.info("✓ OpenAI initialized (gpt-3.5-turbo - cost optimized)")
+                logger.info("✓ OpenAI initialized (gpt-4o-mini)")
                 return
             except ImportError:
                 logger.error("OpenAI SDK not installed. Install: pip install openai")

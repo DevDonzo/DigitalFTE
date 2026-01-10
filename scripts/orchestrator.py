@@ -58,6 +58,12 @@ try:
 except ImportError:
     HAS_WHATSAPP_DRAFTER = False
 
+try:
+    from watchers.whatsapp_watcher import WhatsAppWatcher as WhatsAppBusinessAPI
+    HAS_WHATSAPP_API = True
+except ImportError:
+    HAS_WHATSAPP_API = False
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [%(name)s] %(message)s'
@@ -102,6 +108,15 @@ class VaultHandler(FileSystemEventHandler):
         else:
             self.whatsapp_drafter = None
 
+        # Initialize WhatsApp Business API for sending messages
+        self.whatsapp_api = None
+        if HAS_WHATSAPP_API:
+            try:
+                self.whatsapp_api = WhatsAppBusinessAPI(str(vault_path))
+                logger.info("✓ WhatsApp Business API initialized")
+            except Exception as e:
+                logger.warning(f"Could not initialize WhatsApp Business API: {e}")
+
         # Initialize Gmail Watcher for marking emails as read
         self.gmail_watcher = None
         if GmailWatcher:
@@ -128,8 +143,18 @@ class VaultHandler(FileSystemEventHandler):
         return None
 
     def _scan_existing_files(self):
-        """Process any existing files in Needs_Action/Approved that were created before startup"""
+        """Process any existing files in Inbox/Needs_Action/Approved that were created before startup"""
         logger.info("🔍 Scanning for existing files...")
+
+        # Scan Inbox folder (legacy location)
+        inbox_files = [f for f in self.inbox.glob('*.md') if f.name != '.gitkeep']
+        if inbox_files:
+            logger.info(f"Found {len(inbox_files)} existing file(s) in Inbox")
+            for filepath in inbox_files:
+                try:
+                    self._process_inbox(filepath)
+                except Exception as e:
+                    logger.error(f"Error processing {filepath.name}: {e}")
 
         # Scan Needs_Action folder for emails needing drafting
         needs_action_files = [f for f in self.needs_action.glob('*.md') if f.name != '.gitkeep']
@@ -337,6 +362,8 @@ Processed at: {datetime.now().isoformat()}
             # Parse action type from filename
             if 'EMAIL' in filepath.name:
                 self._execute_email(filepath, content)
+            elif 'WHATSAPP' in filepath.name:
+                self._execute_whatsapp(filepath, content)
             elif 'PAYMENT' in filepath.name:
                 self._execute_payment(filepath, content)
             elif 'POST' in filepath.name:
@@ -589,6 +616,65 @@ Processed at: {datetime.now().isoformat()}
 
         except Exception as e:
             logger.error(f"Failed to post to Facebook: {e}")
+            raise
+
+    def _execute_whatsapp(self, filepath, content):
+        """Execute WhatsApp action - Send reply via WhatsApp Business API"""
+        try:
+            # Parse YAML frontmatter
+            lines = content.split('\n')
+            metadata = {}
+            in_frontmatter = False
+            frontmatter_end = 0
+
+            for i, line in enumerate(lines):
+                if line.strip() == '---':
+                    if not in_frontmatter:
+                        in_frontmatter = True
+                    else:
+                        frontmatter_end = i
+                        break
+                elif in_frontmatter and ':' in line:
+                    key, val = line.split(':', 1)
+                    metadata[key.strip()] = val.strip()
+
+            # Extract reply text from ## Proposed Reply section
+            reply_text = ''
+            reply_started = False
+            reply_sections = ['## Proposed Reply', '## Your Reply', '## Reply']
+
+            for line in lines[frontmatter_end:]:
+                if any(section in line for section in reply_sections):
+                    reply_started = True
+                    continue
+                elif reply_started and line.startswith('##'):
+                    break
+                elif reply_started:
+                    reply_text += line + '\n'
+
+            reply_text = reply_text.strip()
+
+            # Get recipient phone number
+            recipient = metadata.get('to', metadata.get('from', ''))
+
+            if not reply_text:
+                raise ValueError("No reply text found in ## Proposed Reply section")
+
+            if not recipient:
+                raise ValueError("No recipient phone number found in 'to:' or 'from:' field")
+
+            logger.info(f"💬 Sending WhatsApp message to {recipient}")
+            logger.info(f"   Message preview: {reply_text[:100]}...")
+
+            # Send via WhatsApp Business API
+            if self.whatsapp_api:
+                self.whatsapp_api.send_message(recipient, reply_text)
+                logger.info(f"✅ WhatsApp message sent successfully to {recipient}")
+            else:
+                raise RuntimeError("WhatsApp Business API not initialized")
+
+        except Exception as e:
+            logger.error(f"WhatsApp execution failed: {e}")
             raise
 
     def _execute_payment(self, filepath, content):

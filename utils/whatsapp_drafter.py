@@ -26,14 +26,14 @@ class WhatsAppDrafter:
         self.processed_file = self.vault / '.processed_whatsapp'
         self.processed_ids = self._load_processed()
         self.api_key = os.getenv('OPENAI_API_KEY')
-        self.model = "gpt-3.5-turbo"
+        self.model = "gpt-4o-mini"
         self.client = None
 
         if self.api_key:
             try:
                 from openai import OpenAI
                 self.client = OpenAI(api_key=self.api_key)
-                logger.info("✓ WhatsAppDrafter initialized (OpenAI gpt-3.5-turbo)")
+                logger.info("✓ WhatsAppDrafter initialized (OpenAI gpt-4o-mini)")
             except ImportError:
                 logger.error("OpenAI SDK not installed")
         else:
