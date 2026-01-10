@@ -26,7 +26,7 @@ class TweetDrafter:
         self.processed_file = self.vault / '.processed_tweets'
         self.processed_ids = self._load_processed()
         self.api_key = os.getenv('OPENAI_API_KEY')
-        self.model = "gpt-3.5-turbo"
+        self.model = "gpt-4o-mini"
         self.client = None
 
         # Initialize OpenAI client
@@ -34,7 +34,7 @@ class TweetDrafter:
             try:
                 from openai import OpenAI
                 self.client = OpenAI(api_key=self.api_key)
-                logger.info("✓ TweetDrafter initialized (OpenAI gpt-3.5-turbo)")
+                logger.info("✓ TweetDrafter initialized (OpenAI gpt-4o-mini)")
             except ImportError:
                 logger.error("OpenAI SDK not installed. Install: pip install openai")
         else:
