@@ -11,8 +11,9 @@ An autonomous AI agent that works 24/7 like a full-time employee. Built with Cla
 ### Prerequisites
 - Python 3.13+
 - Node.js 24+
-- Claude Code (Pro subscription or free with Gemini)
+- Claude Code (Pro subscription)
 - Obsidian v1.10.6+
+- OpenAI API key (for email drafting)
 
 ### Installation
 
@@ -87,20 +88,24 @@ python scripts/watchdog.py
 
 ## Folder Structure
 
-- `vault/` - Obsidian vault (your AI's memory)
-  - `Inbox/` - Watcher input
-  - `Plans/` - Claude reasoning
-  - `Pending_Approval/` - Awaiting human decision
-  - `Approved/` - Ready for execution
-  - `Done/` - Completed actions
-  - `Logs/` - Audit trail
-
-- `watchers/` - Perception layer (Gmail, 
-- `scripts/` - Orchestration (orchestrator.py, watchdog.py, weekly_audit.py)
-- `mcp_servers/` - Action handlers (email, xero, social media)
-- `utils/` - Shared utilities (audit_logger.py, retry_handler.py)
-- `skills/` - Claude Code Agent Skills definitions
-- `tests/` - Unit and integration tests
+```
+DigitalFTE/
+├── auth/           # OAuth scripts (Gmail, LinkedIn, Xero, Twitter)
+├── docs/           # Documentation (specs, architecture, setup guides)
+├── mcp_servers/    # MCP server configs
+├── scripts/        # Core runtime (orchestrator, webhook_server, etc.)
+├── skills/         # Claude Code Agent Skills definitions
+├── tests/          # All test files
+├── utils/          # Shared utilities (drafters, error handlers)
+├── vault/          # Obsidian vault (AI memory)
+│   ├── Inbox/           # Watcher input
+│   ├── Needs_Action/    # Items requiring processing
+│   ├── Pending_Approval/# Awaiting human decision
+│   ├── Approved/        # Ready for execution
+│   ├── Done/            # Completed actions
+│   └── Logs/            # Audit trail
+└── watchers/       # Perception layer (Gmail, WhatsApp, LinkedIn)
+```
 
 ## Configuration
 
@@ -133,7 +138,7 @@ Current target: **GOLD**
 - ✅ Architecture + lessons learned documentation
 - ✅ All AI as Agent Skills (9 defined)
 
-**For judges**: See `HACKATHON_WINNING_STRATEGY.md` for complete compliance mapping with file evidence.
+**For judges**: See `docs/HACKATHON_WINNING_STRATEGY.md` for complete compliance mapping with file evidence.
 
 ### Timeline
 - ✅ Phase 2-7: COMPLETE (implementation, testing, optimization)
@@ -145,10 +150,10 @@ See `vault/Dashboard.md` for real-time progress.
 
 ## Documentation
 
-- `GOLD_SPEC.md` - Complete technical specification
-- `ARCHITECTURE.md` - System design & decisions
+- `docs/GOLD_SPEC.md` - Complete technical specification
+- `docs/ARCHITECTURE.md` - System design & decisions
+- `docs/CREDENTIALS_SETUP.md` - API credentials setup guide
 - `vault/Company_Handbook.md` - Automation rules
-- `vault/Logs/audit_rules.md` - Logging & retention policy
 
 ## Next Steps
 

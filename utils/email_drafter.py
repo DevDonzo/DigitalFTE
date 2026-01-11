@@ -226,7 +226,7 @@ Your responses should be clear, concise, and professional. Sign off with 'Hamza 
             return self._generate_template_response(email), 0.7
 
     def _generate_template_response(self, email: dict) -> str:
-        """Fallback template response if Gemini is unavailable"""
+        """Fallback template response if OpenAI is unavailable"""
         subject = email['subject']
         sender = email['from'].split('@')[0]
 

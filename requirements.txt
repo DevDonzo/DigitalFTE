@@ -6,7 +6,7 @@ pydantic>=2.0.0
 pyyaml>=6.0
 
 # AI & LLM
-google-genai>=0.0.1  # For Google Gemini 2.0 Flash email drafting (latest)
+openai>=1.0.0  # For OpenAI GPT-4o-mini email drafting
 
 # Google API (Gmail)
 google-auth-oauthlib>=1.1.0
