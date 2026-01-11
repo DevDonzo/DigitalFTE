@@ -28,7 +28,7 @@ class GmailWatcher(BaseWatcher):
     ]
     
     def __init__(self, vault_path: str, credentials_path: str):
-        super().__init__(vault_path, check_interval=120)
+        super().__init__(vault_path, check_interval=20)
         self.credentials_path = Path(credentials_path)
         self.service = self._authenticate()
         
