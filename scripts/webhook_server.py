@@ -1,4 +1,4 @@
-"""WhatsApp Business Webhook Server - FastAPI"""
+"""WhatsApp Webhook Server - FastAPI (supports Twilio and Meta)"""
 import os
 import json
 import logging
@@ -32,150 +32,132 @@ async def verify_webhook(
     hub_verify_token: str = Query(None, alias="hub.verify_token"),
     hub_challenge: str = Query(None, alias="hub.challenge")
 ):
-    """WhatsApp webhook verification (GET request from Meta)"""
-    logger.info(f"Webhook verification: mode={hub_mode}, token={hub_verify_token}")
-
+    """Webhook verification (GET from Meta)"""
     if hub_mode == "subscribe" and hub_verify_token == VERIFY_TOKEN:
-        logger.info("Webhook verified successfully!")
+        logger.info("✓ Webhook verified")
         return PlainTextResponse(content=hub_challenge)
 
-    logger.warning("Webhook verification failed")
+    logger.warning("✗ Verification failed")
     raise HTTPException(status_code=403, detail="Verification failed")
 
 
 @app.post("/webhook")
 async def receive_webhook(request: Request):
-    """Receive incoming WhatsApp messages (POST from Meta)"""
+    """Receive WhatsApp messages from Twilio or Meta"""
     try:
-        payload = await request.json()
-        logger.info(f"Webhook received: {json.dumps(payload, indent=2)}")
+        content_type = request.headers.get("content-type", "")
 
-        # Extract messages from payload
-        entry = payload.get('entry', [{}])[0]
-        changes = entry.get('changes', [{}])[0]
-        value = changes.get('value', {})
-        messages = value.get('messages', [])
-        contacts = value.get('contacts', [])
-
-        # Get contact info
-        contact_map = {c.get('wa_id'): c.get('profile', {}).get('name', 'Unknown')
-                       for c in contacts}
-
-        for msg in messages:
-            msg_id = msg.get('id', '')
-            sender_id = msg.get('from', '')
-            sender_name = contact_map.get(sender_id, sender_id)
-            msg_type = msg.get('type', 'text')
-            timestamp = msg.get('timestamp', '')
-
-            # Extract text content
-            if msg_type == 'text':
-                text_content = msg.get('text', {}).get('body', '')
-            elif msg_type == 'button':
-                text_content = msg.get('button', {}).get('text', '')
-            elif msg_type == 'interactive':
-                text_content = msg.get('interactive', {}).get('button_reply', {}).get('title', '')
-            else:
-                text_content = f"[{msg_type} message]"
-
-            logger.info(f"Message from {sender_name} ({sender_id}): {text_content[:100]}")
-
-            # Create action file for orchestrator
-            create_whatsapp_action_file(msg_id, sender_id, sender_name, text_content, timestamp)
-
-        return {"status": "ok"}
+        if "application/x-www-form-urlencoded" in content_type:
+            # Twilio webhook
+            form_data = await request.form()
+            await handle_twilio_webhook(form_data)
+            return PlainTextResponse("")
+        else:
+            # Meta webhook
+            payload = await request.json()
+            await handle_meta_webhook(payload)
+            return {"status": "ok"}
 
     except Exception as e:
-        logger.error(f"Webhook error: {e}")
+        logger.error(f"❌ Webhook error: {e}")
         return {"status": "error", "message": str(e)}
 
 
+async def handle_twilio_webhook(form_data):
+    """Handle Twilio WhatsApp webhook"""
+    # Only process incoming messages, not status updates
+    message_status = form_data.get("MessageStatus", "")
+    message_text = form_data.get("Body", "")
+
+    # Only process if it's an incoming message (has Body) and not a status callback
+    if not message_text:
+        logger.debug(f"Ignoring status callback: {message_status}")
+        return
+
+    from_number = form_data.get("From", "").replace("whatsapp:", "")
+    msg_id = form_data.get("MessageSid", "")
+
+    logger.info(f"📱 Incoming message from {from_number}: {message_text[:50]}")
+
+    create_whatsapp_action_file(msg_id, from_number, from_number, message_text, "")
+
+
+async def handle_meta_webhook(payload):
+    """Handle Meta WhatsApp webhook"""
+    logger.info(f"📱 Meta WhatsApp webhook received")
+
+    entry = payload.get('entry', [{}])[0]
+    changes = entry.get('changes', [{}])[0]
+    value = changes.get('value', {})
+    messages = value.get('messages', [])
+    contacts = value.get('contacts', [])
+
+    contact_map = {c.get('wa_id'): c.get('profile', {}).get('name', 'Unknown')
+                   for c in contacts}
+
+    for msg in messages:
+        msg_id = msg.get('id', '')
+        sender_id = msg.get('from', '')
+        sender_name = contact_map.get(sender_id, sender_id)
+        msg_type = msg.get('type', 'text')
+
+        if msg_type == 'text':
+            text_content = msg.get('text', {}).get('body', '')
+        elif msg_type == 'button':
+            text_content = msg.get('button', {}).get('text', '')
+        elif msg_type == 'interactive':
+            text_content = msg.get('interactive', {}).get('button_reply', {}).get('title', '')
+        else:
+            text_content = f"[{msg_type} message]"
+
+        logger.info(f"Message from {sender_name} ({sender_id}): {text_content[:50]}")
+        create_whatsapp_action_file(msg_id, sender_id, sender_name, text_content, "")
+
+
 def create_whatsapp_action_file(msg_id: str, sender_id: str, sender_name: str,
-                                 text: str, timestamp: str):
-    """Create a markdown file in Needs_Action for the orchestrator"""
+                                text: str, timestamp: str):
+    """Create markdown file in Needs_Action for orchestrator"""
     import hashlib
 
-    # Generate unique filename
     unique_id = hashlib.md5(f"{msg_id}{sender_id}".encode()).hexdigest()[:12]
     filename = f"WHATSAPP_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{unique_id}.md"
     filepath = NEEDS_ACTION / filename
 
-    # Convert timestamp
-    try:
-        ts = datetime.fromtimestamp(int(timestamp), tz=timezone.utc).isoformat()
-    except:
-        ts = datetime.now(timezone.utc).isoformat()
-
     content = f"""---
-type: whatsapp
+type: whatsapp_message
 from: {sender_id}
-sender_name: {sender_name}
-whatsapp_message_id: {msg_id}
-received: {ts}
-priority: high
-status: pending
+from_name: {sender_name}
+received: {datetime.now().isoformat()}
+message_id: {msg_id}
 ---
 
-## From
-{sender_name} ({sender_id})
+## WhatsApp Message
+
+**From**: {sender_name} ({sender_id})
+**Time**: {datetime.now().isoformat()}
 
 ## Message
+
 {text}
 
 ## Actions
-- [ ] Reply via WhatsApp Business API
-- [ ] Forward to email
-- [ ] Mark as done
+
+- [ ] Draft reply
+- [ ] Approve and send
 """
 
     filepath.write_text(content)
-    logger.info(f"Created action file: {filename}")
-
-    # Also store in webhook store for backup
-    webhook_store = VAULT_PATH / '.whatsapp_incoming.json'
-    try:
-        if webhook_store.exists():
-            data = json.loads(webhook_store.read_text())
-        else:
-            data = {'messages': []}
-
-        data['messages'].append({
-            'id': msg_id,
-            'from': sender_id,
-            'sender_name': sender_name,
-            'text': {'body': text},
-            'timestamp': ts
-        })
-        webhook_store.write_text(json.dumps(data, indent=2))
-    except Exception as e:
-        logger.warning(f"Could not update webhook store: {e}")
+    logger.info(f"✓ Created: {filename}")
 
 
 @app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    return {
-        "status": "healthy",
-        "vault_path": str(VAULT_PATH),
-        "verify_token": VERIFY_TOKEN[:5] + "..."
-    }
+async def health():
+    """Health check"""
+    return {"status": "ok", "service": "DigitalFTE WhatsApp Webhook"}
 
 
-@app.get("/")
-async def root():
-    """Root endpoint"""
-    return {
-        "service": "DigitalFTE WhatsApp Webhook",
-        "endpoints": {
-            "/webhook": "WhatsApp webhook (GET for verify, POST for messages)",
-            "/health": "Health check"
-        }
-    }
-
-
-if __name__ == "__main__":
-    port = int(os.getenv('WEBHOOK_PORT', 8000))
-    logger.info(f"Starting WhatsApp webhook server on port {port}")
-    logger.info(f"Verify token: {VERIFY_TOKEN}")
-    logger.info(f"Vault path: {VAULT_PATH}")
+if __name__ == '__main__':
+    port = int(os.getenv('WEBHOOK_PORT', 8001))
+    logger.info(f"🚀 Starting webhook server on port {port}")
+    logger.info(f"   Webhook URL: http://localhost:{port}/webhook")
     uvicorn.run(app, host="0.0.0.0", port=port)

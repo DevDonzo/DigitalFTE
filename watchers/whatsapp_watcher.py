@@ -24,7 +24,7 @@ class WhatsAppWatcher(BaseWatcher):
     """Twilio WhatsApp API watcher and sender"""
 
     def __init__(self, vault_path: str, session_path: str = None):
-        super().__init__(vault_path, check_interval=30)
+        super().__init__(vault_path, check_interval=10)
 
         # Twilio WhatsApp credentials
         self.account_sid = os.getenv('TWILIO_ACCOUNT_SID')
