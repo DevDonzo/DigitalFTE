@@ -26,12 +26,15 @@ NEEDS_ACTION = VAULT_PATH / 'Needs_Action'
 NEEDS_ACTION.mkdir(parents=True, exist_ok=True)
 
 # Track processed message IDs to prevent duplicates
-PROCESSED_MESSAGES = set()
 PROCESSED_FILE = VAULT_PATH / '.processed_twilio_messages'
-if PROCESSED_FILE.exists():
-    PROCESSED_MESSAGES = set(PROCESSED_FILE.read_text().strip().split('\n'))
-else:
-    PROCESSED_MESSAGES = set()
+def _load_processed_messages():
+    """Load processed message IDs from file, filtering empty strings"""
+    if PROCESSED_FILE.exists():
+        ids = [line.strip() for line in PROCESSED_FILE.read_text().strip().split('\n') if line.strip()]
+        return set(ids)
+    return set()
+
+PROCESSED_MESSAGES = _load_processed_messages()
 
 
 @app.get("/webhook")
@@ -83,20 +86,27 @@ async def handle_twilio_webhook(form_data):
         logger.debug(f"Ignoring status callback: {message_status}")
         return
 
+    # Skip if no message ID
+    if not msg_id:
+        logger.warning("No MessageSid found in webhook")
+        return
+
     # Skip if already processed (deduplicate)
     if msg_id in PROCESSED_MESSAGES:
-        logger.debug(f"Already processed message: {msg_id}")
+        logger.info(f"⏭️ Duplicate message skipped: {msg_id}")
         return
 
     from_number = form_data.get("From", "").replace("whatsapp:", "")
 
     logger.info(f"📱 Incoming message from {from_number}: {message_text[:50]}")
+    logger.debug(f"Message ID: {msg_id}")
 
-    # Mark as processed
+    # Mark as processed BEFORE creating file (prevent race condition)
     PROCESSED_MESSAGES.add(msg_id)
     with open(PROCESSED_FILE, 'a') as f:
         f.write(msg_id + '\n')
 
+    logger.info(f"✓ Message {msg_id} marked as processed")
     create_whatsapp_action_file(msg_id, from_number, from_number, message_text, "")
 
 
@@ -128,7 +138,18 @@ async def handle_meta_webhook(payload):
         else:
             text_content = f"[{msg_type} message]"
 
+        # Skip if already processed (deduplicate)
+        if msg_id in PROCESSED_MESSAGES:
+            logger.info(f"⏭️ Duplicate message skipped: {msg_id}")
+            continue
+
         logger.info(f"Message from {sender_name} ({sender_id}): {text_content[:50]}")
+
+        # Mark as processed
+        PROCESSED_MESSAGES.add(msg_id)
+        with open(PROCESSED_FILE, 'a') as f:
+            f.write(msg_id + '\n')
+
         create_whatsapp_action_file(msg_id, sender_id, sender_name, text_content, "")
 
 
