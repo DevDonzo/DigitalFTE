@@ -562,39 +562,89 @@ Processed at: {datetime.now().isoformat()}
             raise
 
     def _call_meta_api(self, text: str, metadata: dict):
-        """Post to Facebook Page via Graph API"""
+        """Post to Facebook/Instagram via Meta Social MCP"""
         import os
-        import requests
+        import json
+        import subprocess
 
-        access_token = os.getenv('META_ACCESS_TOKEN')
-        page_id = os.getenv('META_PAGE_ID')
+        access_token = os.getenv('FACEBOOK_ACCESS_TOKEN')
+        page_id = os.getenv('FACEBOOK_PAGE_ID')
+        ig_account_id = os.getenv('INSTAGRAM_BUSINESS_ACCOUNT_ID')
 
         if not access_token:
-            raise RuntimeError("META_ACCESS_TOKEN not configured in .env")
+            raise RuntimeError("FACEBOOK_ACCESS_TOKEN not configured in .env")
         if not page_id:
-            raise RuntimeError("META_PAGE_ID not configured in .env")
+            raise RuntimeError("FACEBOOK_PAGE_ID not configured in .env")
 
         try:
-            # Post to Facebook Page
-            url = f"https://graph.facebook.com/v18.0/{page_id}/feed"
-            payload = {
-                "message": text,
-                "access_token": access_token
-            }
+            # Determine platform from metadata or default to Facebook
+            platform = metadata.get('platform', 'facebook')
 
-            response = requests.post(url, data=payload)
+            # Call Meta Social MCP
+            mcp_path = Path(__file__).parent.parent / 'mcp_servers' / 'meta_social_mcp' / 'index.js'
 
-            if response.status_code != 200:
-                error_msg = response.text
-                logger.error(f"Meta API error: {response.status_code} - {error_msg}")
-                raise RuntimeError(f"Meta API error: {response.status_code} - {error_msg}")
+            if platform in ['instagram', 'ig']:
+                if not ig_account_id:
+                    raise RuntimeError("INSTAGRAM_BUSINESS_ACCOUNT_ID not configured for Instagram posting")
 
-            response_data = response.json()
-            post_id = response_data.get('id')
+                tool_request = {
+                    'tool': 'post_instagram',
+                    'input': {
+                        'account_id': ig_account_id,
+                        'caption': text,
+                        'image_url': metadata.get('image_url', ''),
+                        'media_type': 'IMAGE'
+                    }
+                }
+            else:
+                # Default to Facebook
+                tool_request = {
+                    'tool': 'post_facebook',
+                    'input': {
+                        'page_id': page_id,
+                        'message': text,
+                        'image_url': metadata.get('image_url'),
+                        'link_url': metadata.get('link_url')
+                    }
+                }
 
-            logger.info(f"✅ Posted to Facebook")
+            # Execute via Node.js subprocess
+            env = os.environ.copy()
+            env['FACEBOOK_ACCESS_TOKEN'] = access_token
+            env['FACEBOOK_PAGE_ID'] = page_id
+            if ig_account_id:
+                env['INSTAGRAM_BUSINESS_ACCOUNT_ID'] = ig_account_id
+
+            process = subprocess.Popen(
+                ['node', str(mcp_path)],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                env=env,
+                text=True
+            )
+
+            stdout, stderr = process.communicate(input=json.dumps(tool_request), timeout=30)
+
+            if process.returncode != 0 or not stdout.strip():
+                logger.error(f"Meta MCP error: {stderr}")
+                raise RuntimeError(f"Meta MCP returned error")
+
+            response = json.loads(stdout.strip())
+
+            if not response.get('success'):
+                raise RuntimeError(f"Meta API error: {response.get('error', 'Unknown error')}")
+
+            post_id = response.get('post_id')
+            platform_name = response.get('platform', 'facebook')
+
+            logger.info(f"✅ Posted to {platform_name.upper()}")
             logger.info(f"   Post ID: {post_id}")
-            logger.info(f"   URL: https://facebook.com/{post_id}")
+
+            if platform_name == 'facebook':
+                logger.info(f"   URL: https://facebook.com/{post_id}")
+            else:
+                logger.info(f"   URL: https://instagram.com/p/{post_id}")
 
             # Log the post
             log_file = self.vault / 'Logs' / 'posts_sent.jsonl'
@@ -602,11 +652,11 @@ Processed at: {datetime.now().isoformat()}
 
             post_log = {
                 'text': text,
-                'platform': 'facebook',
+                'platform': platform_name,
                 'timestamp': datetime.now(timezone.utc).isoformat(),
                 'status': 'posted',
                 'post_id': post_id,
-                'url': f"https://facebook.com/{post_id}"
+                'url': f"https://{platform_name}.com/{post_id}"
             }
 
             with open(log_file, 'a') as f:
@@ -614,8 +664,11 @@ Processed at: {datetime.now().isoformat()}
 
             logger.info(f"📝 Logged to: {log_file}")
 
+        except subprocess.TimeoutExpired:
+            logger.error("Meta MCP request timed out")
+            raise RuntimeError("Meta MCP request timed out")
         except Exception as e:
-            logger.error(f"Failed to post to Facebook: {e}")
+            logger.error(f"Failed to post via Meta MCP: {e}")
             raise
 
     def _call_linkedin_api(self, text: str, metadata: dict):
@@ -812,7 +865,11 @@ Processed at: {datetime.now().isoformat()}
                         logger.info(f"✅ LinkedIn post successful")
 
                     elif platform in ['instagram', 'ig']:
-                        logger.warning(f"Instagram requires image - skipping text-only post")
+                        logger.info(f"📸 Posting to Instagram")
+                        # Add platform info to metadata for Meta MCP
+                        metadata['platform'] = 'instagram'
+                        self._call_meta_api(post_text, metadata)
+                        logger.info(f"✅ Instagram post successful")
 
                     else:
                         logger.warning(f"Unknown platform: {platform}, skipping")
