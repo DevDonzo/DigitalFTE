@@ -51,40 +51,88 @@ python scripts/watchdog.py
 ## Architecture
 
 ```
-┌─────────────────────────────────────────┐
-│       EXTERNAL SOURCES                   │
-│  Gmail │ 
-└────────┬────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────┐
-│     PERCEPTION LAYER (Watchers)         │
-│  Gmail, 
-└────────┬────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────┐
-│   OBSIDIAN VAULT (Memory)                │
-│  /Inbox → /Plans → /Pending_Approval →   │
-│  /Approved → /Done (with Logs)           │
-└────────┬────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────┐
-│   REASONING LAYER (Claude Code)         │
-│  Read → Think → Plan → Write → Request   │
-└────────┬────────────────────────────────┘
-         │
-         ├──────────────┬──────────────┐
-         ▼              ▼              ▼
-┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-│  HITL        │ │ MCP SERVERS  │ │ EXTERNAL     │
-│  Approval    │ │ Email, Xero, │ │ ACTIONS      │
-│  Folders     │ │ Social, etc  │ │ Send emails, │
-│              │ │              │ │ post social, │
-│              │ │              │ │ log payments │
-└──────────────┘ └──────────────┘ └──────────────┘
+┌────────────────────────────────────────────────────────────────┐
+│              PERCEPTION LAYER (Watchers)                       │
+│  ┌─────────┐  ┌──────────┐  ┌──────────────┐                  │
+│  │ Gmail   │  │ WhatsApp │  │ LinkedIn     │                  │
+│  │ Watcher │  │ Watcher  │  │ Watcher      │                  │
+│  └────┬────┘  └────┬─────┘  └──────┬───────┘                  │
+│       │            │               │                           │
+│       └────────────┼───────────────┘                           │
+│                    │                                           │
+└────────────────────┬────────────────────────────────────────────┘
+                     │
+                     ▼
+┌────────────────────────────────────────────────────────────────┐
+│           OBSIDIAN VAULT (Memory & Dashboard)                  │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │ /Inbox/ │ /Needs_Action/ │ /Plans/ │ /Done/ │ /Logs/    │  │
+│  ├──────────────────────────────────────────────────────────┤  │
+│  │ Dashboard.md │ Company_Handbook.md │ Business_Goals.md  │  │
+│  ├──────────────────────────────────────────────────────────┤  │
+│  │ /Pending_Approval/ │ /Approved/ │ /Rejected/           │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         ▼
+┌────────────────────────────────────────────────────────────────┐
+│                    REASONING LAYER                             │
+│  ┌──────────────────────────────────────────────────────────┐ │
+│  │                      CLAUDE CODE                        │ │
+│  │   Read → Think → Plan → Write → Request Approval       │ │
+│  └──────────────────────────────────────────────────────────┘ │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+              ┌──────────┴───────────────┐
+              ▼                          ▼
+┌──────────────────────────────┐    ┌────────────────────────────────┐
+│    HUMAN-IN-THE-LOOP         │    │         ACTION LAYER           │
+│  ┌────────────────────────┐  │    │  ┌──────────────────────────┐  │
+│  │ Review Approval Files  │──┼───▶│  │    MCP SERVERS           │  │
+│  │ Move to /Approved      │  │    │  │  ┌──────────┐ ┌───────┐  │  │
+│  └────────────────────────┘  │    │  │  │  Email   │ │Xero   │  │  │
+│                              │    │  │  │  MCP     │ │Accnt. │  │  │
+│                              │    │  │  ├──────────┼─┤MCP    │  │  │
+│                              │    │  │  │ Browser  │ │       │  │  │
+│                              │    │  │  │ MCP      │ │       │  │  │
+│                              │    │  │  ├──────────┼─┼───────┤  │  │
+│                              │    │  │  │  Meta    │ │Twitter│  │  │
+│                              │    │  │  │  Social  │ │MCP    │  │  │
+│                              │    │  │  │  (FB/IG) │ │       │  │  │
+│                              │    │  │  └──────────┴─┴───────┘  │  │
+│                              │    └────────────────────────────────┘  │
+└──────────────────────────────┘
+                  │                 │
+                  └─────────┬───────┘
+                            ▼
+                ┌────────────────────────────┐
+                │     EXTERNAL ACTIONS       │
+                │  Send Email   Post Social  │
+                │  Make Payment Update       │
+                │  Log Transactions          │
+                └────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────┐
+│                    ORCHESTRATION LAYER                         │
+│  ┌──────────────────────────────────────────────────────────┐ │
+│  │              Orchestrator.py (Master Process)            │ │
+│  │   Scheduling │ Folder Watching │ Process Management      │ │
+│  └──────────────────────────────────────────────────────────┘ │
+│  ┌──────────────────────────────────────────────────────────┐ │
+│  │              Watchdog.py (Health Monitor)                │ │
+│  │   Restart Failed Processes │ Alert on Errors             │ │
+│  └──────────────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────────────┘
 ```
+
+**Architecture Highlights:**
+
+- **Local-First**: All data stored in Obsidian vault (local markdown files)
+- **Watchers**: Perception layer continuously polls email, WhatsApp, LinkedIn
+- **HITL Safety**: File-based approval system in Pending_Approval/ folder
+- **MCP Servers**: 5 external integrations (Email, Browser, Xero, Meta Social, Twitter)
+- **Orchestrator**: Master process that watches vault folders and executes actions
+- **Watchdog**: Monitors all processes, auto-restarts on crash
 
 ## Folder Structure
 
