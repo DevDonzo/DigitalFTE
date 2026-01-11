@@ -189,10 +189,27 @@ Current target: **GOLD**
 **For judges**: See `docs/HACKATHON_WINNING_STRATEGY.md` for complete compliance mapping with file evidence.
 
 ### Timeline
-- ✅ Phase 2-7: COMPLETE (implementation, testing, optimization)
-- 🟡 Phase 5: API credentials (in progress - Gmail ✅, rest pending)
-- 🟡 Phase 8: Demo recording (ready after credentials)
-- ⏳ Phase 9: Submission (will follow Phase 8)
+
+#### ✅ COMPLETE
+- Phase 2-7: Implementation, testing, and optimization
+
+#### 🟡 IN PROGRESS
+**Phase 5 - API Credentials**
+- ✅ OpenAI (gpt-4o-mini) - CONFIGURED
+- ✅ LinkedIn - CONFIGURED & WORKING
+- ✅ Twitter/X - CONFIGURED & WORKING
+- ✅ Twilio (WhatsApp) - CONFIGURED & WORKING
+- ✅ Xero - CONFIGURED & WORKING
+- ✅ Meta (Facebook/Instagram) - CONFIGURED & WORKING
+- 🟡 Gmail OAuth - **PLACEHOLDER** (needs Google Cloud Console real credentials)
+
+**Phase 8 - Demo Recording**
+- Status: READY TO RECORD (pending Gmail credential fix)
+- Why blocked: Email watcher needs real Gmail OAuth credentials
+
+#### ⏳ PENDING
+**Phase 9 - Submission**
+- Blocked on: Phase 8 completion
 
 See `vault/Dashboard.md` for real-time progress.
 
@@ -203,15 +220,29 @@ See `vault/Dashboard.md` for real-time progress.
 - `docs/CREDENTIALS_SETUP.md` - API credentials setup guide
 - `vault/Company_Handbook.md` - Automation rules
 
-## Next Steps
+## Next Steps to Complete Hackathon
 
-1. Set up external accounts (Xero, Meta, Twitter)
-2. Implement watcher scripts (Gmail API, 
-3. Configure MCP servers
-4. Create orchestration logic
-5. Build CEO briefing system
-6. Write tests
-7. Create demo video
+### Immediate (To Unblock Demo)
+1. **Fix Gmail OAuth Credentials** (5 min)
+   - Get real Google Cloud OAuth credentials
+   - Update GMAIL_CLIENT_ID and GMAIL_CLIENT_SECRET in .env
+   - This unblocks: Phase 8 (demo recording)
+
+### After Demo
+2. Record demo video showing:
+   - Email arrives → auto-drafted → approved → sent
+   - WhatsApp message → auto-drafted → approved → sent
+   - Social post drafted → approved → posted to LinkedIn/Twitter/Facebook
+   - Watchdog auto-restarting crashed process
+   - CEO briefing with Xero data
+
+3. Submit to hackathon judges
+
+### Optional (Polish)
+- Deploy to cloud VM for true 24/7 operation
+- Add more watchers (Slack, Discord, custom webhooks)
+- Build mobile app for approvals
+- Add more MCP servers (Calendar, Database, etc.)
 
 ## Security
 
@@ -229,5 +260,8 @@ See `vault/Dashboard.md` for real-time progress.
 
 ---
 
-**Status**: Phase 7 Complete - All GOLD requirements met (131/131)
-**Next**: Phase 8 Demo Recording (blocked on API credential setup)
+**Status**: Phase 7 Complete - All GOLD requirements met (100% Setup_Verify.py score)
+**Blockers**:
+- Phase 5: Gmail OAuth credentials (placeholder) - **5 min fix**
+- Phase 8: Demo recording - **Ready to record once Gmail fixed**
+**Next**: Get Gmail OAuth credentials from Google Cloud Console, then record demo
