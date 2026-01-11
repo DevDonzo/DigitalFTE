@@ -98,3 +98,14 @@
 {"timestamp": "2026-01-11T16:34:38.377598+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260111_113437_835b5fa41875.md", "result": "success", "error": null}
 {"timestamp": "2026-01-11T16:34:40.787260+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260111_113438.md", "result": "success", "error": null}
 {"timestamp": "2026-01-11T16:34:50.908415+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260111_113437_835b5fa41875.md", "result": "success", "error": null}
+{"timestamp": "2026-01-11T16:35:39.215203+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_DEMO_001.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-11T16:35:39.215631+00:00", "action_type": "whatsapp_draft_failed", "actor": "orchestrator", "target": "WHATSAPP_20260111_113437_835b5fa41875.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-11T16:35:39.215795+00:00", "action_type": "whatsapp_draft_failed", "actor": "orchestrator", "target": "WHATSAPP_20260111_113350_3c3169ff22a0.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-11T16:35:51.518523+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260111_113450.md", "result": "success", "error": null}
+{"timestamp": "2026-01-11T16:36:07.477647+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260111_113606_86d3db950536.md", "result": "success", "error": null}
+{"timestamp": "2026-01-11T16:36:07.477738+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260111_113606_86d3db950536.md", "result": "success", "error": null}
+{"timestamp": "2026-01-11T16:36:07.559381+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260111_113606_86d3db950536.md", "result": "success", "error": null}
+{"timestamp": "2026-01-11T16:36:07.901931+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260111_113606_86d3db950536.md", "result": "success", "error": null}
+{"timestamp": "2026-01-11T16:36:07.957826+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260111_113606_86d3db950536.md", "result": "success", "error": null}
+{"timestamp": "2026-01-11T16:36:08.537990+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260111_113606_86d3db950536.md", "result": "success", "error": null}
+{"timestamp": "2026-01-11T16:36:17.244692+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260111_113607.md", "result": "success", "error": null}

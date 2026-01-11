@@ -25,6 +25,14 @@ VERIFY_TOKEN = os.getenv('WHATSAPP_WEBHOOK_VERIFY_TOKEN', 'digitalfte_verify')
 NEEDS_ACTION = VAULT_PATH / 'Needs_Action'
 NEEDS_ACTION.mkdir(parents=True, exist_ok=True)
 
+# Track processed message IDs to prevent duplicates
+PROCESSED_MESSAGES = set()
+PROCESSED_FILE = VAULT_PATH / '.processed_twilio_messages'
+if PROCESSED_FILE.exists():
+    PROCESSED_MESSAGES = set(PROCESSED_FILE.read_text().strip().split('\n'))
+else:
+    PROCESSED_MESSAGES = set()
+
 
 @app.get("/webhook")
 async def verify_webhook(
@@ -68,16 +76,26 @@ async def handle_twilio_webhook(form_data):
     # Only process incoming messages, not status updates
     message_status = form_data.get("MessageStatus", "")
     message_text = form_data.get("Body", "")
+    msg_id = form_data.get("MessageSid", "")
 
     # Only process if it's an incoming message (has Body) and not a status callback
     if not message_text:
         logger.debug(f"Ignoring status callback: {message_status}")
         return
 
+    # Skip if already processed (deduplicate)
+    if msg_id in PROCESSED_MESSAGES:
+        logger.debug(f"Already processed message: {msg_id}")
+        return
+
     from_number = form_data.get("From", "").replace("whatsapp:", "")
-    msg_id = form_data.get("MessageSid", "")
 
     logger.info(f"📱 Incoming message from {from_number}: {message_text[:50]}")
+
+    # Mark as processed
+    PROCESSED_MESSAGES.add(msg_id)
+    with open(PROCESSED_FILE, 'a') as f:
+        f.write(msg_id + '\n')
 
     create_whatsapp_action_file(msg_id, from_number, from_number, message_text, "")
 
