@@ -618,6 +618,57 @@ Processed at: {datetime.now().isoformat()}
             logger.error(f"Failed to post to Facebook: {e}")
             raise
 
+    def _call_linkedin_api(self, text: str, metadata: dict):
+        """Post to LinkedIn via API"""
+        import os
+
+        access_token = os.getenv('LINKEDIN_ACCESS_TOKEN')
+
+        if not access_token:
+            raise RuntimeError("LINKEDIN_ACCESS_TOKEN not configured in .env")
+
+        try:
+            from watchers.linkedin_watcher import LinkedInAPI
+            linkedin = LinkedInAPI(access_token)
+
+            # Check for link in metadata
+            link_url = metadata.get('url', metadata.get('link', ''))
+
+            if link_url:
+                result = linkedin.post_with_link(text, link_url)
+            else:
+                result = linkedin.post_text(text)
+
+            if result:
+                post_id = result.get('id', 'unknown')
+                logger.info(f"✅ Posted to LinkedIn")
+                logger.info(f"   Post ID: {post_id}")
+
+                # Log the post
+                log_file = self.vault / 'Logs' / 'linkedin_posts.jsonl'
+                log_file.parent.mkdir(parents=True, exist_ok=True)
+
+                post_log = {
+                    'text': text[:200],
+                    'platform': 'linkedin',
+                    'timestamp': datetime.now(timezone.utc).isoformat(),
+                    'status': 'posted',
+                    'post_id': post_id
+                }
+
+                with open(log_file, 'a') as f:
+                    f.write(json.dumps(post_log) + '\n')
+
+                logger.info(f"📝 Logged to: {log_file}")
+            else:
+                raise RuntimeError("LinkedIn post returned no result")
+
+        except ImportError:
+            raise RuntimeError("LinkedIn watcher not available")
+        except Exception as e:
+            logger.error(f"Failed to post to LinkedIn: {e}")
+            raise
+
     def _execute_whatsapp(self, filepath, content):
         """Execute WhatsApp action - Send reply via WhatsApp Business API"""
         try:
@@ -702,17 +753,26 @@ Processed at: {datetime.now().isoformat()}
                     key, val = line.split(':', 1)
                     metadata[key.strip()] = val.strip()
 
-            # Determine platform from metadata or filename
-            platform = metadata.get('platform', 'twitter').lower()
-            if 'facebook' in filepath.name.lower() or 'fb' in filepath.name.lower():
-                platform = 'facebook'
-            elif 'instagram' in filepath.name.lower() or 'ig' in filepath.name.lower():
-                platform = 'instagram'
+            # Determine platforms from metadata or filename
+            # Support both 'platform:' (single) and 'platforms:' (multiple)
+            platforms_str = metadata.get('platforms', metadata.get('platform', '')).lower()
+            platforms = [p.strip() for p in platforms_str.split(',') if p.strip()]
 
-            # Extract post text - support formats: ## Tweet, ## Post Text, ## Post Content
+            # Fallback: check filename for platform hints
+            if not platforms:
+                if 'facebook' in filepath.name.lower() or 'fb' in filepath.name.lower():
+                    platforms = ['facebook']
+                elif 'linkedin' in filepath.name.lower() or 'li' in filepath.name.lower():
+                    platforms = ['linkedin']
+                elif 'instagram' in filepath.name.lower() or 'ig' in filepath.name.lower():
+                    platforms = ['instagram']
+                else:
+                    platforms = ['linkedin', 'facebook']  # Default to LinkedIn + Facebook
+
+            # Extract post text - support formats: ## Tweet, ## Post Text, ## Post Content, ## Content
             post_text = ''
             post_started = False
-            post_sections = ['## Tweet', '## Post Text', '## Post Content', '## Facebook Post']
+            post_sections = ['## Tweet', '## Post Text', '## Post Content', '## Facebook Post', '## Content']
 
             for i, line in enumerate(lines[frontmatter_end:]):
                 if any(section in line for section in post_sections):
@@ -728,30 +788,37 @@ Processed at: {datetime.now().isoformat()}
             if not post_text:
                 raise ValueError("No post text found")
 
-            # Route to appropriate platform
-            if platform == 'twitter':
-                if len(post_text) > 280:
-                    logger.warning(f"Tweet exceeds 280 chars ({len(post_text)}), truncating")
-                    post_text = post_text[:277] + "..."
+            # Route to all specified platforms
+            for platform in platforms:
+                try:
+                    if platform == 'twitter':
+                        tweet_text = post_text
+                        if len(tweet_text) > 280:
+                            logger.warning(f"Tweet exceeds 280 chars ({len(tweet_text)}), truncating")
+                            tweet_text = tweet_text[:277] + "..."
 
-                logger.info(f"📱 Posting to Twitter/X")
-                logger.info(f"   Text: {post_text}")
-                self._call_twitter_api(post_text, metadata)
-                logger.info(f"✅ Tweet posted successfully")
+                        logger.info(f"📱 Posting to Twitter/X")
+                        self._call_twitter_api(tweet_text, metadata)
+                        logger.info(f"✅ Tweet posted successfully")
 
-            elif platform in ['facebook', 'fb']:
-                logger.info(f"📘 Posting to Facebook")
-                logger.info(f"   Text: {post_text}")
-                self._call_meta_api(post_text, metadata)
-                logger.info(f"✅ Facebook post successful")
+                    elif platform in ['facebook', 'fb']:
+                        logger.info(f"📘 Posting to Facebook")
+                        self._call_meta_api(post_text, metadata)
+                        logger.info(f"✅ Facebook post successful")
 
-            elif platform in ['instagram', 'ig']:
-                logger.warning(f"Instagram requires image - skipping text-only post")
-                raise ValueError("Instagram requires an image URL")
+                    elif platform == 'linkedin':
+                        logger.info(f"💼 Posting to LinkedIn")
+                        self._call_linkedin_api(post_text, metadata)
+                        logger.info(f"✅ LinkedIn post successful")
 
-            else:
-                logger.warning(f"Unknown platform: {platform}, defaulting to Twitter")
-                self._call_twitter_api(post_text, metadata)
+                    elif platform in ['instagram', 'ig']:
+                        logger.warning(f"Instagram requires image - skipping text-only post")
+
+                    else:
+                        logger.warning(f"Unknown platform: {platform}, skipping")
+
+                except Exception as e:
+                    logger.error(f"Failed to post to {platform}: {e}")
 
         except Exception as e:
             logger.error(f"Post execution failed: {e}")
