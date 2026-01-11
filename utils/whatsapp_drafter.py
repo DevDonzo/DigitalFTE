@@ -61,19 +61,14 @@ class WhatsAppDrafter:
 
         prompt = f"""You are an AI assistant helping draft WhatsApp message replies.
 
-Context from Company Handbook:
-{handbook_context}
-
----
-
 Incoming WhatsApp message from: {sender}
 Message: {message}
-
----
 
 Draft a helpful, professional but friendly reply. Keep it concise (WhatsApp style - not too formal).
 If the message requires action (payment, meeting, etc.), acknowledge it and state what you'll do.
 Keep response under 200 words.
+
+IMPORTANT: Reply with ONLY the message text. Do not include any formatting marks or dashes.
 
 Reply:"""
 
