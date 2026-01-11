@@ -185,21 +185,15 @@ status: pending_approval
 
 {original_msg}
 
----
-
 ## Proposed Reply
 
 {reply}
-
----
 
 ## Actions
 
 - [ ] Edit reply above if needed
 - [ ] Move to /Approved/ to send
 - [ ] Delete to discard
-
----
 
 *AI-generated draft. Review before sending.*
 """
