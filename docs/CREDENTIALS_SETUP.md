@@ -1,7 +1,5 @@
 # Credentials Setup Guide
 
-**Status**: ✅ All code is complete and tested. Just add these 2 credentials to get running.
-
 ---
 
 ## Priority 1: Xero (Accounting) - HIGH PRIORITY
@@ -160,29 +158,15 @@ If you get stuck:
 
 ---
 
-## Timeline to Launch
+## Next Steps
 
-**Step 1: Xero Setup** (5-10 minutes)
-- Sign up, create app, copy credentials
-- Update `.env`
-- Test
+After credentials are configured:
 
-**Step 2: WhatsApp Setup** (3-5 minutes)
-- Install Playwright
-- Run watcher to get session
-- Update `.env`
-- Test
-
-**Total: 10-15 minutes to full automation! ⚡**
-
----
-
-**Once done**:
 ```bash
-# Everything is ready to go!
+# Start the system
 python scripts/orchestrator.py &
 python watchers/gmail_watcher.py &
 python scripts/watchdog.py &
-
-# Your AI Employee is now running 24/7 🚀
 ```
+
+For production deployment, use launchd configuration in `AUTONOMY_GUIDE.md`.
