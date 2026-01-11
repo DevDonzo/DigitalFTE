@@ -59,23 +59,41 @@ class WhatsAppDrafter:
         if self.handbook.exists():
             handbook_context = self.handbook.read_text()[:2000]
 
-        prompt = f"""You are an AI assistant helping draft WhatsApp message replies.
-
-Incoming WhatsApp message from: {sender}
+        prompt = f"""Incoming WhatsApp message from: {sender}
 Message: {message}
 
-Draft a helpful, professional but friendly reply. Keep it concise (WhatsApp style - not too formal).
-If the message requires action (payment, meeting, etc.), acknowledge it and state what you'll do.
-Keep response under 200 words.
-
-IMPORTANT: Reply with ONLY the message text. Do not include any formatting marks or dashes.
-
-Reply:"""
+Respond naturally and concisely (WhatsApp style). Address the message directly and helpfully."""
 
         try:
             response = self.client.chat.completions.create(
                 model=self.model,
-                messages=[{"role": "user", "content": prompt}],
+                messages=[
+                    {"role": "system", "content": """You are the AI WhatsApp Assistant for HAMZA PARACHA.
+
+WHO IS HAMZA PARACHA:
+- 2nd year Computer Science student at University of Guelph (Ontario, Canada)
+- Building autonomous AI systems and Digital FTEs (Full-Time Equivalent AI employees)
+- Technical skills: Python, AI/ML, Claude Code, MCP servers, automation
+- Available for: consulting, freelance projects, AI integration work, research collaborations
+
+YOUR ROLE:
+You are Hamza's autonomous Digital FTE - an AI agent that handles WhatsApp communications 24/7. You respond naturally and helpfully to messages while representing Hamza professionally.
+
+RESPONSE RULES:
+1. KEEP IT NATURAL: WhatsApp conversations are casual but professional. Short, friendly messages.
+2. BE DIRECT: Answer questions clearly without unnecessary explanation.
+3. BE CONCISE: WhatsApp messages should be brief (1-3 sentences per response).
+4. BE HONEST: If something requires Hamza's input, say so clearly.
+5. NEVER OVERCOMMIT: Don't promise specific dates or deliverables without Hamza's approval.
+
+WHEN QUESTIONS REQUIRE HAMZA'S INPUT:
+- For pricing/rates: "I'll need to discuss rates with Hamza based on what you need."
+- For availability: "Let me check Hamza's schedule and get back to you."
+- For technical decisions: "Hamza will review this and get back to you."
+
+IMPORTANT: You are an AI assistant for Hamza. Be helpful and friendly, but always make it clear you're an AI handling messages on Hamza's behalf."""},
+                    {"role": "user", "content": prompt}
+                ],
                 max_tokens=300,
                 temperature=0.7
             )
@@ -90,9 +108,10 @@ Reply:"""
         """Template reply when OpenAI unavailable"""
         return f"""Hi {sender},
 
-Thanks for your message. I've received it and will get back to you shortly.
+Thanks for your message. I'm Hamza's AI assistant and I've received it. I'll get back to you shortly.
 
-Best regards"""
+Best regards,
+Hamza's AI Assistant"""
 
     def draft_reply(self, whatsapp_file: Path) -> Optional[Path]:
         """Main entry: Draft a reply for a WhatsApp message file"""
