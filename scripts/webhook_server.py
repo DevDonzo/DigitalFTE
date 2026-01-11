@@ -25,6 +25,11 @@ VERIFY_TOKEN = os.getenv('WHATSAPP_WEBHOOK_VERIFY_TOKEN', 'digitalfte_verify')
 NEEDS_ACTION = VAULT_PATH / 'Needs_Action'
 NEEDS_ACTION.mkdir(parents=True, exist_ok=True)
 
+# Keyword classifications for message urgency
+URGENT_KEYWORDS = ['urgent', 'asap', 'emergency', 'help', 'problem', 'crisis', 'down', 'broken', 'critical', 'immediately']
+BUSINESS_KEYWORDS = ['pricing', 'rate', 'invoice', 'payment', 'contract', 'proposal', 'quote', 'budget', 'cost', 'fee']
+INFO_KEYWORDS = ['thanks', 'ok', 'yes', 'no', 'sounds', 'great', 'perfect', 'confirmed', 'received']
+
 # Track processed message IDs to prevent duplicates
 PROCESSED_FILE = VAULT_PATH / '.processed_twilio_messages'
 def _load_processed_messages():
@@ -35,6 +40,29 @@ def _load_processed_messages():
     return set()
 
 PROCESSED_MESSAGES = _load_processed_messages()
+
+
+def classify_urgency(message_text: str) -> str:
+    """Classify message urgency based on keywords"""
+    text_lower = message_text.lower()
+
+    # Check for urgent keywords first
+    for keyword in URGENT_KEYWORDS:
+        if keyword in text_lower:
+            return 'URGENT'
+
+    # Check for business keywords
+    for keyword in BUSINESS_KEYWORDS:
+        if keyword in text_lower:
+            return 'BUSINESS'
+
+    # Check for info keywords
+    for keyword in INFO_KEYWORDS:
+        if keyword in text_lower:
+            return 'INFO'
+
+    # Default to NORMAL
+    return 'NORMAL'
 
 
 @app.get("/webhook")
@@ -107,7 +135,8 @@ async def handle_twilio_webhook(form_data):
         f.write(msg_id + '\n')
 
     logger.info(f"✓ Message {msg_id} marked as processed")
-    create_whatsapp_action_file(msg_id, from_number, from_number, message_text, "")
+    urgency = classify_urgency(message_text)
+    create_whatsapp_action_file(msg_id, from_number, from_number, message_text, "", urgency)
 
 
 async def handle_meta_webhook(payload):
@@ -150,11 +179,12 @@ async def handle_meta_webhook(payload):
         with open(PROCESSED_FILE, 'a') as f:
             f.write(msg_id + '\n')
 
-        create_whatsapp_action_file(msg_id, sender_id, sender_name, text_content, "")
+        urgency = classify_urgency(text_content)
+        create_whatsapp_action_file(msg_id, sender_id, sender_name, text_content, "", urgency)
 
 
 def create_whatsapp_action_file(msg_id: str, sender_id: str, sender_name: str,
-                                text: str, timestamp: str):
+                                text: str, timestamp: str, urgency: str = 'NORMAL'):
     """Create markdown file in Needs_Action for orchestrator"""
     import hashlib
 
@@ -162,18 +192,29 @@ def create_whatsapp_action_file(msg_id: str, sender_id: str, sender_name: str,
     filename = f"WHATSAPP_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{unique_id}.md"
     filepath = NEEDS_ACTION / filename
 
+    # Add urgency indicator to filename for easier sorting
+    urgency_indicator = {
+        'URGENT': '🔴',
+        'BUSINESS': '🟠',
+        'INFO': '🟢',
+        'NORMAL': '⚪'
+    }.get(urgency, '⚪')
+
     content = f"""---
 type: whatsapp_message
 from: {sender_id}
 from_name: {sender_name}
 received: {datetime.now().isoformat()}
 message_id: {msg_id}
+urgency: {urgency}
+priority: {'HIGH' if urgency == 'URGENT' else 'MEDIUM' if urgency in ['BUSINESS', 'INFO'] else 'NORMAL'}
 ---
 
 ## WhatsApp Message
 
 **From**: {sender_name} ({sender_id})
 **Time**: {datetime.now().isoformat()}
+**Urgency**: {urgency_indicator} {urgency}
 
 ## Message
 
@@ -186,7 +227,7 @@ message_id: {msg_id}
 """
 
     filepath.write_text(content)
-    logger.info(f"✓ Created: {filename}")
+    logger.info(f"✓ Created: {filename} [{urgency_indicator} {urgency}]")
 
 
 @app.get("/health")

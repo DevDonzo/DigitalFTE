@@ -359,6 +359,29 @@ Processed at: {datetime.now().isoformat()}
             # Mark as executed immediately to prevent double-processing
             self.executed_files.add(filepath.name)
 
+            # Extract urgency and priority from frontmatter
+            urgency = 'NORMAL'
+            priority = 'NORMAL'
+            if content.startswith('---'):
+                frontmatter_end = content.find('---', 3)
+                if frontmatter_end > 0:
+                    frontmatter = content[:frontmatter_end]
+                    for line in frontmatter.split('\n'):
+                        if line.startswith('urgency:'):
+                            urgency = line.split(':', 1)[1].strip()
+                        elif line.startswith('priority:'):
+                            priority = line.split(':', 1)[1].strip()
+
+            # Log urgency
+            urgency_indicator = {
+                'URGENT': '🔴',
+                'BUSINESS': '🟠',
+                'INFO': '🟢',
+                'NORMAL': '⚪'
+            }.get(urgency, '⚪')
+
+            logger.info(f"⚡ Executing {urgency_indicator} {urgency} action (priority: {priority}): {filepath.name}")
+
             # Parse action type from filename
             if 'EMAIL' in filepath.name:
                 self._execute_email(filepath, content)
@@ -370,12 +393,12 @@ Processed at: {datetime.now().isoformat()}
                 self._execute_post(filepath, content)
             else:
                 logger.warning(f"Unknown action type: {filepath.name}")
-            
+
             # Move to done
             done_file = self.done / filepath.name
             filepath.rename(done_file)
-            logger.info(f"✔️ Done: {done_file.name}")
-            self._log_action('action_executed', filepath.name, 'success')
+            logger.info(f"✔️ Done: {done_file.name} [{urgency_indicator} {urgency}]")
+            self._log_action('action_executed', filepath.name, 'success', f"urgency={urgency}")
         except Exception as e:
             logger.error(f"Action error: {e}")
             self._log_action('action_error', filepath.name, 'failure', str(e))

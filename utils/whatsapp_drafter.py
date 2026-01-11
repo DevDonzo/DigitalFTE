@@ -49,7 +49,7 @@ class WhatsAppDrafter:
         with open(self.processed_file, 'a') as f:
             f.write(filename + '\n')
 
-    def _generate_reply(self, sender: str, message: str) -> tuple:
+    def _generate_reply(self, sender: str, message: str, urgency: str = 'NORMAL') -> tuple:
         """Use OpenAI to generate WhatsApp reply"""
         if not self.client:
             return self._fallback_reply(sender, message), 0.5
@@ -98,7 +98,20 @@ IMPORTANT: You are an AI assistant for Hamza. Be helpful and friendly, but alway
                 temperature=0.7
             )
             reply = response.choices[0].message.content.strip()
-            confidence = 0.85
+
+            # Adjust confidence based on urgency
+            # URGENT/BUSINESS messages need human review (lower confidence)
+            # INFO messages can be more confident (safe patterns)
+            # NORMAL is standard confidence
+            if urgency == 'URGENT':
+                confidence = 0.65  # Low confidence - needs immediate human review
+            elif urgency == 'BUSINESS':
+                confidence = 0.70  # Lower confidence - needs careful approval
+            elif urgency == 'INFO':
+                confidence = 0.92  # High confidence - safe patterns
+            else:
+                confidence = 0.85  # Standard confidence
+
             return reply, confidence
         except Exception as e:
             logger.error(f"OpenAI error: {e}")
@@ -130,17 +143,21 @@ Hamza's AI Assistant"""
             sender = "Unknown"
             message = ""
             full_context = ""
+            urgency = "NORMAL"  # Default urgency
+            priority = "NORMAL"  # Default priority
 
-            for line in content.split('\n'):
-                if line.startswith('from:'):
-                    sender = line.split(':', 1)[1].strip()
-                elif line.startswith('## From'):
-                    # Next non-empty line is sender
-                    continue
-                elif line.startswith('## Message'):
-                    continue
-                elif line.startswith('## Full Context'):
-                    continue
+            # Extract frontmatter for urgency
+            if content.startswith("---"):
+                frontmatter_end = content.find("---", 3)
+                if frontmatter_end > 0:
+                    frontmatter = content[:frontmatter_end]
+                    for line in frontmatter.split('\n'):
+                        if line.startswith('urgency:'):
+                            urgency = line.split(':', 1)[1].strip()
+                        elif line.startswith('priority:'):
+                            priority = line.split(':', 1)[1].strip()
+                        elif line.startswith('from:'):
+                            sender = line.split(':', 1)[1].strip()
 
             # Extract message section
             if '## Message' in content:
@@ -169,10 +186,10 @@ Hamza's AI Assistant"""
                 return None
 
             # Generate reply
-            reply_text, confidence = self._generate_reply(sender, message)
+            reply_text, confidence = self._generate_reply(sender, message, urgency)
 
             # Create draft file
-            draft_file = self._create_draft_file(sender, message, reply_text, confidence, filename)
+            draft_file = self._create_draft_file(sender, message, reply_text, confidence, filename, urgency)
 
             self._mark_processed(filename)
             return draft_file
@@ -181,12 +198,29 @@ Hamza's AI Assistant"""
             logger.error(f"Error drafting WhatsApp reply: {e}")
             return None
 
-    def _create_draft_file(self, sender: str, original_msg: str, reply: str, confidence: float, original_file: str) -> Path:
+    def _create_draft_file(self, sender: str, original_msg: str, reply: str, confidence: float, original_file: str, urgency: str = 'NORMAL') -> Path:
         """Create draft reply file in Pending_Approval"""
         self.pending.mkdir(parents=True, exist_ok=True)
 
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         draft_filename = f"WHATSAPP_DRAFT_{timestamp}.md"
+
+        # Urgency indicators
+        urgency_indicator = {
+            'URGENT': '🔴',
+            'BUSINESS': '🟠',
+            'INFO': '🟢',
+            'NORMAL': '⚪'
+        }.get(urgency, '⚪')
+
+        # Add note about urgency/confidence
+        urgency_note = ""
+        if urgency == 'URGENT':
+            urgency_note = "\n⚠️ **URGENT MESSAGE** - Requires immediate review"
+        elif urgency == 'BUSINESS':
+            urgency_note = "\n⚠️ **BUSINESS MESSAGE** - Requires careful approval (pricing, contracts, etc)"
+        elif urgency == 'INFO':
+            urgency_note = "\n✓ **INFO MESSAGE** - Low risk, high confidence in auto-response"
 
         content = f"""---
 type: whatsapp_draft
@@ -195,12 +229,14 @@ to: {sender}
 created: {datetime.now().isoformat()}
 ai_generated: true
 confidence: {confidence}
+urgency: {urgency}
 status: pending_approval
 ---
 
 ## Original Message
 
 **From:** {sender}
+**Urgency:** {urgency_indicator} {urgency}{urgency_note}
 
 {original_msg}
 
@@ -214,9 +250,9 @@ status: pending_approval
 - [ ] Move to /Approved/ to send
 - [ ] Delete to discard
 
-*AI-generated draft. Review before sending.*
+*AI-generated draft. Confidence: {confidence:.0%} | Review before sending.*
 """
         draft_path = self.pending / draft_filename
         draft_path.write_text(content)
-        logger.info(f"✓ WhatsApp draft created: {draft_filename}")
+        logger.info(f"✓ WhatsApp draft created: {draft_filename} [{urgency_indicator} {urgency}, confidence: {confidence:.0%}]")
         return draft_path
