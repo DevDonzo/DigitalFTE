@@ -101,7 +101,7 @@ Move to /Approved to post immediately, or edit schedule time above.
         prompt = f"""Generate a LinkedIn/professional social media post about: {topic}
 
 Style: {style}
-Author: Hamza Paracha, 2nd year Computer Science student at University of Guelph
+Author: Hamza Paracha, 2nd year Software Engineering student at University of Guelph
 Focus: AI automation, Digital FTE development, Claude Code, Python
 
 Requirements:

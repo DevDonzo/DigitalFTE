@@ -1,7 +1,7 @@
 # Business Goals & Metrics
 
 **Owner**: Hamza Paracha
-**Role**: 2nd Year Computer Science Student @ University of Guelph
+**Role**: 2nd Year Software Engineering Student @ University of Guelph
 **Last Updated**: 2026-01-10
 **Review Frequency**: Weekly (Monday briefing)
 

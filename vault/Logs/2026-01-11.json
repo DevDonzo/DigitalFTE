@@ -109,3 +109,4 @@
 {"timestamp": "2026-01-11T16:36:07.957826+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260111_113606_86d3db950536.md", "result": "success", "error": null}
 {"timestamp": "2026-01-11T16:36:08.537990+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260111_113606_86d3db950536.md", "result": "success", "error": null}
 {"timestamp": "2026-01-11T16:36:17.244692+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260111_113607.md", "result": "success", "error": null}
+{"timestamp": "2026-01-11T16:53:25.408935+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_DEMO_001.md", "result": "failure", "error": null}
