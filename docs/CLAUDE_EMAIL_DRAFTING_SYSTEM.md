@@ -1,571 +1,425 @@
-# Claude-Powered Email Drafting System
+# Email Drafting System
 
-**Status**: ✅ Fully Implemented and Integrated
-**Date**: 2026-01-09
-**Architecture**: Perception → Reasoning → Action with Human-in-the-Loop (HITL)
+## Overview
 
----
-
-## System Overview
-
-Your DigitalFTE AI Employee now uses **Claude's reasoning engine** to intelligently draft email responses. When emails arrive, instead of mechanical file processing, Claude reads the email, consults your automation rules, and generates contextually appropriate replies.
-
-### The Flow (Automated)
-
-```
-📧 Email Received
-  ↓
-🤖 Claude Analyzes (using Company_Handbook.md rules)
-  ↓
-✍️  Claude Drafts Response
-  ↓
-👥 Human Reviews (takes 5-30 seconds)
-  ↓
-✅ Human Approves
-  ↓
-📤 Email Sent via Gmail API
-  ↓
-📝 Audit Logged
-```
+The email drafting system intelligently generates responses to incoming emails using OpenAI's language model. Email analysis and response generation is performed with human-in-the-loop approval before sending.
 
 ---
 
-## Components Implemented
+## Architecture
 
-### 1. **Email Drafter Module** (`utils/email_drafter.py`)
+### Process Flow
 
-The intelligent reasoning engine that:
-- Reads incoming emails from `vault/Inbox/`
-- Parses email metadata (from, subject, content)
-- Loads automation rules from `Company_Handbook.md`
-- Classifies email type (inquiry, complaint, invoice, meeting, etc.)
-- Determines if auto-approvable (known contacts)
-- Calls Claude API to generate intelligent response
-- Creates draft file in `vault/Pending_Approval/` with:
-  - Original email
-  - Claude's analysis & reasoning
-  - Proposed response
-  - Auto-approve status
-  - Confidence score
+```
+Email Received (Gmail)
+    |
+    v
+Gmail Watcher Detection
+    |
+    v
+vault/Inbox/EMAIL_*.md
+    |
+    v
+Orchestrator Detection
+    |
+    v
+EmailDrafter Analysis
+    |
+    +-- Parse email content
+    +-- Load Company_Handbook rules
+    +-- Classify email type
+    +-- Call OpenAI (gpt-4o-mini)
+    |
+    v
+vault/Pending_Approval/EMAIL_DRAFT_*.md
+    |
+    v
+Human Review (Obsidian)
+    |
+    +-- Edit if needed
+    +-- Move to Approved/
+    |
+    v
+vault/Approved/
+    |
+    v
+Email MCP → Gmail API → Recipient
+    |
+    v
+vault/Done/
+    |
+    v
+vault/Logs/ (audit entry)
+```
+
+---
+
+## Components
+
+### EmailDrafter Module (utils/email_drafter.py)
+
+Processes incoming emails and generates AI responses:
+
+**Initialization**:
+- Loads OpenAI API key
+- Initializes model: `gpt-4o-mini`
+- Tracks processed emails (deduplication)
 
 **Key Methods**:
-- `_load_handbook_rules()` - Parse Company_Handbook.md
-- `_parse_email()` - Extract email metadata
-- `_classify_email_type()` - Determine email intent
-- `_generate_draft()` - Call Claude API for response
-- `draft_reply()` - Main entry point
 
-### 2. **Orchestrator Integration** (`scripts/orchestrator.py`)
+- `draft_reply(email_file)` - Main entry point
+  - Input: Markdown file from `vault/Inbox/`
+  - Output: Draft file in `vault/Pending_Approval/`
+  - Handles: Parsing, API calls, file creation
 
-The orchestrator now:
-- Detects emails in `vault/Inbox/`
-- Initializes EmailDrafter on startup
-- Calls `email_drafter.draft_reply()` for each email
-- Handles approval workflow
-- Executes approved responses
-- Logs all actions
+- `_parse_email(content)` - Extract email metadata
+  - Extracts: From, To, Subject, Body, Headers
+  - Returns: Structured email data
 
-**Updated Methods**:
-- `__init__()` - Initialize EmailDrafter
-- `_process_inbox()` - Call email drafter for emails
+- `_classify_email_type(subject, body)` - Determine intent
+  - Returns: meeting_request, invoice, complaint, inquiry, general
 
-### 3. **Automation Rules** (`vault/Company_Handbook.md`)
+- `_generate_draft(sender, content)` - Call OpenAI
+  - System prompt: Defines tone and rules
+  - Max tokens: 500
+  - Temperature: 0.7
 
-Defines how Claude should respond:
-
-```yaml
-Known Contacts (Auto-Approve):
-  - boss@company.com
-  - team@company.com
-  - clients@company.com
-
-Response Rules by Type:
-  - Inquiry: Professional, factual, <2h target
-  - Complaint: Empathetic, solution-focused (ALWAYS approval required)
-  - Invoice: Factual, reference numbers, auto-approve if <$1000
-  - Meeting: Confirmatory, auto-approve
-  - New Contact: Warm but cautious (ALWAYS approval required)
-
-General Rules:
-  - Include AI disclosure signature
-  - Flag low confidence drafts (<80%) for review
-  - Require approval for non-business topics
+**System Prompt**:
+```
+You are an email assistant. Analyze the email and generate a professional response.
+- Keep responses concise (<200 words)
+- Be friendly but professional
+- If uncertain, ask clarifying questions
+- Flag urgent items for human review
 ```
 
-### 4. **Email Drafting Skill** (`skills/email-drafting.md`)
+**Confidence Scoring**:
+- 0.85-0.95: High confidence (standard emails)
+- 0.70-0.84: Medium confidence (requires review)
+- 0.50-0.69: Low confidence (needs human input)
 
-Agent skill documenting:
-- Architecture & data flow
-- Capabilities & configuration
-- Usage workflow
-- File formats
-- Integration points
-- Safety features
+Confidence stored in draft frontmatter; visible to human reviewer.
 
----
+### Orchestrator Integration (scripts/orchestrator.py)
 
-## Email Classification & Rules
+Orchestrator detects new emails and calls drafter:
 
-Claude automatically classifies emails and applies rules:
-
-### Email Types
-
-| Type | Detection | Auto-Approve | Tone | Deadline |
-|------|-----------|--------------|------|----------|
-| **Inquiry** | "question", "help", "info", "can you" | Known contacts only | Professional, factual | <2h |
-| **Complaint** | "problem", "issue", "broken", "error" | **NEVER** | Empathetic, solution-focused | <1h |
-| **Invoice** | "invoice", "payment", "bill" | <$1000 only | Factual, reference numbers | <24h |
-| **Meeting** | "meeting", "schedule", "time" | Known contacts only | Confirmatory | Same day |
-| **New Contact** | Unknown sender | **NEVER** | Warm but cautious | <4h |
-| **Other** | No keywords | Known contacts only | Professional | <24h |
-
-### Auto-Approval Logic
-
+**On Startup**:
 ```python
-auto_approve = (
-    email_type == "meeting_request" and is_known_contact
-    or email_type == "inquiry" and is_known_contact
-    or email_type == "invoice" and amount < 1000 and is_known_contact
-)
-
-never_auto_approve = (
-    email_type == "complaint"
-    or not is_known_contact
-    or low_confidence
-)
+self.email_drafter = EmailDrafter(vault_path)
 ```
 
+**On File Detection**:
+```python
+if is_email and self.email_drafter:
+    draft_file = self.email_drafter.draft_reply(filepath)
+    if draft_file:
+        logger.info(f"Email draft created: {draft_file.name}")
+```
+
+**Execution**:
+```python
+if 'EMAIL' in filepath.name:
+    self._execute_email(filepath, content)  # Sends via Gmail API
+```
+
+### Automation Rules (vault/Company_Handbook.md)
+
+Defines email handling policies:
+
+**Format**:
+```yaml
+---
+type: company_handbook
+version: 1.0
 ---
 
-## Draft File Format (Generated by Claude)
+# Email Response Rules
 
-When Claude drafts a reply, it creates: `vault/Pending_Approval/EMAIL_DRAFT_TIMESTAMP.md`
+## Priority Contacts
+List of senders whose emails require immediate attention
+
+## Auto-Approval Rules
+- Types of emails that can be auto-approved
+- Confidence thresholds
+- Financial limits (if applicable)
+
+## Tone Guidelines
+- Professional vs. casual contexts
+- Signature requirements
+- Escalation procedures
+
+## Special Handling
+- Complaint resolution procedure
+- Sensitive topic handling
+- External party communications
+```
+
+### Email Draft Format
+
+Drafts created in `vault/Pending_Approval/`:
 
 ```markdown
 ---
 type: email_draft
-original_from: boss@company.com
-original_subject: Quarterly Review Meeting Tomorrow
-email_type: meeting_request
-created: 2026-01-09T10:30:00Z
-auto_approve: true
-confidence: 0.95
+original_file: EMAIL_client_20260111_120000.md
+to: client@example.com
+subject: Re: Project Update
+created: 2026-01-11T12:00:15
 ai_generated: true
+confidence: 0.85
+status: pending_approval
 ---
 
 ## Original Email
 
-**From**: boss@company.com
-**Subject**: Quarterly Review Meeting Tomorrow at 2 PM
-**Received**: 2026-01-09T10:30:00Z
-
-### Body
-[Original email text]
-
----
-
-## AI Analysis
-
-**Email Type**: meeting_request
-**Confidence**: 95%
-**Auto-Approve**: true
-
-**Claude's Reasoning**:
-- Classified as meeting_request based on keywords
-- Sender is known contact (boss@company.com)
-- Standard scheduling inquiry
-- Professional, confirmatory response appropriate
-
----
-
-## Proposed Response
+**From:** client@example.com
+**Subject:** Project Update
+**Received:** 2026-01-11T12:00:00
 
 Hi,
 
-Thank you for the reminder. I confirm my attendance for the quarterly review
-meeting tomorrow at 2 PM in the main conference room.
+Can you provide an update on the project timeline?
 
-Looking forward to discussing the Q4 results and Q1 planning.
+Thanks,
+Client
+
+## Email Analysis
+
+**Type:** Inquiry
+**Urgency:** Standard
+**Suggested Response:** Provide factual update on timeline
+
+## Proposed Reply
+
+Hi Client,
+
+Thanks for checking in on the project. Here's the current status:
+
+- Phase 1: Complete
+- Phase 2: In progress (ETA Friday)
+- Phase 3: Scheduled to start Monday
+
+I'll send a detailed report by end of week.
 
 Best regards,
-[Your Name]
-
----
-
-## AI Disclosure Signature
-
-*This email reply was drafted by Claude AI Employee.*
-*[Your name] reviewed and approved this response.*
-*Sent via DigitalFTE autonomous email system.*
-
----
+Hamza
 
 ## Actions
 
-- [x] Auto-approved (known contact)
-- [ ] Review and edit response above
-- [ ] Move to /Approved/ folder to send
-- [ ] Reject (provide custom reply instead)
+- [ ] Edit reply above if needed
+- [ ] Move to /Approved/ to send
+- [ ] Delete to discard
+
+*AI-generated draft. Confidence: 85% | Review before sending.*
 ```
 
 ---
 
-## Workflow (Step by Step)
+## Data Flow
 
-### Step 1: Email Arrives (Watcher)
-- Gmail watcher detects unread email
-- Creates: `vault/Inbox/EMAIL_*.md`
-- Includes: from, subject, body, metadata
+### Input: Email in Inbox
 
-### Step 2: Orchestrator Detects
-- File system watcher triggers on new file
-- Recognizes as email (checks for "type: email")
-- Calls: `email_drafter.draft_reply(filepath)`
+File format: `vault/Inbox/EMAIL_<sender>_<timestamp>.md`
 
-### Step 3: Claude Analyzes & Drafts
+```markdown
+---
+type: email
+from: client@example.com
+to: hamza@example.com
+subject: Project Update
+received: 2026-01-11T12:00:00
+message_id: msg_abc123
+---
+
+## Email
+
+Hi,
+
+Can you provide an update on the project timeline?
+
+Thanks,
+Client
 ```
-Claude reads:
-├─ Email: From, Subject, Body
-├─ Rules: Company_Handbook.md
-└─ Determines: Type, Auto-approve status
 
-Claude generates:
-├─ Classification (inquiry/complaint/invoice/etc)
-├─ Tone (professional/empathetic/factual)
-├─ Response (2-3 paragraphs)
-├─ AI disclosure signature
-└─ Confidence score (0-1)
-```
+### Processing: Drafter Analysis
 
-### Step 4: Human Reviews (Takes 5-30 seconds)
-**For auto-approvable emails** (known contacts):
-- ✅ Can immediately move to /Approved/ to send
-- 📝 Can edit if desired before approving
+1. Parse email metadata
+2. Extract subject and body
+3. Load Company_Handbook rules
+4. Classify email type
+5. Call OpenAI API with:
+   - System prompt (with rules)
+   - Email content
+   - Context (sender, type, company info)
+6. Receive AI-generated response
+7. Calculate confidence score
+8. Create draft file
 
-**For approval-required emails** (new contacts, complaints):
-- 👁️ Must review response
-- ✏️ Can edit/customize
-- ✅ Then move to /Approved/ to send
+### Output: Draft in Pending_Approval
 
-**For problematic emails**:
-- 🗑️ Can delete draft and write custom reply
-- 🔄 Can reject and have Claude try again
+File format: `vault/Pending_Approval/EMAIL_DRAFT_<timestamp>.md`
 
-### Step 5: Move to Approved
-Move file from:
-- `vault/Pending_Approval/EMAIL_DRAFT_*.md`
-To:
-- `vault/Approved/EMAIL_*.md`
-
-Orchestrator detects move and triggers execution.
-
-### Step 6: Execute (Send Email)
-- Orchestrator detects file in `/Approved/`
-- Extracts recipient, subject, body
-- Calls Gmail API to send
-- Logs email sent
-- Moves file to `/Done/`
-
-### Step 7: Audit Logged
-- Recorded in: `vault/Logs/YYYY-MM-DD.json`
-- Includes:
-  - Timestamp
-  - Email type
-  - From/To
-  - Action (drafted/approved/sent)
-  - Claude confidence
-  - AI disclosure note
+Contains:
+- Original email (full quote)
+- Drafter analysis (intent, urgency, type)
+- Proposed response (AI-generated)
+- Confidence score (for prioritization)
+- Meta information (timestamps, file IDs)
 
 ---
 
 ## Configuration
 
-### Enable Real Claude Drafting
-
-The system works with or without Claude API:
-- **Without API key**: Uses fallback template responses
-- **With API key**: Uses real Claude intelligence
-
-To enable real Claude drafting:
+### Environment Variables
 
 ```bash
-# Set your Anthropic API key
-export ANTHROPIC_API_KEY="sk-ant-..."
+# OpenAI API
+OPENAI_API_KEY=sk-xxx
 
-# Or add to ~/.bashrc or ~/.zshrc for persistence:
-echo 'export ANTHROPIC_API_KEY="sk-ant-..."' >> ~/.bashrc
+# Email processing
+COMPANY_HANDBOOK_PATH=./vault/Company_Handbook.md
+VAULT_PATH=./vault
 ```
 
-Then the email drafter will:
-- Call Claude API for each email
-- Generate intelligent, context-aware responses
-- Apply your business rules automatically
-- Complete drafts in <2 seconds
+### Handbook Rules
 
-### Customize Automation Rules
+Edit `vault/Company_Handbook.md` to customize:
 
-Edit `vault/Company_Handbook.md`:
+```yaml
+# Adjust for your organization
+auto_approve_contacts:
+  - boss@company.com
+  - team@company.com
 
-```markdown
-### Email Handling (Claude-Powered Drafting)
+min_confidence_for_approval: 0.8
 
-**Known Contacts (Auto-Approve Replies)**:
-- boss@company.com
-- team@company.com
-- clients@company.com
-- [ADD YOUR CONTACTS HERE]
-
-**Response Rules by Email Type**:
-- **Inquiry**: Professional tone, factual...
-- [CUSTOMIZE FOR YOUR BUSINESS]
+response_templates:
+  greeting: "Hi {sender_name},"
+  closing: "Best regards,\nTeam"
 ```
 
 ---
 
-## Safety Features
+## Usage Workflow
 
-### 1. **AI Disclosure**
-Every draft includes signature:
-```
-This email reply was drafted by Claude AI Employee.
-[Your name] reviewed and approved this response.
-Sent via DigitalFTE autonomous email system.
-```
+### For Users
 
-### 2. **Confidence Scoring**
-Claude rates how certain it is (0-1):
-- 0.95+: Very confident (auto-approvable for known contacts)
-- 0.80-0.95: Confident (review recommended)
-- <0.80: Low confidence (always requires approval)
+1. **Email Arrives** → Gmail Watcher detects (within 20s)
+2. **Draft Created** → Appears in `vault/Pending_Approval/`
+3. **Review** → Open in Obsidian
+   - Read original email
+   - Check AI analysis
+   - Review proposed response
+   - See confidence score
+4. **Decide**
+   - Approve as-is → Move to `Approved/`
+   - Edit → Modify response → Move to `Approved/`
+   - Reject → Delete file
+5. **Execute** → Orchestrator sends when file reaches `Approved/`
+6. **Confirm** → File moves to `Done/`, logged to audit trail
 
-### 3. **Human-in-the-Loop**
-All emails require human approval, even auto-approvable ones:
-- Can review draft
-- Can edit response
-- Can reject and write custom reply
-- Full control at every step
+### For Operations
 
-### 4. **Complaint Escalation**
-Complaints always require approval:
-- Flagged as `auto_approve: false`
-- Empathetic tone suggested
-- Never sent without human review
+Monitor email processing:
 
-### 5. **New Contact Rules**
-First contact from unknown senders always requires approval:
-- Warm but cautious tone
-- Prevents over-committing
-- Human can customize before sending
+```bash
+# View pending approvals
+ls -la vault/Pending_Approval/
 
-### 6. **Audit Trail**
-Every action logged with:
-- Timestamp
-- Original email
-- Claude's analysis
-- Human approval
-- Final response sent
-- Can prove AI involvement
+# Check recent actions
+tail -f vault/Logs/$(date +%Y-%m-%d).json | jq '.[] | select(.action=="email_*")'
 
----
-
-## Advanced Features
-
-### Contact Personalization
-Claude can learn your tone for different contacts:
-- Formal for executives
-- Friendly for clients
-- Casual for team
-- Professional for vendors
-
-### Template Learning
-System learns from your approved responses:
-- "You usually respond to invoices like this..."
-- "For complaints, you emphasize..."
-- Improves suggestions over time
-
-### Escalation Alerts
-Auto-flags for human review:
-- Unknown contacts
-- New vendors
-- Payment requests
-- Contract discussions
-- Multiple similar requests
-
-### Batch Processing
-When multiple emails arrive:
-- All drafts created in parallel
-- Batched for human review
-- Can approve in bulk if auto-approvable
-
----
-
-## Metrics & Tracking
-
-System tracks:
-- **Draft generation time**: Typically <2 seconds
-- **Human review time**: Auto-approve = 5s, manual = 2-5 min
-- **Claude confidence**: Average score per email type
-- **Auto-approve ratio**: % auto-approved vs. manual approval
-- **Response quality**: Can be rated after sending
-
-Example:
-```json
-{
-  "email_type": "inquiry",
-  "confidence": 0.92,
-  "auto_approve": true,
-  "human_review_time": 0.05,  // seconds
-  "draft_generation_time": 1.23,
-  "result": "approved_and_sent"
-}
+# View confidence distribution
+grep "confidence" vault/Pending_Approval/*.md | awk -F: '{print $3}' | sort -n
 ```
 
 ---
 
-## Common Scenarios
+## Performance
 
-### Scenario 1: Inquiry from Known Contact
-```
-Email arrives: "Question about your rates"
-From: boss@company.com
+| Operation | Latency | Notes |
+|-----------|---------|-------|
+| Email detection | ~20s | Poll interval |
+| Drafter parsing | <100ms | Local file read |
+| OpenAI API call | 2-5s | gpt-4o-mini generation |
+| Draft file creation | <50ms | Local write |
+| Total end-to-end | ~2.5-6s | Excluding human review |
 
-→ Claude drafts professional response
-→ Auto-approve = true
-→ Human glances at draft (5 seconds)
-→ Moves to /Approved/
-→ Sent automatically
-→ Done!
-```
+**Throughput**: Up to 5 emails per 20-second polling cycle
 
-### Scenario 2: Complaint from Unknown Contact
-```
-Email arrives: "Your service was terrible!"
-From: angry@example.com
+---
 
-→ Claude drafts empathetic, solution-focused response
-→ Auto-approve = false (new contact + complaint)
-→ Human reviews carefully
-→ Human can edit to add specific solutions
-→ Moves to /Approved/
-→ Sent with custom edits
-→ Logged
-```
+## Error Handling
 
-### Scenario 3: Invoice from Client
-```
-Email arrives: "Invoice #12345 due tomorrow"
-From: client@company.com
+**Missing Email**:
+- Logs warning
+- Skips processing
+- Does not crash
 
-→ Claude drafts professional acknowledgment
-→ Auto-approve = true (known contact, <$1000)
-→ Human reviews (notes the amount)
-→ Moves to /Approved/
-→ Sent
-→ Xero MCP creates invoice record
-→ Done!
-```
+**OpenAI API Failure**:
+- Logs error with API response
+- Creates fallback draft
+- Lower confidence score (0.5)
+- Requires human review
+
+**Malformed Inbox File**:
+- Logs parsing error
+- Moves to rejected folder
+- Does not crash
+
+**Duplicate Email**:
+- Tracked via processed_ids
+- Prevents duplicate drafts
+- Idempotent
+
+---
+
+## Testing
+
+Run `python3 test_keyword_escalation.py` to verify system:
+
+- Email parsing: Extract metadata correctly
+- Draft generation: Call OpenAI successfully
+- File creation: Write to vault correctly
+- Deduplication: No duplicate drafts
+
+---
+
+## Security
+
+**HITL Safeguards**:
+- All responses require human approval before sending
+- AI confidence score visible to reviewer
+- Easy rejection path (delete file)
+- Audit logging of all approvals
+
+**Data Handling**:
+- Email content never logged to external systems
+- OpenAI API calls made over HTTPS
+- Credentials stored in .env (not committed to git)
+- Local file operations only
+
+**Compliance**:
+- Audit trail records who approved each email
+- Timestamps enable timeline reconstruction
+- 90-day log retention
 
 ---
 
 ## Troubleshooting
 
-### Q: Draft not being created?
-A: Check:
-1. Email file has `type: email` in frontmatter
-2. ANTHROPIC_API_KEY is set (or fallback template will be used)
-3. Orchestrator is running and watching vault
-4. Check logs in `vault/Logs/` for errors
+**No drafts appearing**:
+- Check OpenAI API key in .env
+- Verify vault directory permissions
+- Check orchestrator logs: `grep email vault/Logs/`
 
-### Q: Claude responses seem generic?
-A: This means:
-1. API key is not set → using fallback template
-2. Set ANTHROPIC_API_KEY to enable real Claude
-3. Or low confidence score → need to customize Company_Handbook.md
+**Low confidence scores**:
+- Review email content (ambiguous requests)
+- Update Company_Handbook rules
+- Consider fallback template
 
-### Q: How to reject a draft?
-A:
-1. Delete the file from `/Pending_Approval/`
-2. Orchestrator won't process it
-3. Optionally create custom reply manually
-
-### Q: Can I edit the draft before approving?
-A: Yes!
-1. Open draft in `/Pending_Approval/`
-2. Edit the "## Proposed Response" section
-3. Move to `/Approved/` to send edited version
-
----
-
-## Integration with Other Systems
-
-### With Xero (Accounting)
-- Invoice emails trigger draft response
-- Human approves
-- Email sent + Xero invoice created simultaneously
-
-### With Social Media
-- Important updates can trigger posts
-- Draft approval creates social posts
-- Same human review mechanism
-
-### With WhatsApp
-- Urgent messages flagged
-- Draft responses created
-- Human can approve to send
-
----
-
-## Stats & Performance
-
-**Draft Generation**:
-- First draft: ~1-2 seconds (API call + template rendering)
-- Fallback (no API): <100ms
-- Batch (10 emails): ~15-20 seconds total
-
-**Human Review**:
-- Auto-approvable: 5-10 seconds per email
-- Requires approval: 1-5 minutes per email
-- Edit operations: Additional 1-2 minutes
-
-**System Throughput**:
-- Can handle 50+ emails/day
-- Auto-approves 40-60% (known contacts)
-- Requires manual approval 40-60% (new/sensitive)
-
----
-
-## What's Next?
-
-Once ANTHROPIC_API_KEY is set, your system will:
-
-✅ Automatically draft intelligent email responses
-✅ Apply your business rules (Company_Handbook.md)
-✅ Auto-approve known contacts
-✅ Require review for new/sensitive emails
-✅ Include professional AI disclosure
-✅ Maintain complete audit trail
-✅ Integrate with Xero, WhatsApp, Social Media
-
-**Your AI Employee now genuinely reasons about emails instead of just processing them mechanically.**
-
----
-
-## Files Added/Modified
-
-**New Files**:
-- `utils/email_drafter.py` - Email drafting engine
-- `skills/email-drafting.md` - Skill documentation
-
-**Modified Files**:
-- `scripts/orchestrator.py` - Integrated email drafter
-- `vault/Company_Handbook.md` - Added detailed email rules
-
-**Configuration**:
-- `vault/Pending_Approval/` - Now stores AI-generated drafts
-- `vault/Approved/` - Approved drafts (can be edited before moving here)
-- `vault/Done/` - Sent emails with proof of AI/human involvement
-- `vault/Logs/` - Complete audit trail
-
----
-
-**Status**: ✅ Ready to use (pending ANTHROPIC_API_KEY for full capability)
+**Drafts not being executed**:
+- Verify file is in vault/Approved/
+- Check email MCP server status
+- Review orchestrator logs for errors
