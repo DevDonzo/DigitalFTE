@@ -1,45 +1,35 @@
 #!/usr/bin/env python3
-"""WhatsApp Setup - Scan QR code to authenticate"""
-from playwright.sync_api import sync_playwright
-from pathlib import Path
-import time
+"""WhatsApp Setup - Twilio webhook configuration helper"""
+import os
 
-SESSION_PATH = Path.home() / '.whatsapp_session'
+print("=" * 60)
+print("WhatsApp (Twilio) Setup")
+print("=" * 60)
+print("\nThis project uses Twilio WhatsApp + webhook ingestion.")
+print("No Playwright or WhatsApp Web automation is required.\n")
 
-print("=" * 50)
-print("WhatsApp Web Setup")
-print("=" * 50)
-print(f"\nSession will be saved to: {SESSION_PATH}")
-print("\n1. A browser window will open")
-print("2. Scan the QR code with your phone")
-print("3. Wait for WhatsApp to load")
-print("4. Press Enter in this terminal when ready")
-print("=" * 50)
+required = {
+    "TWILIO_ACCOUNT_SID": os.getenv("TWILIO_ACCOUNT_SID"),
+    "TWILIO_AUTH_TOKEN": os.getenv("TWILIO_AUTH_TOKEN"),
+    "TWILIO_WHATSAPP_NUMBER": os.getenv("TWILIO_WHATSAPP_NUMBER")
+}
 
-with sync_playwright() as p:
-    # Launch browser with persistent context (saves session)
-    # Using Firefox because WhatsApp blocks Playwright's Chromium
-    browser = p.firefox.launch_persistent_context(
-        str(SESSION_PATH),
-        headless=False,  # Show browser so user can scan QR
-        viewport={'width': 1280, 'height': 800}
-    )
+missing = [k for k, v in required.items() if not v]
+if missing:
+    print("Missing environment variables:")
+    for key in missing:
+        print(f"  - {key}")
+else:
+    print("Twilio credentials detected.")
 
-    page = browser.pages[0] if browser.pages else browser.new_page()
-    page.goto('https://web.whatsapp.com')
-
-    print("\n>>> Browser opened. Scan the QR code with your phone.")
-    print(">>> After WhatsApp loads, press Enter here to save session...")
-
-    input("\nPress Enter when WhatsApp is loaded...")
-
-    # Give it a moment to save cookies
-    time.sleep(2)
-
-    browser.close()
-
-print("\n" + "=" * 50)
-print("Session saved!")
-print("You can now run the WhatsApp watcher:")
-print("  python3 watchers/whatsapp_watcher.py")
-print("=" * 50)
+print("\nNext steps:")
+print("1) Start webhook server:")
+print("   python scripts/webhook_server.py")
+print("2) Expose locally (ngrok example):")
+print("   ngrok http 8000")
+print("3) In Twilio Console, set the WhatsApp webhook URL:")
+print("   https://<your-ngrok-domain>/webhook")
+print("4) Run the watcher to convert inbound messages into Needs_Action:")
+print("   python watchers/whatsapp_watcher.py")
+print("\nDone.")
+print("=" * 60)

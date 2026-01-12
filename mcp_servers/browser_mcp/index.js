@@ -1,6 +1,6 @@
 /**
  * Browser MCP Server - Web automation and navigation
- * Integrates with Playwright for browser automation
+ * Placeholder interface for future browser automation
  */
 
 const { Server } = require('@anthropic-sdk/mcp-sdk');
@@ -55,7 +55,7 @@ const tools = [
 ];
 
 /**
- * Process Browser MCP tools - Calls Playwright API
+ * Process Browser MCP tools - Placeholder responses
  */
 async function processTool(name, args) {
   const timestamp = new Date().toISOString();

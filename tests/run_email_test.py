@@ -18,7 +18,7 @@ STEP 2: Send Yourself an Email
   └─> Send an email TO YOURSELF with subject containing: "test" or "urgent"
   └─> Make sure it's marked as IMPORTANT (star it)
 
-STEP 3: Check /Inbox/
+STEP 3: Check /Needs_Action/
   └─> Look for EMAIL_*.md files created by the watcher
   └─> These are your action items
 
@@ -27,8 +27,9 @@ Let's start!
 
 input("Press ENTER to start Gmail Watcher authentication...")
 
-vault_path = str(Path(__file__).parent / 'vault')
-creds_path = str(Path(__file__).parent / 'credentials.json')
+project_root = Path(__file__).resolve().parents[1]
+vault_path = str(project_root / 'vault')
+creds_path = str(project_root / 'credentials.json')
 
 print(f"\n🔐 Using credentials from: {creds_path}")
 print(f"📁 Vault path: {vault_path}\n")
@@ -68,10 +69,10 @@ watcher.run()
 except KeyboardInterrupt:
     print("\n\n⏸️  Gmail Watcher stopped (Ctrl+C)")
     print("\n" + "=" * 70)
-    print("Check your /Inbox/ folder!")
+    print("Check your /Needs_Action/ folder!")
     print("=" * 70)
 
-    inbox = Path(vault_path) / 'Inbox'
+    inbox = Path(vault_path) / 'Needs_Action'
     email_files = list(inbox.glob('EMAIL_*.md'))
 
     if email_files:

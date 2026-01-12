@@ -17,7 +17,7 @@ Email Received (Gmail)
 Gmail Watcher Detection
     |
     v
-vault/Inbox/EMAIL_*.md
+vault/Needs_Action/EMAIL_*.md
     |
     v
 Orchestrator Detection
@@ -68,7 +68,7 @@ Processes incoming emails and generates AI responses:
 **Key Methods**:
 
 - `draft_reply(email_file)` - Main entry point
-  - Input: Markdown file from `vault/Inbox/`
+  - Input: Markdown file from `vault/Needs_Action/`
   - Output: Draft file in `vault/Pending_Approval/`
   - Handles: Parsing, API calls, file creation
 
@@ -220,7 +220,7 @@ Hamza
 
 ### Input: Email in Inbox
 
-File format: `vault/Inbox/EMAIL_<sender>_<timestamp>.md`
+File format: `vault/Needs_Action/EMAIL_<sender>_<timestamp>.md`
 
 ```markdown
 ---

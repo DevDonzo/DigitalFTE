@@ -47,7 +47,7 @@
 - Test stubs created early for Phase 6
 
 ### Challenges
-- Playwright WhatsApp automation can be fragile (browser versioning)
+- Twilio WhatsApp webhooks are more reliable than browser automation
 - OAuth token refresh timing in Gmail watcher
 - Xero API documentation is verbose
 
@@ -154,7 +154,7 @@
 ### Known Limitations (Phase 7)
 1. **Single-user only** - HITL system designed for one user
 2. **Polling-based** - FileSystem watcher polls every 2 sec (not true real-time)
-3. **WhatsApp Playwright** - Can be fragile with browser updates
+3. **WhatsApp Webhook** - Webhook ingestion avoids browser breakage
 4. **OAuth token refresh** - Manual refresh needed if tokens expire mid-operation
 5. **No database** - File-based system slower for 10K+ records
 6. **No API versioning** - Will break if APIs change (unlikely but possible)
@@ -197,7 +197,7 @@
 ## Performance Insights
 
 - Gmail API: 2 min response time acceptable
-- WhatsApp Playwright: 30 sec warmup, then ~2 sec per check  
+- WhatsApp Webhook: Near-real-time delivery (no polling warmup)
 - FileSystem watcher: <1 sec response time
 - Orchestrator: <100 ms file detection
 - CEO briefing generation: <5 sec for 100 items
@@ -367,4 +367,3 @@ This project proved that:
 - Meta (Facebook/Instagram) posting - awaiting credentials
 - Xero accounting integration - awaiting official MCP server setup
 - WhatsApp monitoring - awaiting QR code auth
-

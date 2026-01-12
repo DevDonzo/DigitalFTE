@@ -13,6 +13,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+VAULT_PATH = Path(os.getenv('VAULT_PATH', PROJECT_ROOT / 'vault'))
+
 # Processes to monitor (name -> command)
 PROCESSES = {
     'orchestrator': 'python3 scripts/orchestrator.py',
@@ -105,7 +108,7 @@ def should_restart(name: str) -> bool:
 
 def log_failure(name: str, error: str = None):
     """Log process failure for audit trail"""
-    vault_logs = Path('/Users/hparacha/DigitalFTE/vault/Logs')
+    vault_logs = VAULT_PATH / 'Logs'
     vault_logs.mkdir(parents=True, exist_ok=True)
 
     failure_log = {

@@ -7,7 +7,7 @@ Handle Xero operations: invoices, transactions, balance.
 See implementation files for details.
 
 ## Status
-⏳ Ready for Xero OAuth
+Requires Xero access token + tenant ID.
 
 ## Documentation
-See ARCHITECTURE.md and GOLD_SPEC.md for details.
+See `docs/CREDENTIALS_SETUP.md`, `ARCHITECTURE.md`, and `GOLD_SPEC.md`.

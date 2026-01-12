@@ -24,6 +24,7 @@ VAULT_PATH = Path(os.getenv('VAULT_PATH', './vault'))
 VERIFY_TOKEN = os.getenv('WHATSAPP_WEBHOOK_VERIFY_TOKEN', 'digitalfte_verify')
 NEEDS_ACTION = VAULT_PATH / 'Needs_Action'
 NEEDS_ACTION.mkdir(parents=True, exist_ok=True)
+INCOMING_STORE = VAULT_PATH / '.whatsapp_incoming.json'
 
 # Keyword classifications for message urgency
 URGENT_KEYWORDS = ['urgent', 'asap', 'emergency', 'help', 'problem', 'crisis', 'down', 'broken', 'critical', 'immediately']
@@ -136,7 +137,7 @@ async def handle_twilio_webhook(form_data):
 
     logger.info(f"✓ Message {msg_id} marked as processed")
     urgency = classify_urgency(message_text)
-    create_whatsapp_action_file(msg_id, from_number, from_number, message_text, "", urgency)
+    enqueue_incoming_message(msg_id, from_number, from_number, message_text, urgency)
 
 
 async def handle_meta_webhook(payload):
@@ -180,7 +181,31 @@ async def handle_meta_webhook(payload):
             f.write(msg_id + '\n')
 
         urgency = classify_urgency(text_content)
-        create_whatsapp_action_file(msg_id, sender_id, sender_name, text_content, "", urgency)
+        enqueue_incoming_message(msg_id, sender_id, sender_name, text_content, urgency)
+
+
+def enqueue_incoming_message(msg_id: str, sender_id: str, sender_name: str,
+                             text: str, urgency: str) -> None:
+    """Append a message to the inbound queue for WhatsAppWatcher."""
+    entry = {
+        "id": msg_id,
+        "from": sender_id,
+        "sender_name": sender_name,
+        "text": {"body": text},
+        "urgency": urgency,
+        "received_at": datetime.now(timezone.utc).isoformat()
+    }
+
+    payload = {"messages": []}
+    if INCOMING_STORE.exists():
+        try:
+            payload = json.loads(INCOMING_STORE.read_text())
+        except Exception:
+            payload = {"messages": []}
+
+    payload.setdefault("messages", []).append(entry)
+    INCOMING_STORE.write_text(json.dumps(payload, indent=2))
+    logger.info(f"Queued WhatsApp message {msg_id} for watcher processing")
 
 
 def create_whatsapp_action_file(msg_id: str, sender_id: str, sender_name: str,

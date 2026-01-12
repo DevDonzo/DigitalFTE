@@ -15,7 +15,7 @@ class TestEmailWatcherIntegration:
 
     def test_email_creates_inbox_file(self, populated_vault):
         """Test email watcher creates inbox markdown file"""
-        inbox = populated_vault / "Inbox"
+        inbox = populated_vault / "Needs_Action"
         email_files = list(inbox.glob("EMAIL_*.md"))
         assert len(email_files) >= 2
 
@@ -27,7 +27,7 @@ class TestEmailWatcherIntegration:
 
     def test_inbox_file_structure(self, populated_vault):
         """Test created inbox files follow expected structure"""
-        inbox = populated_vault / "Inbox"
+        inbox = populated_vault / "Needs_Action"
         for email_file in inbox.glob("EMAIL_*.md"):
             content = email_file.read_text()
             lines = content.split('\n')
@@ -43,7 +43,7 @@ class TestOrchestratorIntegration:
 
     def test_plan_creation_from_inbox(self, populated_vault):
         """Test orchestrator creates plan from inbox item"""
-        inbox = populated_vault / "Inbox"
+        inbox = populated_vault / "Needs_Action"
         plans = populated_vault / "Plans"
 
         # Simulate orchestrator processing inbox files
@@ -69,7 +69,7 @@ HIGH
 
     def test_approval_workflow_state_transitions(self, populated_vault):
         """Test HITL workflow state transitions"""
-        inbox = populated_vault / "Inbox"
+        inbox = populated_vault / "Needs_Action"
         plans = populated_vault / "Plans"
         pending = populated_vault / "Pending_Approval"
         approved = populated_vault / "Approved"
@@ -229,7 +229,7 @@ class TestEndToEndWorkflow:
 
     def test_email_to_briefing_workflow(self, populated_vault):
         """Test complete workflow from email to briefing"""
-        inbox = populated_vault / "Inbox"
+        inbox = populated_vault / "Needs_Action"
         plans = populated_vault / "Plans"
         approvals = populated_vault / "Pending_Approval"
         done = populated_vault / "Done"

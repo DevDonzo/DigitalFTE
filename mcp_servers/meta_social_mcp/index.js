@@ -6,6 +6,8 @@
  */
 
 const axios = require('axios');
+const { Server } = require('@anthropic-sdk/mcp-sdk');
+const { StdioTransport } = require('@anthropic-sdk/mcp-sdk');
 
 // Configuration from environment
 const FACEBOOK_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN || '';
@@ -15,6 +17,88 @@ const FACEBOOK_PAGE_ID = process.env.FACEBOOK_PAGE_ID || '';
 const API_VERSION = 'v18.0';
 const GRAPH_API_BASE = `https://graph.instagram.com/${API_VERSION}`;
 const FACEBOOK_GRAPH_BASE = `https://graph.facebook.com/${API_VERSION}`;
+
+const tools = [
+  {
+    name: 'post_facebook',
+    description: 'Post a message to a Facebook Page',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        page_id: { type: 'string', description: 'Facebook Page ID' },
+        message: { type: 'string', description: 'Post message' },
+        image_url: { type: 'string', description: 'Image URL (optional)' },
+        link_url: { type: 'string', description: 'Link URL (optional)' }
+      },
+      required: ['message']
+    }
+  },
+  {
+    name: 'post_instagram',
+    description: 'Post media to an Instagram Business Account',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        account_id: { type: 'string', description: 'Instagram Business Account ID' },
+        caption: { type: 'string', description: 'Post caption' },
+        image_url: { type: 'string', description: 'Image URL' },
+        media_type: { type: 'string', description: 'Media type', default: 'IMAGE' }
+      },
+      required: ['caption', 'image_url']
+    }
+  },
+  {
+    name: 'schedule_facebook',
+    description: 'Schedule a Facebook Page post for a future time',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        page_id: { type: 'string', description: 'Facebook Page ID' },
+        message: { type: 'string', description: 'Post message' },
+        publish_time: { type: 'string', description: 'Scheduled publish time (ISO8601)' },
+        image_url: { type: 'string', description: 'Image URL (optional)' }
+      },
+      required: ['message', 'publish_time']
+    }
+  },
+  {
+    name: 'get_instagram_insights',
+    description: 'Get Instagram account insights',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        account_id: { type: 'string', description: 'Instagram Business Account ID' },
+        metric: { type: 'string', description: 'Metric name (impressions, reach, profile_views, follower_count)' }
+      }
+    }
+  },
+  {
+    name: 'get_media_insights',
+    description: 'Get Instagram media insights for a post',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        media_id: { type: 'string', description: 'Instagram media ID' }
+      },
+      required: ['media_id']
+    }
+  },
+  {
+    name: 'get_page_insights',
+    description: 'Get Facebook Page insights',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        page_id: { type: 'string', description: 'Facebook Page ID' }
+      }
+    }
+  },
+  {
+    name: 'check_auth',
+    description: 'Verify Meta access token',
+    inputSchema: { type: 'object', properties: {} }
+  }
+];
 
 /**
  * Post to Facebook Page
@@ -261,11 +345,9 @@ async function checkAuth() {
 }
 
 /**
- * Main MCP Handler
+ * MCP tool handler
  */
-async function handleRequest(toolName, toolInput) {
-  console.error(`[Meta Social MCP] Tool called: ${toolName}`);
-
+async function processTool(toolName, toolInput) {
   switch (toolName) {
     case 'post_facebook':
       return await postToFacebook(
@@ -314,66 +396,48 @@ async function handleRequest(toolName, toolInput) {
   }
 }
 
-/**
- * Start MCP Server
- */
-async function startServer() {
-  console.error('🚀 Meta Social MCP Server starting...');
-  console.error(`📱 Instagram Account ID: ${INSTAGRAM_BUSINESS_ACCOUNT_ID || 'NOT SET'}`);
-  console.error(`📘 Facebook Page ID: ${FACEBOOK_PAGE_ID || 'NOT SET'}`);
-  console.error(`🔑 Access Token: ${FACEBOOK_ACCESS_TOKEN ? '✓ SET' : '✗ NOT SET'}`);
-
-  // Check authentication on startup
-  const auth = await checkAuth();
-  if (auth.authenticated) {
-    console.error(`✅ Authentication successful (${auth.name})`);
-  } else {
-    console.error(`⚠️  Authentication failed: ${auth.error}`);
-  }
-
-  console.error('Available tools:');
-  console.error('  - post_facebook: Post to Facebook Page');
-  console.error('  - post_instagram: Post to Instagram Business Account');
-  console.error('  - schedule_facebook: Schedule Facebook post');
-  console.error('  - get_instagram_insights: Get Instagram metrics');
-  console.error('  - get_media_insights: Get metrics for specific post');
-  console.error('  - get_page_insights: Get Facebook page metrics');
-  console.error('  - check_auth: Verify authentication status');
-
-  // Read stdin for MCP requests
+function startLegacyServer() {
+  console.error('Meta Social MCP (legacy stdio) starting...');
   let inputBuffer = '';
 
   process.stdin.on('data', async (chunk) => {
     inputBuffer += chunk.toString();
 
     try {
-      // Try to parse complete JSON objects
       const lines = inputBuffer.split('\n');
-      inputBuffer = lines[lines.length - 1]; // Keep incomplete line
+      inputBuffer = lines[lines.length - 1];
 
       for (let i = 0; i < lines.length - 1; i++) {
-        if (lines[i].trim()) {
-          const request = JSON.parse(lines[i]);
-          const result = await handleRequest(request.tool, request.input || {});
-          console.log(JSON.stringify(result));
+        if (!lines[i].trim()) {
+          continue;
         }
+        const request = JSON.parse(lines[i]);
+        const result = await processTool(request.tool, request.input || {});
+        console.log(JSON.stringify(result));
       }
     } catch (error) {
-      // Invalid JSON, wait for more data
+      // Wait for complete JSON
     }
-  });
-
-  process.stdin.on('end', () => {
-    console.error('Meta Social MCP Server shutting down');
-    process.exit(0);
   });
 }
 
-// Start server
-startServer().catch(error => {
-  console.error('❌ Fatal error:', error.message);
-  process.exit(1);
-});
+function startMcpServer() {
+  const server = new Server(
+    { name: 'meta-social-mcp', version: '1.0.0' },
+    { transport: new StdioTransport(), tools }
+  );
+
+  server.setToolHandler(processTool);
+  server.start();
+
+  console.error('Meta Social MCP Server started (MCP SDK)');
+}
+
+if (process.argv.includes('--legacy-stdio')) {
+  startLegacyServer();
+} else {
+  startMcpServer();
+}
 
 module.exports = {
   postToFacebook,

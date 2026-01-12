@@ -2,6 +2,7 @@
 """Standalone email sender - No dependencies, just send the email"""
 import base64
 import json
+import os
 from email.mime.text import MIMEText
 from pathlib import Path
 from datetime import datetime
@@ -58,7 +59,8 @@ try:
     print(f"   Message ID: {result['id']}")
 
     # Log it
-    vault = Path('/Users/hparacha/DigitalFTE/vault')
+    project_root = Path(__file__).resolve().parents[1]
+    vault = Path(os.getenv('VAULT_PATH', project_root / 'vault'))
     sent_file = vault / 'Logs' / 'emails_sent.jsonl'
     sent_file.parent.mkdir(parents=True, exist_ok=True)
 

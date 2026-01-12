@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """Direct test of orchestrator email execution"""
+import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, '/Users/hparacha/DigitalFTE')
+project_root = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(project_root))
 from scripts.orchestrator import VaultHandler
 
 print("=" * 70)
 print("🤖 Direct Orchestrator Email Test")
 print("=" * 70)
 
-vault_path = '/Users/hparacha/DigitalFTE/vault'
+vault_path = Path(os.getenv('VAULT_PATH', project_root / 'vault'))
 handler = VaultHandler(vault_path)
 
 # Find email in Approved

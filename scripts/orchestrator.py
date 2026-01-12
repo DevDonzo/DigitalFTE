@@ -10,10 +10,19 @@ import sys
 import base64
 from email.mime.text import MIMEText
 from pathlib import Path
-from datetime import datetime, timezone
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
+from datetime import datetime, timezone, timedelta
 from collections import defaultdict
+
+# Avoid local scripts/watchdog.py shadowing watchdog package when running as script.
+scripts_dir = Path(__file__).resolve().parent
+if sys.path and Path(sys.path[0]).resolve() == scripts_dir:
+    sys.path.pop(0)
+
+from watchdog.observers import Observer as _Observer
+from watchdog.observers.polling import PollingObserver
+from watchdog.events import FileSystemEventHandler
+
+Observer = PollingObserver if os.getenv("WATCHDOG_USE_POLLING") == "1" else _Observer
 
 # Load environment variables from .env file
 try:
@@ -43,7 +52,6 @@ try:
     from utils.email_drafter import EmailDrafter
     HAS_EMAIL_DRAFTER = True
 except ImportError:
-    logger.warning("EmailDrafter not available - using legacy email processing")
     HAS_EMAIL_DRAFTER = False
 
 try:
@@ -69,6 +77,12 @@ logging.basicConfig(
     format='%(asctime)s [%(name)s] %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Log import status
+if HAS_EMAIL_DRAFTER:
+    logger.info("✓ EmailDrafter available")
+else:
+    logger.warning("EmailDrafter not available - using legacy email processing")
 
 class VaultHandler(FileSystemEventHandler):
     SCOPES = [
@@ -265,6 +279,7 @@ class VaultHandler(FileSystemEventHandler):
             # Route to WhatsApp Drafter
             if is_whatsapp and self.whatsapp_drafter:
                 logger.info(f"💬 Using AI to draft WhatsApp reply for: {filepath.name}")
+                self._maybe_create_invoice_draft(filepath, content, channel='whatsapp')
                 try:
                     draft_file = self.whatsapp_drafter.draft_reply(filepath)
                     if draft_file:
@@ -298,6 +313,7 @@ class VaultHandler(FileSystemEventHandler):
             if is_email and self.email_drafter:
                 # Use AI Assistant to draft reply
                 logger.info(f"🤖 Using AI Assistant to draft reply for: {filepath.name}")
+                self._maybe_create_invoice_draft(filepath, content, channel='email')
                 try:
                     draft_file = self.email_drafter.draft_reply(filepath)
 
@@ -345,6 +361,140 @@ Processed at: {datetime.now().isoformat()}
         except Exception as e:
             logger.error(f"Inbox processing error: {e}")
             self._log_action('inbox_error', filepath.name, 'failure', str(e))
+
+    def _maybe_create_invoice_draft(self, filepath, content, channel):
+        """Create an invoice draft when an incoming message requests an invoice."""
+        if not self._is_invoice_request(content):
+            return
+        message_id = self._extract_message_id(content)
+        if self._invoice_draft_exists(filepath.name, message_id=message_id):
+            logger.info(f"🧾 Invoice draft already exists for {filepath.name}; skipping")
+            return
+
+        contact_name = self._extract_contact_name(content, fallback=filepath.stem)
+        amount = self._extract_amount(content)
+        due_date = (datetime.now() + timedelta(days=14)).strftime('%Y-%m-%d')
+        description = f"Invoice requested via {channel}"
+
+        draft_name = f"INVOICE_DRAFT_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
+        draft_path = self.vault / 'Pending_Approval' / draft_name
+        draft_path.parent.mkdir(parents=True, exist_ok=True)
+
+        draft_content = f"""---
+type: invoice_draft
+source_file: {filepath.name}
+message_id: {message_id or ''}
+contact_name: {contact_name}
+amount: {amount:.2f}
+description: {description}
+due_date: {due_date}
+status: pending_approval
+---
+
+## Invoice Draft
+
+- Contact: {contact_name}
+- Amount: {amount:.2f}
+- Description: {description}
+- Due Date: {due_date}
+
+## Actions
+
+- [ ] Review and edit invoice details above if needed
+- [ ] Move to /Approved/ to create the invoice in Xero
+- [ ] Delete to discard
+"""
+
+        draft_path.write_text(draft_content)
+        logger.info(f"🧾 Invoice draft created: {draft_path.name}")
+        self._log_action('invoice_draft_created', filepath.name, 'success', draft_path.name)
+
+    def _invoice_draft_exists(self, source_filename, message_id=None):
+        drafts_dir = self.vault / 'Pending_Approval'
+        if not drafts_dir.exists():
+            return False
+        for draft in drafts_dir.glob('INVOICE_DRAFT_*.md'):
+            try:
+                text = draft.read_text()
+            except Exception:
+                continue
+            if f"source_file: {source_filename}" in text:
+                return True
+            if message_id and f"message_id: {message_id}" in text:
+                return True
+        return False
+
+    def _is_invoice_request(self, content):
+        return 'invoice' in content.lower()
+
+    def _extract_amount(self, content):
+        # Prefer message body over metadata like phone numbers/timestamps.
+        lines = content.splitlines()
+        body_lines = []
+        for i, line in enumerate(lines):
+            lowered = line.strip().lower()
+            if (
+                lowered == 'content'
+                or 'message content' in lowered
+                or lowered == '## whatsapp message'
+            ):
+                body_lines = lines[i + 1 :]
+                break
+        if not body_lines:
+            body_lines = lines
+
+        filtered = []
+        for line in body_lines:
+            lower = line.strip().lower()
+            if lower.startswith(('from:', 'to:', 'created:', 'date:')):
+                continue
+            filtered.append(line)
+        body = "\n".join(filtered)
+
+        def parse_amounts(matches):
+            values = []
+            for match in matches:
+                normalized = match.replace(',', '')
+                try:
+                    values.append(float(normalized))
+                except ValueError:
+                    continue
+            return values
+
+        matches = re.findall(
+            r'\$\s*([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)',
+            body
+        )
+        values = parse_amounts(matches)
+        if values:
+            return max(values)
+
+        matches = re.findall(
+            r'\b([0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)\b',
+            body
+        )
+        values = parse_amounts(matches)
+        if values:
+            return max(values)
+
+        return 100.00
+
+    def _extract_message_id(self, content):
+        for line in content.splitlines():
+            if line.lower().startswith('message_id:'):
+                return line.split(':', 1)[1].strip()
+            if line.lower().startswith('**message id**'):
+                return line.split(':', 1)[1].strip()
+        return None
+
+    def _extract_contact_name(self, content, fallback):
+        for line in content.splitlines():
+            if line.lower().startswith('from:'):
+                value = line.split(':', 1)[1].strip()
+                if '<' in value:
+                    return value.split('<', 1)[0].strip() or fallback
+                return value or fallback
+        return fallback
     
     def _execute_action(self, filepath):
         """Approved action detected → Execute"""
@@ -389,6 +539,8 @@ Processed at: {datetime.now().isoformat()}
                 self._execute_whatsapp(filepath, content)
             elif 'PAYMENT' in filepath.name:
                 self._execute_payment(filepath, content)
+            elif 'INVOICE' in filepath.name:
+                self._execute_invoice(filepath, content)
             elif 'POST' in filepath.name:
                 self._execute_post(filepath, content)
             else:
@@ -639,7 +791,7 @@ Processed at: {datetime.now().isoformat()}
                 env['INSTAGRAM_BUSINESS_ACCOUNT_ID'] = ig_account_id
 
             process = subprocess.Popen(
-                ['node', str(mcp_path)],
+                ['node', str(mcp_path), '--legacy-stdio'],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -805,9 +957,244 @@ Processed at: {datetime.now().isoformat()}
             raise
 
     def _execute_payment(self, filepath, content):
-        """Execute payment action (would call Xero MCP)"""
-        logger.info(f"💰 Payment action: {filepath.name}")
-        # TODO: Call Xero MCP server
+        """Execute payment action - Log transaction via Xero MCP"""
+        try:
+            # Parse YAML frontmatter
+            lines = content.split('\n')
+            metadata = {}
+            in_frontmatter = False
+            frontmatter_end = 0
+
+            for i, line in enumerate(lines):
+                if line.strip() == '---':
+                    if not in_frontmatter:
+                        in_frontmatter = True
+                    else:
+                        frontmatter_end = i
+                        break
+                elif in_frontmatter and ':' in line:
+                    key, val = line.split(':', 1)
+                    metadata[key.strip()] = val.strip()
+
+            # Extract payment details from content
+            amount = metadata.get('amount', '0')
+            description = metadata.get('description', 'Payment from orchestrator')
+            account = metadata.get('account', '200')  # Default to sales revenue
+            transaction_type = metadata.get('transaction_type', 'BANK')
+            bank_account_code = metadata.get('bank_account_code', metadata.get('bank_account', ''))
+
+            logger.info(f"💰 Processing payment: {description}")
+            logger.info(f"   Amount: {amount}")
+            logger.info(f"   Account: {account}")
+
+            # Call Xero MCP to log transaction
+            self._call_xero_mcp_log_transaction(
+                float(amount),
+                description,
+                account,
+                transaction_type,
+                bank_account_code=bank_account_code
+            )
+
+            logger.info(f"✅ Payment logged successfully")
+
+        except Exception as e:
+            logger.error(f"Payment execution failed: {e}")
+            raise
+
+    def _call_xero_mcp_log_transaction(
+        self,
+        amount: float,
+        description: str,
+        account: str,
+        transaction_type: str = 'BANK',
+        bank_account_code: str = ''
+    ):
+        """Log transaction via Xero MCP server"""
+        import os
+        import json
+        import subprocess
+
+        try:
+            xero_access_token = os.getenv('XERO_ACCESS_TOKEN')
+            xero_tenant_id = os.getenv('XERO_TENANT_ID')
+
+            if not xero_access_token or not xero_tenant_id:
+                logger.warning("Xero credentials not configured - missing XERO_ACCESS_TOKEN or XERO_TENANT_ID")
+                return
+
+            # Create request for Xero MCP
+            mcp_path = Path(__file__).parent.parent / 'mcp_servers' / 'xero_mcp' / 'index.js'
+
+            tool_request = {
+                'tool': 'log_transaction',
+                'input': {
+                    'amount': amount,
+                    'description': description,
+                    'account': account,
+                    'transaction_type': transaction_type,
+                    'bank_account_code': bank_account_code,
+                    'date': datetime.now().strftime('%Y-%m-%d')
+                }
+            }
+
+            # Execute via Node.js subprocess
+            env = os.environ.copy()
+            env['XERO_ACCESS_TOKEN'] = xero_access_token
+            env['XERO_TENANT_ID'] = xero_tenant_id
+
+            process = subprocess.Popen(
+                ['node', str(mcp_path), '--legacy-stdio'],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                env=env,
+                text=True
+            )
+
+            stdout, stderr = process.communicate(input=json.dumps(tool_request), timeout=30)
+
+            if process.returncode != 0 or not stdout.strip():
+                logger.warning(f"Xero MCP returned non-zero status: {stderr}")
+                return
+
+            response = json.loads(stdout.strip())
+
+            if not response.get('status') or response.get('status') == 'error':
+                error = response.get('error', 'Unknown error')
+                detail = response.get('detail')
+                if detail:
+                    logger.warning(f"Xero transaction logging returned: {error} ({detail})")
+                else:
+                    logger.warning(f"Xero transaction logging returned: {error}")
+                return
+
+            transaction_id = response.get('transaction_id', 'unknown')
+            logger.info(f"✅ Transaction logged in Xero (ID: {transaction_id})")
+
+            # Log the transaction
+            log_file = self.vault / 'Logs' / 'xero_transactions.jsonl'
+            log_file.parent.mkdir(parents=True, exist_ok=True)
+
+            txn_log = {
+                'amount': amount,
+                'description': description,
+                'account': account,
+                'transaction_type': transaction_type,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'status': 'logged',
+                'transaction_id': transaction_id
+            }
+
+            with open(log_file, 'a') as f:
+                f.write(json.dumps(txn_log) + '\n')
+
+        except subprocess.TimeoutExpired:
+            logger.error("Xero MCP request timed out")
+        except Exception as e:
+            logger.warning(f"Failed to log transaction via Xero MCP: {e}")
+
+    def _execute_invoice(self, filepath, content):
+        """Execute invoice action - Create invoice in Xero MCP"""
+        try:
+            lines = content.split('\n')
+            metadata = {}
+            in_frontmatter = False
+            frontmatter_end = 0
+
+            for i, line in enumerate(lines):
+                if line.strip() == '---':
+                    if not in_frontmatter:
+                        in_frontmatter = True
+                    else:
+                        frontmatter_end = i
+                        break
+                elif in_frontmatter and ':' in line:
+                    key, val = line.split(':', 1)
+                    metadata[key.strip()] = val.strip()
+
+            contact_name = metadata.get('contact_name') or metadata.get('contact') or ''
+            amount_raw = metadata.get('amount', '').strip()
+            description = metadata.get('description', 'Invoice from orchestrator')
+            due_date = metadata.get('due_date', '')
+
+            if not contact_name:
+                raise ValueError("Missing contact_name in invoice draft")
+            if not amount_raw:
+                raise ValueError("Missing amount in invoice draft")
+
+            amount = float(amount_raw)
+            logger.info(f"🧾 Creating Xero invoice for {contact_name} ({amount:.2f})")
+
+            self._call_xero_mcp_create_invoice(contact_name, amount, description, due_date)
+            logger.info("✅ Invoice created successfully")
+
+        except Exception as e:
+            logger.error(f"Invoice execution failed: {e}")
+            raise
+
+    def _call_xero_mcp_create_invoice(self, contact_name, amount, description, due_date):
+        """Create invoice via Xero MCP server"""
+        import os
+        import json
+        import subprocess
+
+        try:
+            xero_access_token = os.getenv('XERO_ACCESS_TOKEN')
+            xero_tenant_id = os.getenv('XERO_TENANT_ID')
+
+            if not xero_access_token or not xero_tenant_id:
+                logger.warning("Xero credentials not configured - missing XERO_ACCESS_TOKEN or XERO_TENANT_ID")
+                return
+
+            mcp_path = Path(__file__).parent.parent / 'mcp_servers' / 'xero_mcp' / 'index.js'
+
+            tool_request = {
+                'tool': 'create_invoice',
+                'input': {
+                    'contact_name': contact_name,
+                    'amount': amount,
+                    'description': description,
+                    'due_date': due_date or (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
+                }
+            }
+
+            env = os.environ.copy()
+            env['XERO_ACCESS_TOKEN'] = xero_access_token
+            env['XERO_TENANT_ID'] = xero_tenant_id
+
+            process = subprocess.Popen(
+                ['node', str(mcp_path), '--legacy-stdio'],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                env=env,
+                text=True
+            )
+
+            stdout, stderr = process.communicate(input=json.dumps(tool_request), timeout=30)
+
+            if process.returncode != 0 or not stdout.strip():
+                logger.warning(f"Xero MCP returned non-zero status: {stderr}")
+                return
+
+            response = json.loads(stdout.strip())
+            if response.get('status') != 'created':
+                error = response.get('error', 'Unknown error')
+                detail = response.get('detail')
+                if detail:
+                    logger.warning(f"Xero invoice creation returned: {error} ({detail})")
+                else:
+                    logger.warning(f"Xero invoice creation returned: {error}")
+                return
+
+            invoice_id = response.get('invoice_id', 'unknown')
+            logger.info(f"✅ Invoice created in Xero (ID: {invoice_id})")
+
+        except subprocess.TimeoutExpired:
+            logger.error("Xero MCP request timed out")
+        except Exception as e:
+            logger.warning(f"Failed to create invoice via Xero MCP: {e}")
     
     def _execute_post(self, filepath, content):
         """Execute social post action - Post to Twitter/X or Facebook"""

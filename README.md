@@ -4,7 +4,7 @@
 
 An autonomous AI agent that works 24/7 like a full-time employee. Built with Claude Code, Obsidian, Python watchers, and MCP servers.
 
-**Status**: Ready to win - 11/11 GOLD requirements implemented, tested, and documented.
+**Status**: Gold target. Core architecture is implemented; external integrations require credentials and vendor approvals.
 
 ## Quick Start
 
@@ -31,7 +31,7 @@ cp .env.example .env
 # Edit .env with your API keys
 
 # Verify setup
-python scripts/setup_verify.py
+python Setup_Verify.py
 ```
 
 ### Start the System
@@ -42,6 +42,7 @@ python scripts/orchestrator.py
 
 # In another terminal, start watchers
 python watchers/gmail_watcher.py
+python scripts/webhook_server.py
 python watchers/whatsapp_watcher.py
 
 # Monitor with watchdog
@@ -66,7 +67,7 @@ python scripts/watchdog.py
 ┌────────────────────────────────────────────────────────────────┐
 │           OBSIDIAN VAULT (Memory & Dashboard)                  │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │ /Inbox/ │ /Needs_Action/ │ /Plans/ │ /Done/ │ /Logs/    │  │
+│  │ /Inbox/ (legacy) │ /Needs_Action/ │ /Plans/ │ /Done/ │ /Logs/ │  │
 │  ├──────────────────────────────────────────────────────────┤  │
 │  │ Dashboard.md │ Company_Handbook.md │ Business_Goals.md  │  │
 │  ├──────────────────────────────────────────────────────────┤  │
@@ -130,7 +131,7 @@ python scripts/watchdog.py
 - **Local-First**: All data stored in Obsidian vault (local markdown files)
 - **Watchers**: Perception layer continuously polls email, WhatsApp, LinkedIn
 - **HITL Safety**: File-based approval system in Pending_Approval/ folder
-- **MCP Servers**: 5 external integrations (Email, Browser, Xero, Meta Social, Twitter)
+- **MCP Servers**: Email, Xero, Meta Social, Twitter (Browser MCP is optional/placeholder)
 - **Orchestrator**: Master process that watches vault folders and executes actions
 - **Watchdog**: Monitors all processes, auto-restarts on crash
 
@@ -146,7 +147,7 @@ DigitalFTE/
 ├── tests/          # All test files
 ├── utils/          # Shared utilities (drafters, error handlers)
 ├── vault/          # Obsidian vault (AI memory)
-│   ├── Inbox/           # Watcher input
+│   ├── Inbox/           # Legacy watcher input
 │   ├── Needs_Action/    # Items requiring processing
 │   ├── Pending_Approval/# Awaiting human decision
 │   ├── Approved/        # Ready for execution
@@ -173,20 +174,20 @@ Current target: **GOLD**
 
 ## 🎯 Hackathon Submission Status
 
-### GOLD Tier Requirements (11/11 Complete)
+### GOLD Tier Requirements (Targeted)
 - ✅ All Silver requirements (watchers, MCP, HITL, scheduling)
 - ✅ Full cross-domain integration (personal + business)
-- ✅ Xero accounting system + MCP server
-- ✅ Facebook/Instagram integration
-- ✅ Twitter/X integration
-- ✅ 5 MCP servers configured
+- ✅ Xero accounting system + MCP server (requires Xero access token + tenant)
+- ✅ Facebook/Instagram integration (requires Meta app approvals)
+- ✅ Twitter/X integration (requires API access)
+- [ ] Browser MCP placeholder (no Playwright automation)
 - ✅ Weekly CEO briefing generation
 - ✅ Error recovery + graceful degradation
 - ✅ Comprehensive audit logging
 - ✅ Architecture + lessons learned documentation
 - ✅ All AI as Agent Skills (9 defined)
 
-**For judges**: See `docs/HACKATHON_WINNING_STRATEGY.md` for complete compliance mapping with file evidence.
+**For judges**: See `docs/hackathon_prompt.md` and `docs/HACKATHON_WINNING_STRATEGY.md` for the prompt and compliance mapping.
 
 ### Timeline
 
@@ -221,15 +222,17 @@ See `vault/Dashboard.md` for real-time progress.
 
 ## Documentation
 
-- `docs/GOLD_SPEC.md` - Complete technical specification
+- `GOLD_SPEC.md` - Complete technical specification
 - `docs/ARCHITECTURE.md` - System design & decisions
 - `docs/CREDENTIALS_SETUP.md` - API credentials setup guide
+- `docs/hackathon_prompt.md` - Judge-facing prompt
+- `docs/HACKATHON_WINNING_STRATEGY.md` - Evidence map
 - `vault/Company_Handbook.md` - Automation rules
 
 ## Next Steps to Complete Hackathon
 
 ### READY NOW - Just Record Demo!
-All integrations are functional. Simply:
+Core workflows are wired; external integrations require valid credentials. Simply:
 
 1. **Record demo video** showing:
    - Email workflow: incoming → AI draft → human approval → sent

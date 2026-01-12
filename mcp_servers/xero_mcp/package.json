@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "description": "Xero MCP Server for DigitalFTE",
   "main": "index.js",
-  "type": "module",
   "dependencies": {
-    "@anthropic-sdk/mcp-sdk": "^1.0.0"
+    "axios": "^1.7.9"
   }
 }

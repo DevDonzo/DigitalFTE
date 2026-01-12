@@ -105,7 +105,7 @@ Every Monday 8:00 AM, launchd triggers:
 
 Meanwhile, continuously:
     ↓
-1. Gmail Watcher polls → finds email → creates vault/Inbox/
+1. Gmail Watcher polls → finds email → creates vault/Needs_Action/
 2. Orchestrator watches → detects file → calls AI drafter
 3. AI drafts response → creates vault/Pending_Approval/
 4. You review in Obsidian → move to vault/Approved/

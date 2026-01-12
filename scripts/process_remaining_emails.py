@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Process all remaining emails in Approved"""
+import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, '/Users/hparacha/DigitalFTE')
+project_root = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(project_root))
 from scripts.orchestrator import VaultHandler
 
-vault_path = '/Users/hparacha/DigitalFTE/vault'
+vault_path = Path(os.getenv('VAULT_PATH', project_root / 'vault'))
 handler = VaultHandler(vault_path)
 approved = Path(vault_path) / 'Approved'
 

@@ -9,7 +9,8 @@ print("📱 Meta (Facebook/Instagram) Post Test")
 print("=" * 70)
 
 # Load .env file
-env_path = Path('/Users/hparacha/DigitalFTE/.env')
+project_root = Path(__file__).resolve().parents[1]
+env_path = project_root / '.env'
 env_vars = {}
 if env_path.exists():
     with open(env_path) as f:
