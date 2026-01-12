@@ -8,6 +8,7 @@ import re
 import subprocess
 import sys
 import base64
+import threading
 from email.mime.text import MIMEText
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
@@ -149,6 +150,9 @@ class VaultHandler(FileSystemEventHandler):
         self.last_batch_time = time.time()
         self.batch_timeout = 2.0  # Batch events every 2 seconds
 
+        # Lock for thread-safe deduplication (prevents race conditions when multiple events fire simultaneously)
+        self.dedup_lock = threading.Lock()
+
     def _extract_gmail_message_id(self, email_content: str) -> str:
         """Extract gmail_message_id from email file content"""
         lines = email_content.split('\n')
@@ -229,25 +233,33 @@ class VaultHandler(FileSystemEventHandler):
 
         # Queue events for batching
         if filepath.parent == self.needs_action:
-            # Skip if already processed (check processed_hashes as source of truth)
-            if filepath.name in self.processed_hashes:
-                logger.debug(f"Skipping already-processed file: {filepath.name}")
-                return
+            # Thread-safe deduplication using lock
+            with self.dedup_lock:
+                # Skip if already processed
+                if filepath.name in self.processed_hashes:
+                    logger.debug(f"Skipping already-processed file: {filepath.name}")
+                    return
 
-            # Mark as processed immediately to prevent ANY re-processing
-            self.processed_hashes.add(filepath.name)
+                # Mark as processed immediately to prevent ANY re-processing
+                self.processed_hashes.add(filepath.name)
+
+            # Queue outside lock to avoid holding it during batch processing
             self.event_queue['inbox'].append(filepath)
             self._process_batch_if_ready('inbox')
 
         # Handle approved actions → execute
         elif filepath.parent == self.approved:
-            # Skip if already executed
-            if filepath.name in self.executed_files:
-                logger.debug(f"Skipping already-executed file: {filepath.name}")
-                return
+            # Thread-safe deduplication using lock
+            with self.dedup_lock:
+                # Skip if already executed
+                if filepath.name in self.executed_files:
+                    logger.debug(f"Skipping already-executed file: {filepath.name}")
+                    return
 
-            # Mark as executed immediately to prevent ANY re-execution
-            self.executed_files.add(filepath.name)
+                # Mark as executed immediately to prevent ANY re-execution
+                self.executed_files.add(filepath.name)
+
+            # Queue outside lock to avoid holding it during batch processing
             self.event_queue['approved'].append(filepath)
             self._process_batch_if_ready('approved')
 
