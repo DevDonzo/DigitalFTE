@@ -258,6 +258,17 @@ class VaultHandler(FileSystemEventHandler):
             else:
                 logger.debug(f"Skipping duplicate queue entry: {filepath.name}")
 
+    def on_modified(self, event):
+        """Handle file modifications - same deduplication as on_created"""
+        # Treat modified events the same as created events (prevent re-processing)
+        # This handles watchdog firing multiple events when files are written
+        if event.is_directory:
+            return
+
+        # For Needs_Action and Approved folders, modified events should be ignored
+        # since we already process on_created and use deduplication
+        logger.debug(f"Ignoring modified event for: {Path(event.src_path).name}")
+
     def _process_batch_if_ready(self, queue_type):
         """Process batch if timeout reached or queue is large enough"""
         queue = self.event_queue[queue_type]
