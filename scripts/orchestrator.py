@@ -220,24 +220,30 @@ class VaultHandler(FileSystemEventHandler):
             return
 
         filepath = Path(event.src_path)
-        file_hash = self._get_file_hash(filepath)
 
-        # Skip if already processed (deduplication)
-        if file_hash in self.processed_hashes:
-            logger.debug(f"Skipping duplicate event: {filepath.name}")
+        # Skip if already processed (deduplication using filename)
+        # This prevents duplicate execution when file is moved/copied
+        if filepath.name in self.executed_files:
+            logger.debug(f"Skipping already-executed file: {filepath.name}")
             return
-
-        self.processed_hashes.add(file_hash)
 
         # Queue events for batching
         if filepath.parent == self.needs_action:
-            self.event_queue['inbox'].append(filepath)  # Keep queue name 'inbox' for backwards compat
-            self._process_batch_if_ready('inbox')
+            # Don't add duplicate filenames to queue
+            if not any(f.name == filepath.name for f in self.event_queue['inbox']):
+                self.event_queue['inbox'].append(filepath)  # Keep queue name 'inbox' for backwards compat
+                self._process_batch_if_ready('inbox')
+            else:
+                logger.debug(f"Skipping duplicate queue entry: {filepath.name}")
 
         # Handle approved actions → execute
         if filepath.parent == self.approved:
-            self.event_queue['approved'].append(filepath)
-            self._process_batch_if_ready('approved')
+            # Don't add duplicate filenames to queue
+            if not any(f.name == filepath.name for f in self.event_queue['approved']):
+                self.event_queue['approved'].append(filepath)
+                self._process_batch_if_ready('approved')
+            else:
+                logger.debug(f"Skipping duplicate queue entry: {filepath.name}")
 
     def _process_batch_if_ready(self, queue_type):
         """Process batch if timeout reached or queue is large enough"""
@@ -280,7 +286,8 @@ class VaultHandler(FileSystemEventHandler):
             # Route to WhatsApp Drafter
             if is_whatsapp and self.whatsapp_drafter:
                 logger.info(f"💬 Using AI to draft WhatsApp reply for: {filepath.name}")
-                self._maybe_create_invoice_draft(filepath, content, channel='whatsapp')
+                # NOTE: Do NOT auto-create invoice drafts for WhatsApp messages
+                # Let user manually request invoice if needed by moving draft to Approved
                 try:
                     draft_file = self.whatsapp_drafter.draft_reply(filepath)
                     if draft_file:
@@ -601,11 +608,15 @@ status: pending_approval
             else:
                 logger.warning(f"Unknown action type: {filepath.name}")
 
-            # Move to done
-            done_file = self.done / filepath.name
-            filepath.rename(done_file)
-            logger.info(f"✔️ Done: {done_file.name} [{urgency_indicator} {urgency}]")
-            self._log_action('action_executed', filepath.name, 'success', f"urgency={urgency}")
+            # Move to done (gracefully handle if file already gone)
+            if filepath.exists():
+                done_file = self.done / filepath.name
+                filepath.rename(done_file)
+                logger.info(f"✔️ Done: {done_file.name} [{urgency_indicator} {urgency}]")
+                self._log_action('action_executed', filepath.name, 'success', f"urgency={urgency}")
+            else:
+                logger.warning(f"File already moved or deleted: {filepath.name}")
+                self._log_action('action_executed', filepath.name, 'success', f"urgency={urgency} (file already moved)")
         except Exception as e:
             logger.error(f"Action error: {e}")
             self._log_action('action_error', filepath.name, 'failure', str(e))
