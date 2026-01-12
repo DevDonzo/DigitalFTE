@@ -145,6 +145,7 @@ class VaultHandler(FileSystemEventHandler):
         self.event_queue = defaultdict(list)
         self.processed_hashes = set()
         self.executed_files = set()  # Track executed files to avoid double processing
+        self.invoice_drafts_created = set()  # Track (source_file, message_id) pairs to prevent duplication
         self.last_batch_time = time.time()
         self.batch_timeout = 2.0  # Batch events every 2 seconds
 
@@ -367,20 +368,29 @@ Processed at: {datetime.now().isoformat()}
         if not self._is_invoice_request(content):
             return
         message_id = self._extract_message_id(content)
+
+        # Check if we've already created an invoice draft for this message in this run
+        dedupe_key = (filepath.name, message_id or '')
+        if dedupe_key in self.invoice_drafts_created:
+            logger.debug(f"🧾 Invoice draft already created this run for {filepath.name}; skipping")
+            return
+
+        # Also check filesystem to avoid recreating drafts from previous runs
         if self._invoice_draft_exists(filepath.name, message_id=message_id):
             logger.info(f"🧾 Invoice draft already exists for {filepath.name}; skipping")
             return
 
-        contact_name = self._extract_contact_name(content, fallback=filepath.stem)
-        amount = self._extract_amount(content)
-        due_date = (datetime.now() + timedelta(days=14)).strftime('%Y-%m-%d')
-        description = f"Invoice requested via {channel}"
+        try:
+            contact_name = self._extract_contact_name(content, fallback=filepath.stem)
+            amount = self._extract_amount(content)
+            due_date = (datetime.now() + timedelta(days=14)).strftime('%Y-%m-%d')
+            description = f"Invoice requested via {channel}"
 
-        draft_name = f"INVOICE_DRAFT_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
-        draft_path = self.vault / 'Pending_Approval' / draft_name
-        draft_path.parent.mkdir(parents=True, exist_ok=True)
+            draft_name = f"INVOICE_DRAFT_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
+            draft_path = self.vault / 'Pending_Approval' / draft_name
+            draft_path.parent.mkdir(parents=True, exist_ok=True)
 
-        draft_content = f"""---
+            draft_content = f"""---
 type: invoice_draft
 source_file: {filepath.name}
 message_id: {message_id or ''}
@@ -405,9 +415,13 @@ status: pending_approval
 - [ ] Delete to discard
 """
 
-        draft_path.write_text(draft_content)
-        logger.info(f"🧾 Invoice draft created: {draft_path.name}")
-        self._log_action('invoice_draft_created', filepath.name, 'success', draft_path.name)
+            draft_path.write_text(draft_content)
+            self.invoice_drafts_created.add(dedupe_key)
+            logger.info(f"🧾 Invoice draft created: {draft_path.name} (amount: ${amount:.2f})")
+            self._log_action('invoice_draft_created', filepath.name, 'success', draft_path.name)
+        except Exception as e:
+            logger.error(f"Failed to create invoice draft for {filepath.name}: {e}")
+            self._log_action('invoice_draft_error', filepath.name, 'failure', str(e))
 
     def _invoice_draft_exists(self, source_filename, message_id=None):
         drafts_dir = self.vault / 'Pending_Approval'
@@ -428,55 +442,96 @@ status: pending_approval
         return 'invoice' in content.lower()
 
     def _extract_amount(self, content):
-        # Prefer message body over metadata like phone numbers/timestamps.
+        """Extract invoice amount from message content. Prefer body over metadata."""
         lines = content.splitlines()
         body_lines = []
+
+        # Find the message content section (skip frontmatter & metadata)
+        in_frontmatter = True
         for i, line in enumerate(lines):
             lowered = line.strip().lower()
+
+            # Exit frontmatter at closing ---
+            if in_frontmatter and line.strip() == '---' and i > 0:
+                in_frontmatter = False
+                continue
+
+            if in_frontmatter:
+                continue
+
+            # Look for content section markers
             if (
-                lowered == 'content'
-                or 'message content' in lowered
+                lowered == '## message content'
+                or lowered == '## content'
                 or lowered == '## whatsapp message'
+                or lowered == '## email body'
             ):
+                # Found content section, extract remaining lines
                 body_lines = lines[i + 1 :]
                 break
-        if not body_lines:
-            body_lines = lines
 
+        # If no content section found, use all non-frontmatter lines
+        if not body_lines:
+            body_lines = [l for l in lines if not l.strip().startswith('---') and l.strip()]
+
+        # Filter out metadata lines
         filtered = []
         for line in body_lines:
             lower = line.strip().lower()
-            if lower.startswith(('from:', 'to:', 'created:', 'date:')):
+            # Skip metadata rows and markdown section headers
+            if (
+                lower.startswith(('from:', 'to:', 'created:', 'date:', 'message_id:', 'contact:'))
+                or lower.startswith('#')
+                or lower == ''
+            ):
                 continue
             filtered.append(line)
+
         body = "\n".join(filtered)
 
         def parse_amounts(matches):
+            """Convert matched strings to floats, handling commas."""
             values = []
             for match in matches:
                 normalized = match.replace(',', '')
                 try:
-                    values.append(float(normalized))
+                    val = float(normalized)
+                    # Only accept reasonable amounts ($10 to $1M)
+                    if 10 <= val <= 1000000:
+                        values.append(val)
                 except ValueError:
                     continue
             return values
 
+        # Try currency format first: $1000, $1,000, $1,000.00
+        # Pattern: $ followed by digits with optional commas and decimals
         matches = re.findall(
-            r'\$\s*([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)',
+            r'\$\s*([0-9]+(?:,[0-9]{3})*(?:\.[0-9]{1,2})?)',
             body
         )
         values = parse_amounts(matches)
         if values:
             return max(values)
 
+        # Fallback: plain numbers like 1000 or 1,000 (excluding timestamps/IDs)
         matches = re.findall(
-            r'\b([0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)\b',
+            r'\b([0-9]{4,}(?:\.[0-9]{1,2})?)\b',  # Only 4+ digit numbers to avoid IDs
             body
         )
         values = parse_amounts(matches)
         if values:
             return max(values)
 
+        # Last resort: $100-$999 without commas
+        matches = re.findall(
+            r'\$\s*([0-9]{2,3}(?:\.[0-9]{1,2})?)',
+            body
+        )
+        values = parse_amounts(matches)
+        if values:
+            return max(values)
+
+        logger.warning(f"No valid amount found in message, defaulting to $100.00")
         return 100.00
 
     def _extract_message_id(self, content):
