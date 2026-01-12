@@ -167,6 +167,8 @@ class VaultHandler(FileSystemEventHandler):
             logger.info(f"Found {len(inbox_files)} existing file(s) in Inbox")
             for filepath in inbox_files:
                 try:
+                    # Mark as processed before processing to prevent watcher events from re-processing
+                    self.processed_hashes.add(filepath.name)
                     self._process_inbox(filepath)
                 except Exception as e:
                     logger.error(f"Error processing {filepath.name}: {e}")
@@ -177,6 +179,8 @@ class VaultHandler(FileSystemEventHandler):
             logger.info(f"Found {len(needs_action_files)} existing file(s) in Needs_Action")
             for filepath in needs_action_files:
                 try:
+                    # Mark as processed before processing to prevent watcher events from re-processing
+                    self.processed_hashes.add(filepath.name)
                     self._process_inbox(filepath)
                 except Exception as e:
                     logger.error(f"Error processing {filepath.name}: {e}")
@@ -187,6 +191,8 @@ class VaultHandler(FileSystemEventHandler):
             logger.info(f"Found {len(approved_files)} existing file(s) in Approved")
             for filepath in approved_files:
                 try:
+                    # Mark as executed before executing to prevent watcher events from re-executing
+                    self.executed_files.add(filepath.name)
                     self._execute_action(filepath)
                 except Exception as e:
                     logger.error(f"Error executing {filepath.name}: {e}")
@@ -229,8 +235,14 @@ class VaultHandler(FileSystemEventHandler):
 
         # Queue events for batching
         if filepath.parent == self.needs_action:
+            # Skip if already processed in startup scan
+            if filepath.name in self.processed_hashes:
+                logger.debug(f"Skipping already-processed file: {filepath.name}")
+                return
+
             # Don't add duplicate filenames to queue
             if not any(f.name == filepath.name for f in self.event_queue['inbox']):
+                self.processed_hashes.add(filepath.name)  # Mark immediately to prevent race conditions
                 self.event_queue['inbox'].append(filepath)  # Keep queue name 'inbox' for backwards compat
                 self._process_batch_if_ready('inbox')
             else:
@@ -240,6 +252,7 @@ class VaultHandler(FileSystemEventHandler):
         if filepath.parent == self.approved:
             # Don't add duplicate filenames to queue
             if not any(f.name == filepath.name for f in self.event_queue['approved']):
+                self.executed_files.add(filepath.name)  # Mark immediately to prevent race conditions
                 self.event_queue['approved'].append(filepath)
                 self._process_batch_if_ready('approved')
             else:
