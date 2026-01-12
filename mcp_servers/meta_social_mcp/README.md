@@ -28,10 +28,16 @@ INSTAGRAM_BUSINESS_ACCOUNT_ID=your_instagram_business_account_id
 
 ## Usage
 
-### Via Node.js
+### Via MCP host
 
 ```bash
 FACEBOOK_ACCESS_TOKEN=token FACEBOOK_PAGE_ID=123 node index.js
+```
+
+### Legacy stdio (orchestrator)
+
+```bash
+FACEBOOK_ACCESS_TOKEN=token FACEBOOK_PAGE_ID=123 node index.js --legacy-stdio
 ```
 
 ### Via Orchestrator
@@ -39,6 +45,8 @@ FACEBOOK_ACCESS_TOKEN=token FACEBOOK_PAGE_ID=123 node index.js
 The orchestrator automatically calls this MCP for Facebook/Instagram posts.
 
 ## Tools Available
+
+These JSON examples are for legacy stdio mode (`--legacy-stdio`). MCP hosts should invoke tools via the MCP protocol.
 
 ### post_facebook
 Post text content to Facebook Page

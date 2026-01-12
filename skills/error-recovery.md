@@ -77,7 +77,7 @@ MAX_BACKOFF = 300    # 5 minutes (exponential growth)
 
 ### Start Watchdog
 ```bash
-cd /Users/hparacha/DigitalFTE
+cd /path/to/DigitalFTE
 python3 scripts/process_monitor.py
 ```
 

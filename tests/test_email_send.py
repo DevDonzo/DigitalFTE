@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Test email sending directly"""
+import os
 import sys
 from pathlib import Path
 
 # Add to path
-sys.path.insert(0, '/Users/hparacha/DigitalFTE')
-sys.path.insert(0, '/Users/hparacha/DigitalFTE/scripts')
+project_root = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(project_root))
+sys.path.insert(0, str(project_root / 'scripts'))
 
 from scripts.orchestrator import VaultHandler
 
@@ -13,7 +15,7 @@ print("=" * 70)
 print("🧪 Direct Email Send Test")
 print("=" * 70)
 
-vault_path = '/Users/hparacha/DigitalFTE/vault'
+vault_path = Path(os.getenv('VAULT_PATH', project_root / 'vault'))
 handler = VaultHandler(vault_path)
 
 print(f"\n🔐 Gmail Service Status:")

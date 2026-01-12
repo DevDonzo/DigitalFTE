@@ -8,11 +8,11 @@
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/python3</string>
-        <string>/Users/hparacha/DigitalFTE/scripts/watchdog.py</string>
+        <string>/path/to/DigitalFTE/scripts/watchdog.py</string>
     </array>
     
     <key>WorkingDirectory</key>
-    <string>/Users/hparacha/DigitalFTE</string>
+    <string>/path/to/DigitalFTE</string>
     
     <key>RunAtLoad</key>
     <true/>
@@ -21,15 +21,15 @@
     <true/>
     
     <key>StandardOutPath</key>
-    <string>/Users/hparacha/DigitalFTE/vault/Logs/watchdog.out</string>
+    <string>/path/to/DigitalFTE/vault/Logs/watchdog.out</string>
     
     <key>StandardErrorPath</key>
-    <string>/Users/hparacha/DigitalFTE/vault/Logs/watchdog.err</string>
+    <string>/path/to/DigitalFTE/vault/Logs/watchdog.err</string>
     
     <key>EnvironmentVariables</key>
     <dict>
         <key>VAULT_PATH</key>
-        <string>/Users/hparacha/DigitalFTE/vault</string>
+        <string>/path/to/DigitalFTE/vault</string>
         <key>PATH</key>
         <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
     </dict>

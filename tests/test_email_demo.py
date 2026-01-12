@@ -55,7 +55,7 @@ Step 1: Gmail Watcher Monitors
   └─> Detects new emails from boss, clients, etc.
 
 Step 2: Create Action File
-  └─> Creates file in /Inbox: EMAIL_{message_id}.md
+  └─> Creates file in /Needs_Action: EMAIL_{message_id}.md
   └─> Example content:
       ---
       type: email
@@ -73,7 +73,7 @@ Step 2: Create Action File
       - [ ] Archive
 
 Step 3: Human Reviews
-  └─> You check /Inbox/EMAIL_*.md files
+  └─> You check /Needs_Action/EMAIL_*.md files
   └─> Decide: Approve, Reject, or Forward
 
 Step 4: Email MCP Server Executes
@@ -93,7 +93,7 @@ print("🎯 What You Can Do Now:")
 print("=" * 60)
 print("""
 1. Gmail watcher reads your inbox automatically
-2. Important emails appear as action files in /Inbox
+2. Important emails appear as action files in /Needs_Action
 3. You edit files to approve/reply
 4. Email MCP executes send_email to reply
 5. Everything logged for audit
@@ -123,7 +123,8 @@ This is a demonstration of how emails are processed.
 - [ ] Archive
 """
 
-inbox_path = Path("/Users/hparacha/DigitalFTE/vault/Inbox")
+project_root = Path(__file__).resolve().parents[1]
+inbox_path = project_root / "vault" / "Needs_Action"
 demo_file = inbox_path / "EMAIL_DEMO_001.md"
 demo_file.write_text(demo_action)
 

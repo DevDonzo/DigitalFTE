@@ -3,11 +3,11 @@
 **Skill ID**: `whatsapp-monitor`
 **Type**: Watcher / Monitoring
 **Tier**: Silver
-**Dependencies**: Playwright, WhatsApp Web
+**Dependencies**: Twilio WhatsApp, FastAPI webhook
 
 ## Purpose
 
-Monitor incoming WhatsApp messages for keywords and create action files for important communications.
+Monitor incoming WhatsApp messages from a Twilio webhook and create action files for important communications.
 
 ## Capabilities
 
@@ -20,6 +20,7 @@ Monitor incoming WhatsApp messages for keywords and create action files for impo
 ## Usage
 
 ```bash
+python scripts/webhook_server.py
 python watchers/whatsapp_watcher.py
 ```
 
@@ -27,27 +28,29 @@ python watchers/whatsapp_watcher.py
 
 Set in `.env`:
 ```
-WHATSAPP_SESSION_PATH=/path/to/whatsapp_session  # Persistent browser session
+TWILIO_ACCOUNT_SID=your_account_sid
+TWILIO_AUTH_TOKEN=your_auth_token
+TWILIO_WHATSAPP_NUMBER=+1234567890
 WHATSAPP_CHECK_INTERVAL=30                        # Check every 30 seconds
 WHATSAPP_KEYWORDS=urgent,asap,invoice,payment,help  # Keywords to monitor
 ```
 
 ## Technical Implementation
 
-Uses Playwright for WhatsApp Web automation:
-- Maintains persistent browser session for faster checks
-- Selects unread chats with aria-labels
-- Filters by keyword matches
-- Creates markdown files in `vault/Inbox/`
+Uses Twilio webhook ingestion:
+- Webhook server stores inbound messages in `.whatsapp_incoming.json`
+- Watcher filters by keyword matches
+- Creates markdown files in `vault/Needs_Action/`
 
 ## File Output Format
 
-Creates files like `vault/Inbox/WHATSAPP_20260108_143022.md`:
+Creates files like `vault/Needs_Action/WHATSAPP_20260108_143022.md`:
 ```markdown
 ---
 type: whatsapp
 from: John Smith
 received: 2026-01-08T14:30:22Z
+urgency: BUSINESS
 priority: high
 status: pending
 ---
@@ -63,13 +66,13 @@ Invoice #12345 needs payment ASAP!
 
 ## Integration Points
 
-- **Orchestrator**: Reads from `vault/Inbox/WHATSAPP_*.md`
+- **Orchestrator**: Reads from `vault/Needs_Action/WHATSAPP_*.md`
 - **Approval**: Human reviews in `Pending_Approval/`
 - **Action**: Triggers email replies or forwarding
 
 ## Error Handling
 
-- Catches playwright errors gracefully
+- Catches webhook and queue errors gracefully
 - Logs all errors to audit trail
 - Continues monitoring on failure
 - Maintains processed message tracking

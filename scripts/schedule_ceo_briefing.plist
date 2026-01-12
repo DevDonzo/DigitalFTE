@@ -7,10 +7,10 @@
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/python3</string>
-        <string>/Users/hparacha/DigitalFTE/scripts/weekly_audit.py</string>
+        <string>/path/to/DigitalFTE/scripts/weekly_audit.py</string>
     </array>
     <key>WorkingDirectory</key>
-    <string>/Users/hparacha/DigitalFTE</string>
+    <string>/path/to/DigitalFTE</string>
     <key>StartCalendarInterval</key>
     <dict>
         <key>Weekday</key>
@@ -21,13 +21,13 @@
         <integer>0</integer>
     </dict>
     <key>StandardOutPath</key>
-    <string>/Users/hparacha/DigitalFTE/vault/Logs/ceo_briefing.log</string>
+    <string>/path/to/DigitalFTE/vault/Logs/ceo_briefing.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/hparacha/DigitalFTE/vault/Logs/ceo_briefing_error.log</string>
+    <string>/path/to/DigitalFTE/vault/Logs/ceo_briefing_error.log</string>
     <key>EnvironmentVariables</key>
     <dict>
         <key>VAULT_PATH</key>
-        <string>/Users/hparacha/DigitalFTE/vault</string>
+        <string>/path/to/DigitalFTE/vault</string>
     </dict>
 </dict>
 </plist>

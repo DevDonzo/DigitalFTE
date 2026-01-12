@@ -38,55 +38,56 @@ nano .env
 XERO_CLIENT_ID=your_client_id_here
 XERO_CLIENT_SECRET=your_client_secret_here
 XERO_TENANT_ID=your_tenant_id_here
+XERO_ACCESS_TOKEN=your_access_token_here
 XERO_REDIRECT_URI=http://localhost:8080/callback
 ```
 
 ### Test It
 ```bash
+# Run auth flow (saves token to ~/.xero_token.json)
+python auth/xero.py
+
 # Run orchestrator - it will use Xero for any payment/invoice actions
 python scripts/orchestrator.py
 ```
 
 ---
 
-## Priority 2: WhatsApp (Monitoring) - SECONDARY
+## Priority 2: WhatsApp (Twilio Webhook) - SECONDARY
 
 ### Why it's needed
-Enables monitoring incoming WhatsApp messages for urgent keywords (invoice, payment, help, etc.)
+Enables monitoring incoming WhatsApp messages via Twilio and routing them into the vault.
 
 ### Steps to Get WhatsApp Access
 
-**Step 1: Install Browser**
+**Step 1: Create a Twilio WhatsApp sender**
+- Use a Twilio WhatsApp Sandbox or a dedicated WhatsApp-enabled number.
+- Note your Account SID, Auth Token, and WhatsApp-enabled number.
+
+**Step 2: Update .env**
 ```bash
-pip install playwright
-playwright install chromium
+TWILIO_ACCOUNT_SID=your_account_sid
+TWILIO_AUTH_TOKEN=your_auth_token
+TWILIO_WHATSAPP_NUMBER=+1234567890
 ```
 
-**Step 2: Create Session**
+**Step 3: Start the webhook server**
 ```bash
-# First run will open WhatsApp Web
-python watchers/whatsapp_watcher.py
-
-# In the browser that opens:
-# 1. Scan QR code with your phone
-# 2. Approve access on your phone
-# 3. Browser will save session
+python scripts/webhook_server.py
 ```
 
-**Step 3: Update .env**
+**Step 4: Expose locally (ngrok example)**
 ```bash
-nano .env
-
-# Update this line (should be automatic):
-WHATSAPP_SESSION_PATH=/Users/hparacha/.whatsapp_session
-
-# Optional - customize keywords:
-WHATSAPP_KEYWORDS=urgent,asap,invoice,payment,help
+ngrok http 8000
 ```
+
+**Step 5: Set Twilio webhook URL**
+- In Twilio Console, set the WhatsApp webhook to:
+  `https://<your-ngrok-domain>/webhook`
 
 ### Test It
 ```bash
-# Run watcher - it will scan WhatsApp every 30 seconds
+# Run the watcher to convert inbound messages into Needs_Action files
 python watchers/whatsapp_watcher.py
 ```
 
@@ -146,10 +147,10 @@ If you get stuck:
    - Verify redirect URI is `http://localhost:8080/callback`
    - Try creating new app if still stuck
 
-2. **WhatsApp scan doesn't work?**
-   - Make sure Playwright installed: `pip install playwright`
-   - Run: `playwright install chromium`
-   - Try again with fresh browser
+2. **WhatsApp webhook doesn't receive messages?**
+   - Confirm your webhook URL is reachable from Twilio.
+   - Check `scripts/webhook_server.py` logs for incoming requests.
+   - Confirm Twilio is pointing to `/webhook` with POST.
 
 3. **Watcher not picking up messages?**
    - Check `vault/Logs/` for error messages

@@ -1,0 +1,1 @@
+{"amount": 9.99, "description": "Test payment via Xero with bank code 101", "account": "200", "transaction_type": "BANK", "timestamp": "2026-01-11T20:06:18.336321+00:00", "status": "logged", "transaction_id": "TXN-977902"}

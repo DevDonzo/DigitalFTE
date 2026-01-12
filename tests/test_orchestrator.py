@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Test Orchestrator - Verify email sending works"""
+import os
 import sys
 import time
 import subprocess
 from pathlib import Path
 
-vault = Path('/Users/hparacha/DigitalFTE/vault')
+project_root = Path(__file__).resolve().parents[1]
+vault = Path(os.getenv('VAULT_PATH', project_root / 'vault'))
 approved = vault / 'Approved'
 done = vault / 'Done'
 
@@ -27,7 +29,7 @@ print(f"   Current location: /Approved/{email_file.name}\n")
 print("🚀 Starting Orchestrator...")
 process = subprocess.Popen(
     [sys.executable, 'scripts/orchestrator.py'],
-    cwd='/Users/hparacha/DigitalFTE',
+    cwd=str(project_root),
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
     text=True

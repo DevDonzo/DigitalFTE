@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 # Add watchers to path
-project_root = Path(__file__).parent
+project_root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / 'watchers'))
 
@@ -41,7 +41,7 @@ print("""
   7. Press Ctrl+C to stop
 
 🎯 Expected result:
-  A new file will appear in /vault/Inbox/EMAIL_*.md
+  A new file will appear in /vault/Needs_Action/EMAIL_*.md
   with your email details ready for action
 """)
 
@@ -54,7 +54,7 @@ except KeyboardInterrupt:
     print("\n\n⏸️  Watcher stopped\n")
 
     # Check if any emails were found
-    inbox = Path(vault_path) / 'Inbox'
+    inbox = Path(vault_path) / 'Needs_Action'
     email_files = [f for f in inbox.glob('EMAIL_*.md') if f.stat().st_mtime > 0]
 
     print("=" * 70)

@@ -64,11 +64,18 @@ class WhatsAppWatcher(BaseWatcher):
         if webhook_store.exists():
             try:
                 incoming = json.loads(webhook_store.read_text())
+                remaining = []
                 for msg in incoming.get('messages', []):
                     msg_id = msg.get('id', '')
                     if msg_id not in self.processed_ids:
                         messages.append(msg)
                         self._mark_processed(msg_id)
+                    else:
+                        remaining.append(msg)
+                if remaining:
+                    webhook_store.write_text(json.dumps({'messages': remaining}, indent=2))
+                else:
+                    webhook_store.unlink(missing_ok=True)
             except Exception as e:
                 logger.error(f"Error reading webhook store: {e}")
 
@@ -80,6 +87,7 @@ class WhatsAppWatcher(BaseWatcher):
         from_number = message.get('from', 'unknown')
         text = message.get('text', {}).get('body', 'No text') if isinstance(message.get('text'), dict) else message.get('text', 'No text')
         timestamp = datetime.now().isoformat()
+        urgency = message.get('urgency', 'NORMAL')
 
         content = f"""---
 type: whatsapp_message
@@ -87,6 +95,7 @@ from: {from_number}
 received: {timestamp}
 message_id: {msg_id}
 platform: twilio
+urgency: {urgency}
 ---
 
 ## WhatsApp Message

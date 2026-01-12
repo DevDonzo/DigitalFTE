@@ -1,10 +1,9 @@
 {
   "name": "email-mcp",
   "version": "0.1.0",
-  "description": "Email MCP Server for DigitalFTE",
+  "description": "Email MCP Server for Gmail API integration",
   "main": "index.js",
-  "type": "module",
   "dependencies": {
-    "@anthropic-sdk/mcp-sdk": "^1.0.0"
+    "axios": "^1.6.0"
   }
 }

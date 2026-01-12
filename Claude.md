@@ -23,7 +23,7 @@
 
 #### For Watchers:
 - Gmail: Use google-auth-oauthlib (official SDK)
-- WhatsApp: Use selenium/playwright (not custom browser automation)
+- WhatsApp: Use Twilio webhook + FastAPI ingestion
 - LinkedIn: Use official LinkedIn API library
 - FileSystem: Use watchdog library (already in requirements.txt)
 
@@ -32,7 +32,7 @@
 - Xero: Use xero-python SDK (already in requirements.txt)
 - Twitter: Use tweepy (already in requirements.txt)
 - Meta: Use official meta-api-python package
-- Browser: Use Anthropic's existing browser-mcp or wrap Playwright
+- Browser: Optional placeholder (not using Playwright)
 
 #### For Scripts:
 - Orchestrator: Use watchdog for file monitoring (simple, reliable)
@@ -83,7 +83,7 @@ Use this with GOLD_SPEC.md Part I (Requirements Matrix):
 - [ ] B2: Company_Handbook.md
 - [ ] B3: One working Watcher
 - [ ] B4: Claude Code reads/writes vault
-- [ ] B5: Folder structure (/Inbox, /Needs_Action, /Done)
+- [ ] B5: Folder structure (/Needs_Action, /Inbox legacy, /Done)
 - [ ] B6: Agent Skills defined
 
 ### Silver Tier

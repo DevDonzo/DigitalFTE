@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Authenticate Gmail with correct scopes"""
+import os
 from pathlib import Path
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
@@ -13,7 +14,8 @@ SCOPES = [
     'https://www.googleapis.com/auth/gmail.send'
 ]
 
-creds_path = Path('/Users/hparacha/DigitalFTE/credentials.json')
+project_root = Path(__file__).resolve().parents[1]
+creds_path = Path(os.getenv('GMAIL_CREDENTIALS_PATH', project_root / 'credentials.json'))
 token_path = Path.home() / '.gmail_token.json'
 
 print(f"\n📂 Credentials file: {creds_path}")

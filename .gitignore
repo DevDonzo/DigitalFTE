@@ -31,3 +31,7 @@ vault/Logs/*.log
 *.json.backup
 token.json
 *_token.json
+credentials.json
+.gmail_token.json
+*.key
+*.secret

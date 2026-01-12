@@ -147,7 +147,7 @@ Weekly business performance review and autonomous audit results.
 ## Manual Trigger
 
 ```bash
-cd /Users/hparacha/DigitalFTE
+cd /path/to/DigitalFTE
 python3 scripts/weekly_audit.py
 ```
 

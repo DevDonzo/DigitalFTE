@@ -92,9 +92,8 @@ MOCK_FILE_EVENTS = [
 
 # Mock vault directory structure
 MOCK_VAULT_STRUCTURE = {
-    "Inbox": ["EMAIL_001.md", "EMAIL_002.md", "WHATSAPP_001.md", "FILE_001.md"],
+    "Needs_Action": ["EMAIL_001.md", "EMAIL_002.md", "WHATSAPP_001.md", "FILE_001.md", "ACTION_001.md"],
     "Plans": ["PLAN_EMAIL_001.md", "PLAN_WHATSAPP_001.md"],
-    "Needs_Action": ["ACTION_001.md"],
     "Pending_Approval": ["APPROVAL_001.md"],
     "Approved": [],
     "Rejected": [],
@@ -215,14 +214,14 @@ def generate_email(index: int = 1, **overrides) -> dict:
     base.update(overrides)
     return base
 
-def generate_action_file(vault_path: Path, action_type: str = "inbox", **data):
+def generate_action_file(vault_path: Path, action_type: str = "needs_action", **data):
     """Generate mock action file in vault"""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     prefix = action_type.upper()
 
     filename = f"{prefix}_{timestamp}.md"
-    if action_type == "inbox":
-        directory = vault_path / "Inbox"
+    if action_type in ("inbox", "needs_action"):
+        directory = vault_path / "Needs_Action"
     elif action_type == "plan":
         directory = vault_path / "Plans"
     elif action_type == "approval":
@@ -285,8 +284,8 @@ def mock_vault(tmp_path):
 @pytest.fixture
 def populated_vault(mock_vault):
     """Create vault with sample files"""
-    # Add inbox items
-    inbox = mock_vault / "Inbox"
+    # Add needs_action items
+    inbox = mock_vault / "Needs_Action"
     for email in MOCK_EMAILS[:2]:
         filename = f"{email['id']}.md"
         content = f"# {email['subject']}\n\nFrom: {email['from']}\n\n{email['body']}"

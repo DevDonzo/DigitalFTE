@@ -321,7 +321,7 @@ def retry_with_backoff(func, max_attempts=3):
 ### Orchestrator
 ```
 ┌──────────────────────────────────────┐
-│ Monitor vault/Inbox (file watcher)   │
+│ Monitor vault/Needs_Action (file watcher)   │
 └────────────┬───────────────────────┘
              │
              ▼

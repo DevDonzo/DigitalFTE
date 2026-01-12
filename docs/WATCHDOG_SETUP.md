@@ -23,7 +23,7 @@ The Watchdog monitors critical DigitalFTE processes and automatically restarts t
 ### Option 1: Manual Start (Testing)
 
 ```bash
-cd /Users/hparacha/DigitalFTE
+cd /path/to/DigitalFTE
 python3 scripts/watchdog.py
 ```
 
@@ -167,8 +167,8 @@ After=network.target
 
 [Service]
 Type=simple
-User=hparacha
-WorkingDirectory=/Users/hparacha/DigitalFTE
+User=your_user
+WorkingDirectory=/path/to/DigitalFTE
 ExecStart=/usr/bin/python3 scripts/watchdog.py
 Restart=always
 RestartSec=10

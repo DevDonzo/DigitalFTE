@@ -379,7 +379,7 @@ if __name__ == '__main__':
 
     if len(sys.argv) < 2:
         print("Usage: python email_drafter.py <email_file_path>")
-        print(f"Example: python email_drafter.py vault/Inbox/EMAIL_001.md")
+        print(f"Example: python email_drafter.py vault/Needs_Action/EMAIL_001.md")
         sys.exit(1)
 
     email_file = Path(sys.argv[1])

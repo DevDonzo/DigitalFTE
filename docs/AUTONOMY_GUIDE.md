@@ -14,7 +14,7 @@ External sources are monitored continuously for new input:
 
 ```
 Gmail Watcher (20s interval)  --|
-WhatsApp Watcher (Webhook)     |---> vault/Inbox/
+WhatsApp Watcher (Webhook)     |---> vault/Needs_Action/
 LinkedIn Watcher (5m interval) |
 FileSystem Watcher (Real-time) |
 ```
@@ -25,7 +25,7 @@ FileSystem Watcher (Real-time) |
 - `watchers/linkedin_watcher.py` - Polls LinkedIn API for notifications
 - `watchers/base_watcher.py` - Abstract base class with common functionality
 
-**Output**: Files created in `vault/Inbox/` with standardized markdown format
+**Output**: Files created in `vault/Needs_Action/` with standardized markdown format
 
 ---
 
@@ -34,7 +34,7 @@ FileSystem Watcher (Real-time) |
 Incoming items are processed and AI-generated responses created:
 
 ```
-vault/Inbox/ (detected)
+vault/Needs_Action/ (detected)
     |
     v
 orchestrator.py (watchdog observer)
@@ -195,7 +195,7 @@ vault/Briefings/YYYY-MM-DD_briefing.md
 
 8:00:05 AM - Gmail Watcher polls (20s interval)
   - Detects unread important email
-  - Creates: vault/Inbox/EMAIL_client_20260111_080005.md
+  - Creates: vault/Needs_Action/EMAIL_client_20260111_080005.md
 
 8:00:06 AM - Orchestrator detects new file
   - Reads email content
@@ -245,7 +245,7 @@ Perception Layer (Watchers)
 
     ↓
 
-vault/Inbox/ + vault/Needs_Action/
+vault/Needs_Action/ (primary) + vault/Inbox/ (legacy)
 
     ↓
 
@@ -300,7 +300,8 @@ vault/Done/ + vault/Logs/
 
 | Folder | Purpose | Contains |
 |--------|---------|----------|
-| Inbox/ | Watcher input | New emails, WhatsApp messages, LinkedIn notifications |
+| Inbox/ | Legacy watcher input | Optional legacy flow |
+| Needs_Action/ | Primary input | New emails, WhatsApp messages, LinkedIn notifications |
 | Needs_Action/ | Processing queue | Items awaiting orchestrator processing |
 | Pending_Approval/ | Human review | AI-generated drafts awaiting human approval |
 | Approved/ | Execution queue | Approved actions ready to execute |

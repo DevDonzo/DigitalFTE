@@ -15,12 +15,12 @@
 Python scripts that monitor external inputs:
 
 - **Gmail Watcher**: Polls Gmail API every 2 min for important emails
-- **WhatsApp Watcher**: Monitors WhatsApp Web for keywords (urgent, invoice, payment, help)
+- **WhatsApp Watcher**: Processes Twilio webhook queue for keywords (urgent, invoice, payment, help)
 - **LinkedIn Watcher**: Polls LinkedIn API for profile activity
 - **FileSystem Watcher**: Monitors drop folder for new files
 
 Each watcher:
-- Creates markdown file in `/vault/Inbox/` on detection
+- Creates markdown file in `/vault/Needs_Action/` on detection
 - Logs event to `/vault/Logs/YYYY-MM-DD.json`
 - Implements exponential backoff on API errors
 - Maintains set of processed IDs (prevents duplicates)
@@ -34,8 +34,8 @@ Local markdown-based knowledge base:
 ├── Dashboard.md              # Real-time system status
 ├── Company_Handbook.md       # Automation rules
 ├── Business_Goals.md         # KPIs & targets
-├── Inbox/                    # ← Watcher input
-├── Needs_Action/             # ← Items requiring action
+├── Inbox/                    # ← Legacy watcher input (optional)
+├── Needs_Action/             # ← Primary input for actions
 ├── Plans/                    # ← Claude reasoning
 ├── Pending_Approval/         # ← Awaiting human approval
 ├── Approved/                 # ← Ready to execute
@@ -51,7 +51,7 @@ Local markdown-based knowledge base:
 ```
 
 File flow:
-1. Watcher creates file in `/Inbox/`
+1. Watcher creates file in `/Needs_Action/`
 2. Orchestrator detects change
 3. Claude processes → Creates `/Plans/` reasoning file
 4. Claude determines if action needed
@@ -64,7 +64,7 @@ File flow:
 
 AI decision-making engine:
 
-- Reads `/Inbox/` for new items
+- Reads `/Needs_Action/` for new items (also watches `/Inbox/` for legacy)
 - Consults `Company_Handbook.md` for rules
 - Creates `/Plans/` file with reasoning & next steps
 - Determines if action is auto-approvable or requires HITL
@@ -75,7 +75,7 @@ AI decision-making engine:
 Model Context Protocol servers handle external actions:
 
 - **Email MCP**: Send/draft/search emails (Gmail)
-- **Browser MCP**: Click, fill forms, take screenshots (Playwright)
+- **Browser MCP**: Placeholder for future browser automation (not used in Twilio flow)
 - **Xero MCP**: Create invoices, log transactions (Xero API)
 - **Meta Social MCP**: Post to Facebook/Instagram
 - **Twitter MCP**: Post tweets, fetch metrics
@@ -92,7 +92,7 @@ Master process that coordinates everything:
 
 - Starts all watcher processes (PM2 management)
 - Watches vault folders for changes
-- Triggers Claude Code on new `/Inbox/` files
+- Triggers Claude Code on new `/Needs_Action/` files
 - Executes MCP server actions on approval
 - Maintains process health & auto-restarts failures
 - Routes alerts to human
@@ -113,11 +113,11 @@ System health monitor:
 ```
 Gmail API
   ↓ (Gmail Watcher)
-Creates /Inbox/EMAIL_[ID].md
+Creates /Needs_Action/EMAIL_[ID].md
   ↓ (Orchestrator detects)
 Triggers Claude Code
   ↓
-Claude reads /Inbox/ file
+Claude reads /Needs_Action/ file
 Claude consults Company_Handbook.md
 Claude creates /Plans/PLAN_[ID].md
   ├─ Auto-approvable? → Call Email MCP directly

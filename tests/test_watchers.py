@@ -17,17 +17,17 @@ def test_gmail_watcher_initialization():
     watcher = MockWatcher('./vault')
     assert watcher.vault_path == Path('./vault')
 
-def test_inbox_file_structure(tmp_path):
-    """Test inbox structure"""
+def test_needs_action_file_structure(tmp_path):
+    """Test Needs_Action structure"""
     vault = tmp_path / 'vault'
-    inbox = vault / 'Inbox'
-    inbox.mkdir(parents=True)
+    needs_action = vault / 'Needs_Action'
+    needs_action.mkdir(parents=True)
     
-    (inbox / 'EMAIL_001.md').write_text('# Email')
-    (inbox / 'WHATSAPP_001.md').write_text('# WhatsApp')
-    (inbox / 'FILE_001.md').write_text('# File')
+    (needs_action / 'EMAIL_001.md').write_text('# Email')
+    (needs_action / 'WHATSAPP_001.md').write_text('# WhatsApp')
+    (needs_action / 'FILE_001.md').write_text('# File')
     
-    files = list(inbox.glob('*.md'))
+    files = list(needs_action.glob('*.md'))
     assert len(files) == 3
 
 def test_audit_logging(tmp_path):

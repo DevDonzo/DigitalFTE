@@ -12,7 +12,7 @@ Enable the AI Employee to autonomously read incoming emails, consult automation 
 ## Architecture
 
 ```
-Email Received (Inbox/)
+Email Received (Needs_Action/)
     ↓
 Email Drafter reads:
   ├─ Email content (from, subject, body)
@@ -98,7 +98,7 @@ email_automation:
 
 ## Usage Flow
 
-1. **Email arrives** → `vault/Inbox/EMAIL_*.md`
+1. **Email arrives** → `vault/Needs_Action/EMAIL_*.md`
 2. **Orchestrator detects** → Triggers email drafter
 3. **Claude drafts** → Analyzes email + rules → Generates response
 4. **Creates approval file** → `vault/Pending_Approval/EMAIL_DRAFT_*.md`

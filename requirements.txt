@@ -13,8 +13,9 @@ google-auth-oauthlib>=1.1.0
 google-auth-httplib2>=0.2.0
 google-api-python-client>=2.100.0
 
-# Web Automation (WhatsApp)
-playwright>=1.40.0
+# Webhook Server (WhatsApp)
+fastapi>=0.110.0
+uvicorn>=0.27.0
 
 # File System Monitoring
 watchdog>=3.0.0
