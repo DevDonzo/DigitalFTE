@@ -277,8 +277,18 @@ class VaultHandler(FileSystemEventHandler):
         if not queue:
             return
 
-        logger.info(f"Processing batch of {len(queue)} {queue_type} files")
+        # Deduplicate: remove duplicate filenames from queue (file system watchers can fire multiple events)
+        seen_names = set()
+        unique_queue = []
         for filepath in queue:
+            if filepath.name not in seen_names:
+                seen_names.add(filepath.name)
+                unique_queue.append(filepath)
+            else:
+                logger.debug(f"Removing duplicate from queue: {filepath.name}")
+
+        logger.info(f"Processing batch of {len(unique_queue)} {queue_type} files")
+        for filepath in unique_queue:
             try:
                 if queue_type == 'inbox':
                     self._process_inbox(filepath)
