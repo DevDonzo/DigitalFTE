@@ -227,36 +227,29 @@ class VaultHandler(FileSystemEventHandler):
 
         filepath = Path(event.src_path)
 
-        # Skip if already processed (deduplication using filename)
-        # This prevents duplicate execution when file is moved/copied
-        if filepath.name in self.executed_files:
-            logger.debug(f"Skipping already-executed file: {filepath.name}")
-            return
-
         # Queue events for batching
         if filepath.parent == self.needs_action:
-            # Skip if already processed in startup scan
+            # Skip if already processed (check processed_hashes as source of truth)
             if filepath.name in self.processed_hashes:
                 logger.debug(f"Skipping already-processed file: {filepath.name}")
                 return
 
-            # Don't add duplicate filenames to queue
-            if not any(f.name == filepath.name for f in self.event_queue['inbox']):
-                self.processed_hashes.add(filepath.name)  # Mark immediately to prevent race conditions
-                self.event_queue['inbox'].append(filepath)  # Keep queue name 'inbox' for backwards compat
-                self._process_batch_if_ready('inbox')
-            else:
-                logger.debug(f"Skipping duplicate queue entry: {filepath.name}")
+            # Mark as processed immediately to prevent ANY re-processing
+            self.processed_hashes.add(filepath.name)
+            self.event_queue['inbox'].append(filepath)
+            self._process_batch_if_ready('inbox')
 
         # Handle approved actions → execute
-        if filepath.parent == self.approved:
-            # Don't add duplicate filenames to queue
-            if not any(f.name == filepath.name for f in self.event_queue['approved']):
-                self.executed_files.add(filepath.name)  # Mark immediately to prevent race conditions
-                self.event_queue['approved'].append(filepath)
-                self._process_batch_if_ready('approved')
-            else:
-                logger.debug(f"Skipping duplicate queue entry: {filepath.name}")
+        elif filepath.parent == self.approved:
+            # Skip if already executed
+            if filepath.name in self.executed_files:
+                logger.debug(f"Skipping already-executed file: {filepath.name}")
+                return
+
+            # Mark as executed immediately to prevent ANY re-execution
+            self.executed_files.add(filepath.name)
+            self.event_queue['approved'].append(filepath)
+            self._process_batch_if_ready('approved')
 
     def on_modified(self, event):
         """Handle file modifications - same deduplication as on_created"""
