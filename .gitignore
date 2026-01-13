@@ -35,3 +35,6 @@ credentials.json
 .gmail_token.json
 *.key
 *.secret
+
+# Documentation (reference only, don't commit)
+hackathonspecs.md

@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-01-13T09:22:59.471215",
+  "processes": {
+    "orchestrator": {
+      "running": true,
+      "pid": 92553,
+      "restarts_in_window": 0
+    },
+    "gmail_watcher": {
+      "running": true,
+      "pid": 92554,
+      "restarts_in_window": 0
+    },
+    "whatsapp_watcher": {
+      "running": true,
+      "pid": 92555,
+      "restarts_in_window": 0
+    },
+    "linkedin_watcher": {
+      "running": true,
+      "pid": 92556,
+      "restarts_in_window": 0
+    },
+    "webhook_server": {
+      "running": true,
+      "pid": 92557,
+      "restarts_in_window": 0
+    }
+  }
+}
