@@ -68,6 +68,12 @@ except ImportError:
     HAS_WHATSAPP_DRAFTER = False
 
 try:
+    from utils.social_post_drafter import SocialPostDrafter
+    HAS_SOCIAL_DRAFTER = True
+except ImportError:
+    HAS_SOCIAL_DRAFTER = False
+
+try:
     from watchers.whatsapp_watcher import WhatsAppWatcher as WhatsAppBusinessAPI
     HAS_WHATSAPP_API = True
 except ImportError:
@@ -123,6 +129,13 @@ class VaultHandler(FileSystemEventHandler):
         else:
             self.whatsapp_drafter = None
 
+        # Initialize Social Post Drafter (OpenAI-powered multi-platform posts)
+        if HAS_SOCIAL_DRAFTER:
+            self.social_drafter = SocialPostDrafter(str(vault_path))
+            logger.info("✓ Social Post Drafter initialized (OpenAI-powered)")
+        else:
+            self.social_drafter = None
+
         # Initialize WhatsApp Business API for sending messages
         self.whatsapp_api = None
         if HAS_WHATSAPP_API:
@@ -153,6 +166,96 @@ class VaultHandler(FileSystemEventHandler):
         # Lock for thread-safe deduplication (prevents race conditions when multiple events fire simultaneously)
         self.dedup_lock = threading.Lock()
 
+        # Refresh Xero token at startup (30-min expiry)
+        self._refresh_xero_token_if_needed()
+
+    def _refresh_xero_token_if_needed(self):
+        """Refresh Xero OAuth token if expired or expiring soon"""
+        try:
+            import json
+            import time as time_module
+            
+            token_file = os.path.expanduser('~/.xero_token.json')
+            if not os.path.exists(token_file):
+                logger.debug("Xero token file not found - skipping refresh")
+                return
+            
+            with open(token_file) as f:
+                tokens = json.load(f)
+            
+            # Check if token is expired or expiring within 5 minutes
+            access_token = tokens.get('access_token', '')
+            if not access_token:
+                return
+            
+            # Decode JWT to check expiration
+            try:
+                parts = access_token.split('.')
+                if len(parts) != 3:
+                    return
+                
+                payload = parts[1] + '==' * (4 - len(parts[1]) % 4)
+                decoded = json.loads(__import__('base64').urlsafe_b64decode(payload))
+                exp_time = decoded.get('exp', 0)
+                current_time = time_module.time()
+                
+                # Refresh if expired or expiring within 5 minutes (300 sec)
+                if current_time > exp_time - 300:
+                    logger.info("🔄 Xero token expiring soon - refreshing...")
+                    self._call_xero_refresh_token()
+            except Exception as e:
+                logger.debug(f"Could not check token expiration: {e}")
+        except Exception as e:
+            logger.warning(f"Xero token refresh check failed: {e}")
+    
+    def _call_xero_refresh_token(self):
+        """Refresh Xero token via auth script"""
+        try:
+            auth_script = Path(__file__).parent.parent / 'auth' / 'xero.py'
+            result = subprocess.run(
+                [sys.executable, str(auth_script), 'refresh'],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            if result.returncode == 0:
+                logger.info("✅ Xero token refreshed successfully")
+                
+                # Update .env with new token
+                import json
+                token_file = os.path.expanduser('~/.xero_token.json')
+                with open(token_file) as f:
+                    tokens = json.load(f)
+                
+                new_token = tokens.get('access_token', '')
+                if new_token:
+                    # Update .env
+                    env_path = Path(__file__).parent.parent / '.env'
+                    if env_path.exists():
+                        with open(env_path) as f:
+                            env_content = f.read()
+                        
+                        # Replace token using regex
+                        import re
+                        env_content = re.sub(
+                            r'XERO_ACCESS_TOKEN=.*',
+                            f'XERO_ACCESS_TOKEN={new_token}',
+                            env_content
+                        )
+                        
+                        with open(env_path, 'w') as f:
+                            f.write(env_content)
+                        
+                        # Reload environment
+                        os.environ['XERO_ACCESS_TOKEN'] = new_token
+                        logger.info("✅ .env updated with fresh Xero token")
+            else:
+                logger.warning(f"Xero token refresh failed: {result.stderr}")
+        except subprocess.TimeoutExpired:
+            logger.warning("Xero token refresh timed out")
+        except Exception as e:
+            logger.warning(f"Failed to refresh Xero token: {e}")
+
     def _extract_gmail_message_id(self, email_content: str) -> str:
         """Extract gmail_message_id from email file content"""
         lines = email_content.split('\n')
@@ -160,6 +263,53 @@ class VaultHandler(FileSystemEventHandler):
             if line.startswith('gmail_message_id:'):
                 return line.split(':', 1)[1].strip()
         return None
+
+    def _is_post_request(self, email_content: str) -> bool:
+        """Check if email is requesting a social media post"""
+        content_lower = email_content.lower()
+        post_keywords = [
+            'post to', 'post about', 'post this', 'tweet about', 'tweet this',
+            'share on', 'share to', 'social media', 'facebook', 'linkedin',
+            'twitter', 'please post', 'can you post', 'pls post'
+        ]
+        return any(keyword in content_lower for keyword in post_keywords)
+
+    def _extract_post_request(self, email_content: str) -> tuple:
+        """Extract topic and context from post request email. Returns (topic, context)"""
+        content_lower = email_content.lower()
+
+        # Find the content after "## Body" section
+        body_section = email_content.split('## Body')[-1] if '## Body' in email_content else email_content
+
+        # Extract topic from "post about X" or "post about:"
+        lines = body_section.split('\n')
+        topic = None
+        context = body_section.strip()
+
+        for line in lines:
+            if any(keyword in line.lower() for keyword in ['post about', 'post to', 'tweet about', 'share']):
+                # Extract the topic from this line
+                parts = line.split(':', 1)
+                if len(parts) > 1:
+                    topic = parts[1].strip()
+                    break
+                else:
+                    # Try to get the next meaningful part
+                    words = line.split()
+                    idx = -1
+                    for i, word in enumerate(words):
+                        if word.lower() in ['about', 'to', 'this']:
+                            idx = i + 1
+                            break
+                    if idx > 0 and idx < len(words):
+                        topic = ' '.join(words[idx:])
+                        break
+
+        # If no explicit topic found, use the whole body
+        if not topic:
+            topic = body_section.strip()[:200]  # First 200 chars
+
+        return topic, context
 
     def _scan_existing_files(self):
         """Process any existing files in Inbox/Needs_Action/Approved that were created before startup"""
@@ -260,6 +410,8 @@ class VaultHandler(FileSystemEventHandler):
                 self.executed_files.add(filepath.name)
 
             # Queue outside lock to avoid holding it during batch processing
+            # But don't process the batch here - let the queue handler do it
+            # to avoid double-execution if the batch is already being processed
             self.event_queue['approved'].append(filepath)
             self._process_batch_if_ready('approved')
 
@@ -298,6 +450,16 @@ class VaultHandler(FileSystemEventHandler):
                 unique_queue.append(filepath)
             else:
                 logger.debug(f"Removing duplicate from queue: {filepath.name}")
+
+        # For approved files, also skip if already executed
+        if queue_type == 'approved':
+            filtered_queue = []
+            for filepath in unique_queue:
+                if filepath.name in self.executed_files:
+                    logger.debug(f"Batch: Skipping already-executed file: {filepath.name}")
+                else:
+                    filtered_queue.append(filepath)
+            unique_queue = filtered_queue
 
         logger.info(f"Processing batch of {len(unique_queue)} {queue_type} files")
         for filepath in unique_queue:
@@ -378,6 +540,25 @@ class VaultHandler(FileSystemEventHandler):
                 except Exception as e:
                     logger.error(f"Error drafting reply for {filepath.name}: {e}")
                     self._log_action('email_draft_error', filepath.name, 'failure', str(e))
+
+                # Check if email is requesting a social media post
+                if self.social_drafter and self._is_post_request(content):
+                    logger.info(f"📱 Detected social media post request in: {filepath.name}")
+                    try:
+                        topic, context = self._extract_post_request(content)
+                        if topic:
+                            posts = self.social_drafter.draft_posts(topic, context)
+                            if posts:
+                                logger.info(f"📱 Generated {len(posts)} social media drafts")
+                                for platform, draft_path in posts.items():
+                                    logger.info(f"   ✓ {platform.title()}: {draft_path.name}")
+                                self._log_action('social_drafts_created', filepath.name, 'success', json.dumps(list(posts.keys())))
+                            else:
+                                logger.warning(f"Failed to generate social media drafts for {filepath.name}")
+                                self._log_action('social_drafts_failed', filepath.name, 'failure')
+                    except Exception as e:
+                        logger.error(f"Error generating social posts: {e}")
+                        self._log_action('social_drafts_error', filepath.name, 'failure', str(e))
             else:
                 # Legacy: Create generic plan for non-email items
                 plan_file = self.vault / 'Plans' / f"PLAN_{filepath.stem}.md"
@@ -725,10 +906,32 @@ status: pending_approval
             self._call_email_mcp(recipient, subject, reply_text)
 
             logger.info(f"✉️ Email sent successfully to {recipient}")
+             
+            # Delete the original email from Needs_Action
+            self._delete_original_email_from_needs_action(metadata)
 
         except Exception as e:
             logger.error(f"Email execution failed: {e}")
             raise
+
+    def _delete_original_email_from_needs_action(self, metadata: dict):
+        """Delete the original email file from Needs_Action after approval is sent"""
+        try:
+            # Extract gmail_message_id from email draft metadata
+            gmail_msg_id = metadata.get('gmail_message_id')
+            if not gmail_msg_id:
+                logger.debug("No gmail_message_id in metadata - skipping Needs_Action cleanup")
+                return
+            
+            # Find and delete the original EMAIL_*.md file in Needs_Action
+            original_file = self.needs_action / f"EMAIL_{gmail_msg_id}.md"
+            if original_file.exists():
+                original_file.unlink()
+                logger.info(f"✓ Deleted from Needs_Action: {original_file.name}")
+            else:
+                logger.debug(f"Original email file not found: {original_file}")
+        except Exception as e:
+            logger.warning(f"Failed to delete original email from Needs_Action: {e}")
 
     def _call_email_mcp(self, to: str, subject: str, body: str):
         """Send email via Gmail API"""
@@ -1057,9 +1260,31 @@ status: pending_approval
             else:
                 raise RuntimeError("WhatsApp Business API not initialized")
 
+            # Delete the original WhatsApp message from Needs_Action
+            self._delete_original_whatsapp_from_needs_action(metadata)
+
         except Exception as e:
             logger.error(f"WhatsApp execution failed: {e}")
             raise
+
+    def _delete_original_whatsapp_from_needs_action(self, metadata: dict):
+        """Delete the original WhatsApp message from Needs_Action after reply is sent"""
+        try:
+            # Extract original_file from WhatsApp draft metadata
+            original_file = metadata.get('original_file')
+            if not original_file:
+                logger.debug("No original_file in metadata - skipping Needs_Action cleanup")
+                return
+            
+            # Find and delete the original WHATSAPP_*.md file in Needs_Action
+            original_path = self.needs_action / original_file
+            if original_path.exists():
+                original_path.unlink()
+                logger.info(f"✓ Deleted from Needs_Action: {original_path.name}")
+            else:
+                logger.debug(f"Original WhatsApp message not found: {original_path}")
+        except Exception as e:
+            logger.warning(f"Failed to delete original WhatsApp message from Needs_Action: {e}")
 
     def _execute_payment(self, filepath, content):
         """Execute payment action - Log transaction via Xero MCP"""
@@ -1435,6 +1660,10 @@ def start_orchestrator():
     # Track last approved folder scan
     last_approved_scan = time.time()
     approved_scan_interval = 5  # Scan every 5 seconds
+    
+    # Track last Xero token refresh
+    last_xero_refresh = time.time()
+    xero_refresh_interval = 1200  # Refresh every 20 minutes (token valid for 30 min)
 
     try:
         while True:
@@ -1445,10 +1674,19 @@ def start_orchestrator():
                     if handler.event_queue[queue_type]:
                         handler._process_batch(queue_type)
 
+            # Periodically refresh Xero token to prevent expiration
+            if (current_time - last_xero_refresh) > xero_refresh_interval:
+                handler._refresh_xero_token_if_needed()
+                last_xero_refresh = current_time
+
             # Periodically scan Approved folder for any files that weren't caught by watchdog
             if (current_time - last_approved_scan) > approved_scan_interval:
                 approved_files = [f for f in handler.approved.glob('*.md') if f.name != '.gitkeep']
                 for filepath in approved_files:
+                    # Skip if already executed (prevents duplicate sends)
+                    if filepath.name in handler.executed_files:
+                        logger.debug(f"Periodic scan: Skipping already-executed file: {filepath.name}")
+                        continue
                     try:
                         handler._execute_action(filepath)
                     except Exception as e:
