@@ -9,7 +9,9 @@ const axios = require('axios');
 
 const XERO_API_BASE = 'https://api.xero.com/api.xro/2.0';
 
-const tools = [
+// Tool definitions (for reference - actual tools handled in processTool)
+/* eslint-disable-next-line no-unused-vars */
+const xeroTools = [
   {
     name: 'create_invoice',
     description: 'Create a new invoice in Xero',
