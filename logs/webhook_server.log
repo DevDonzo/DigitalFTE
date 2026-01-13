@@ -1,8 +1,11 @@
-2026-01-12 09:54:23,738 [__main__] 🚀 Starting webhook server on port 8001
-2026-01-12 09:54:23,738 [__main__]    Webhook URL: http://localhost:8001/webhook
-INFO:     Started server process [95286]
+2026-01-13 11:03:55,931 [__main__] 🚀 Starting webhook server on port 8001
+2026-01-13 11:03:55,931 [__main__]    Webhook URL: http://localhost:8001/webhook
+INFO:     Started server process [18076]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
-ERROR:    [Errno 48] error while attempting to bind on address ('0.0.0.0', 8001): address already in use
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('0.0.0.02026-01-13 11:39:16,573 [__main__] 📱 Incoming message from +16475683720: hello ai!
+2026-01-13 11:39:16,574 [__main__] ✓ Message SM0ac9b6a2e77a2e4c3ca44bbceaf2589e marked as processed
+2026-01-13 11:39:16,575 [__main__] Queued WhatsApp message SM0ac9b6a2e77a2e4c3ca44bbceaf2589e for watcher processing
+INFO:     34.229.174.235:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.89.169.100:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.211.92.96:0 - "POST /webhook HTTP/1.1" 200 OK

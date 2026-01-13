@@ -1,0 +1,3 @@
+{"message_id": "SM6df844c61186aa078fb9125f0292daee", "from": "+16475683720", "text": "Hello", "timestamp": "2026-01-13T10:31:12.679300", "urgency": "NORMAL", "status": "received", "platform": "twilio"}
+{"message_id": "SMbbd92a08a0df74a4ccb9dedd5349bd0e", "from": "+16475683720", "text": "Hey", "timestamp": "2026-01-13T10:39:36.128543", "urgency": "NORMAL", "status": "received", "platform": "twilio"}
+{"message_id": "SM0ac9b6a2e77a2e4c3ca44bbceaf2589e", "from": "+16475683720", "text": "hello ai!", "timestamp": "2026-01-13T11:39:18.135503", "urgency": "NORMAL", "status": "received", "platform": "twilio"}
