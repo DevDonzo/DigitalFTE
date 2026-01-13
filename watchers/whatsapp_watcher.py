@@ -119,8 +119,31 @@ urgency: {urgency}
 
         filepath.write_text(content)
         logger.info(f"✓ Created action file: {filename}")
+        
+        # Log the incoming message
+        self._log_incoming_message(msg_id, from_number, text, urgency, timestamp)
 
         return filepath
+    
+    def _log_incoming_message(self, msg_id: str, from_number: str, text: str, urgency: str, timestamp: str):
+        """Log incoming WhatsApp message to audit trail"""
+        log_file = Path(self.vault_path) / 'Logs' / 'whatsapp_received.jsonl'
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        log_entry = {
+            'message_id': msg_id,
+            'from': from_number,
+            'text': text[:200] + '...' if len(text) > 200 else text,
+            'timestamp': timestamp,
+            'urgency': urgency,
+            'status': 'received',
+            'platform': 'twilio'
+        }
+        
+        with open(log_file, 'a') as f:
+            f.write(json.dumps(log_entry) + '\n')
+        
+        logger.info(f"✓ Logged incoming WhatsApp: {msg_id} from {from_number}")
 
     def send_message(self, to_phone: str, message: str) -> dict:
         """Send WhatsApp message via Twilio"""

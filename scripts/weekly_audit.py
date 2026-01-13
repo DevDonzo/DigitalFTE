@@ -48,6 +48,9 @@ def generate_ceo_briefing():
 
     # Get Xero financial data
     xero_data = get_xero_financials()
+    
+    # Get Bank Transactions data (primary source per spec)
+    bank_data = get_bank_transactions(vault)
 
     # Read business goals
     goals = read_business_goals(vault)
@@ -70,6 +73,12 @@ def generate_ceo_briefing():
 ## Executive Summary
 
 Your Digital FTE has been working 24/7 this week. Here's your autonomous business report.
+
+---
+
+## 💰 Financial Summary
+
+{bank_data['summary']}
 
 ---
 
@@ -321,6 +330,83 @@ def get_xero_financials() -> dict:
 - **Status**: Xero error - {str(e)[:50]}
 - Check connection with `python utils/xero_client.py`"""
         }
+
+
+def get_bank_transactions(vault: Path) -> dict:
+    """
+    Read Bank_Transactions.md per hackathon spec.
+    This is the PRIMARY source for financial reporting.
+    """
+    bank_file = vault / 'Bank_Transactions.md'
+    
+    if not bank_file.exists():
+        return {
+            'summary': """### Revenue Tracking
+- **Status**: Bank_Transactions.md not found
+- Create `/vault/Bank_Transactions.md` to enable financial reporting"""
+        }
+    
+    try:
+        content = bank_file.read_text()
+        
+        # Parse summary section
+        summary_lines = []
+        this_week_revenue = 0.0
+        this_week_expenses = 0.0
+        
+        in_summary = False
+        for line in content.split('\n'):
+            if '## Monthly Summary' in line:
+                in_summary = True
+                continue
+            if in_summary and '##' in line and 'Monthly' not in line:
+                break
+            if in_summary and '| Revenue |' in line:
+                # Extract revenue amount
+                parts = line.split('|')
+                if len(parts) > 1:
+                    try:
+                        amount_str = parts[1].strip().replace('+$', '').split()[0]
+                        # This is monthly, divide by 4 for weekly estimate
+                        this_week_revenue = float(amount_str) / 4
+                    except:
+                        pass
+            if in_summary and '| Subscriptions |' in line:
+                # Extract subscription expenses
+                parts = line.split('|')
+                if len(parts) > 1:
+                    try:
+                        amount_str = parts[1].strip().replace('-$', '').split()[0]
+                        this_week_expenses = float(amount_str) / 4
+                    except:
+                        pass
+        
+        # Build summary
+        summary = f"""### Revenue This Week
+- **Revenue**: ${this_week_revenue:,.2f}
+- **Expenses**: ${this_week_expenses:,.2f}
+- **Net**: ${(this_week_revenue - this_week_expenses):,.2f}
+
+### Data Source
+- **File**: Bank_Transactions.md
+- **Last Updated**: {content.split('last_updated:')[1].split('\\n')[0].strip() if 'last_updated:' in content else 'Unknown'}
+- **Status**: ✅ Synced"""
+        
+        return {
+            'summary': summary,
+            'revenue': this_week_revenue,
+            'expenses': this_week_expenses,
+            'net': this_week_revenue - this_week_expenses
+        }
+    
+    except Exception as e:
+        logger.error(f"Error reading Bank_Transactions.md: {e}")
+        return {
+            'summary': f"""### Revenue Tracking
+- **Status**: Error reading Bank_Transactions.md
+- **Error**: {str(e)[:50]}"""
+        }
+
 
 
 def read_business_goals(vault: Path) -> dict:

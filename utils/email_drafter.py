@@ -106,6 +106,7 @@ class EmailDrafter:
             'subject': metadata.get('subject', 'No Subject'),
             'received': metadata.get('received', ''),
             'priority': metadata.get('priority', 'normal'),
+            'gmail_message_id': metadata.get('gmail_message_id', ''),
             'body': body
         }
 
@@ -205,10 +206,13 @@ RESPONSE STRUCTURE FOR COMPLEX EMAILS:
 3. Clear next steps
 4. Professional sign-off
 
-SIGN-OFF FORMAT:
+SIGN-OFF FORMAT (Always use this exact format):
 Best regards,
+
 Hamza Paracha
-(Drafted by AI Assistant - Hamza will review before sending)
+
+---
+This message was composed with AI assistance and reviewed by Hamza Paracha before transmission.
 
 IMPORTANT: This is a Human-in-the-Loop (HITL) system. Hamza reviews all drafts before sending. Be helpful but never autonomous on commitments."""},
                         {"role": "user", "content": prompt}
@@ -259,6 +263,7 @@ Hamza Paracha's AI Assistant"""
 type: email_draft
 original_from: {email['from']}
 original_subject: {email['subject']}
+gmail_message_id: {email.get('gmail_message_id', '')}
 email_type: {email_type}
 created: {datetime.now().isoformat()}
 auto_approve: {str(auto_approve).lower()}
@@ -298,11 +303,9 @@ ai_generated: true
 
 ---
 
-## AI Disclosure Signature
+## AI-Assisted Composition & Review
 
-*This email reply was drafted by Hamza Paracha's AI Assistant.*
-*Hamza Paracha reviewed and approved this response.*
-*Sent via DigitalFTE autonomous email system.*
+This response was composed with advanced AI assistance and has been reviewed by Hamza Paracha prior to transmission.
 
 ---
 
