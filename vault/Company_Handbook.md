@@ -44,10 +44,33 @@ This document defines the automation rules and escalation thresholds for your AI
 - > $500: HITL + Xero verification
 
 ### Social Media Posting
-- Auto-post: Scheduled content only
-- HITL required: Real-time replies, @mentions
-- Tone: Professional but friendly
-- No promotional spam
+
+**Supported Platforms**: Twitter/X, Facebook, Instagram, LinkedIn
+
+**How to Queue Posts**:
+1. Create file in `/vault/Social_Media/`
+2. Name format: `TWEET_[name].md`, `FACEBOOK_[name].md`, or `LINKEDIN_[name].md`
+3. Move to `/Approved/` when ready to post
+4. Orchestrator auto-posts within 5 seconds
+5. Result logged to `/vault/Logs/social_posts.jsonl`
+
+**Auto-Post Rules**:
+- ✅ Scheduled announcements (pre-written, no real-time approval needed)
+- ✅ Content from content library (pre-approved formats)
+- ⚠️ Real-time replies (@mentions, trending topics) - HITL required
+- ⚠️ Controversial or political content - HITL required
+- ❌ Promotional spam or duplicate content
+
+**Tone Guidelines**:
+- Twitter: Professional, concise, thought leadership
+- Facebook: Friendly, conversational, broader audience
+- LinkedIn: Professional, insights-focused, career-oriented
+- Instagram: Visual-first, authentic, personal
+
+**Engagement Tracking**:
+- Likes, shares, comments logged automatically
+- Weekly engagement summary in CEO Briefing
+- Audience growth metrics tracked
 
 ### Xero Accounting
 - Auto-create invoices from templates
