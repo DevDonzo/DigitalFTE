@@ -14,11 +14,6 @@ const os = require('os');
 
 // Configuration
 const GMAIL_API_BASE = 'https://gmail.googleapis.com/gmail/v1/users/me';
-const GMAIL_SCOPES = [
-  'https://www.googleapis.com/auth/gmail.readonly',
-  'https://www.googleapis.com/auth/gmail.send',
-  'https://www.googleapis.com/auth/gmail.modify'
-];
 
 const tools = [
   {
