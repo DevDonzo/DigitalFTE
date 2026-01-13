@@ -104,7 +104,6 @@ const https = require('https');
 
 // Get credentials from environment
 const BEARER_TOKEN = process.env.TWITTER_BEARER_TOKEN;
-const API_KEY = process.env.TWITTER_API_KEY;
 
 // Helper to call Twitter API v2
 function callTwitterAPI(endpoint, method = 'GET', data = null) {
@@ -193,7 +192,7 @@ async function processTool(name, args) {
       }
 
       case 'like_tweet': {
-        const result = await callTwitterAPI(
+        await callTwitterAPI(
           '/2/users/me/likes',
           'POST',
           { tweet_id: args.tweet_id }
@@ -206,7 +205,7 @@ async function processTool(name, args) {
       }
 
       case 'retweet': {
-        const result = await callTwitterAPI(
+        await callTwitterAPI(
           '/2/users/me/retweets',
           'POST',
           { tweet_id: args.tweet_id }
