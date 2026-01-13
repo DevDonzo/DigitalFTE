@@ -20,6 +20,8 @@ This system automates personal and business affairs across multiple domains:
 
 **Core Principle**: Local-first (Obsidian vault) + Cloud integrations (Gmail, WhatsApp, Twitter, etc.) + Human-in-the-loop approval for sensitive actions.
 
+**📖 For a comprehensive list of all capabilities and features, see [CAPABILITIES.md](CAPABILITIES.md)**
+
 ---
 
 ## Quick Start (2 Minutes)
@@ -281,6 +283,7 @@ Available tests:
 
 ## Documentation
 
+- **CAPABILITIES.md** - Complete list of what DigitalFTE can do ⭐ **NEW**
 - **DEMO.md** - How to run the demo (start here!)
 - **ARCHITECTURE.md** - System design & data flows
 - **HACKATHON_COMPLIANCE.md** - All 23 requirements verified ✅
