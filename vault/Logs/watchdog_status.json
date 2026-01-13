@@ -1,29 +1,29 @@
 {
-  "timestamp": "2026-01-13T09:22:59.471215",
+  "timestamp": "2026-01-13T11:43:08.348975",
   "processes": {
     "orchestrator": {
       "running": true,
-      "pid": 92553,
+      "pid": 17462,
       "restarts_in_window": 0
     },
     "gmail_watcher": {
       "running": true,
-      "pid": 92554,
+      "pid": 17463,
       "restarts_in_window": 0
     },
     "whatsapp_watcher": {
       "running": true,
-      "pid": 92555,
+      "pid": 17464,
       "restarts_in_window": 0
     },
     "linkedin_watcher": {
       "running": true,
-      "pid": 92556,
+      "pid": 17465,
       "restarts_in_window": 0
     },
     "webhook_server": {
       "running": true,
-      "pid": 92557,
+      "pid": 17466,
       "restarts_in_window": 0
     }
   }
