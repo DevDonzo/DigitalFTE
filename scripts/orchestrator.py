@@ -915,23 +915,24 @@ status: pending_approval
             raise
 
     def _delete_original_email_from_needs_action(self, metadata: dict):
-        """Delete the original email file from Needs_Action after approval is sent"""
+        """Move the original email file from Needs_Action to Done after approval is sent"""
         try:
             # Extract gmail_message_id from email draft metadata
             gmail_msg_id = metadata.get('gmail_message_id')
             if not gmail_msg_id:
                 logger.debug("No gmail_message_id in metadata - skipping Needs_Action cleanup")
                 return
-            
-            # Find and delete the original EMAIL_*.md file in Needs_Action
+
+            # Find and move the original EMAIL_*.md file to Done
             original_file = self.needs_action / f"EMAIL_{gmail_msg_id}.md"
             if original_file.exists():
-                original_file.unlink()
-                logger.info(f"✓ Deleted from Needs_Action: {original_file.name}")
+                done_file = self.done / original_file.name
+                original_file.rename(done_file)
+                logger.info(f"✓ Moved from Needs_Action → Done: {original_file.name}")
             else:
                 logger.debug(f"Original email file not found: {original_file}")
         except Exception as e:
-            logger.warning(f"Failed to delete original email from Needs_Action: {e}")
+            logger.warning(f"Failed to move original email from Needs_Action: {e}")
 
     def _call_email_mcp(self, to: str, subject: str, body: str):
         """Send email via Gmail API"""
@@ -1268,23 +1269,24 @@ status: pending_approval
             raise
 
     def _delete_original_whatsapp_from_needs_action(self, metadata: dict):
-        """Delete the original WhatsApp message from Needs_Action after reply is sent"""
+        """Move the original WhatsApp message from Needs_Action to Done after reply is sent"""
         try:
             # Extract original_file from WhatsApp draft metadata
             original_file = metadata.get('original_file')
             if not original_file:
                 logger.debug("No original_file in metadata - skipping Needs_Action cleanup")
                 return
-            
-            # Find and delete the original WHATSAPP_*.md file in Needs_Action
+
+            # Find and move the original WHATSAPP_*.md file to Done
             original_path = self.needs_action / original_file
             if original_path.exists():
-                original_path.unlink()
-                logger.info(f"✓ Deleted from Needs_Action: {original_path.name}")
+                done_path = self.done / original_path.name
+                original_path.rename(done_path)
+                logger.info(f"✓ Moved from Needs_Action → Done: {original_path.name}")
             else:
                 logger.debug(f"Original WhatsApp message not found: {original_path}")
         except Exception as e:
-            logger.warning(f"Failed to delete original WhatsApp message from Needs_Action: {e}")
+            logger.warning(f"Failed to move original WhatsApp message from Needs_Action: {e}")
 
     def _execute_payment(self, filepath, content):
         """Execute payment action - Log transaction via Xero MCP"""
