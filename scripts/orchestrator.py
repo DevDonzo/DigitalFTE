@@ -580,31 +580,9 @@ class VaultHandler(FileSystemEventHandler):
                         logger.error(f"Error generating social posts: {e}")
                         self._log_action('social_drafts_error', filepath.name, 'failure', str(e))
             else:
-                # Legacy: Create generic plan for non-email items
-                plan_file = self.vault / 'Plans' / f"PLAN_{filepath.stem}.md"
-                plan_content = f"""---
-created: {datetime.now().isoformat()}
-status: pending
-source: {filepath.name}
----
-
-# Plan: {filepath.stem}
-
-## Analysis
-AI Assistant should process: {filepath.name}
-
-## Next Steps
-- [ ] Review {filepath.name}
-- [ ] Determine if approval needed
-- [ ] Create /Pending_Approval/ or execute directly
-- [ ] Update this plan
-
-## Notes
-Processed at: {datetime.now().isoformat()}
-"""
-                plan_file.write_text(plan_content)
-                logger.info(f"📋 Plan created: {plan_file.name}")
-                self._log_action('inbox_processed', filepath.name, 'success')
+                # Unknown file type - log and skip
+                logger.warning(f"Unknown file type: {filepath.name} - skipping")
+                self._log_action('inbox_skipped', filepath.name, 'unknown_type')
 
         except Exception as e:
             logger.error(f"Inbox processing error: {e}")
