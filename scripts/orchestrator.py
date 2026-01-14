@@ -1584,10 +1584,10 @@ status: pending_approval
                 else:
                     platforms = ['linkedin', 'facebook']  # Default to LinkedIn + Facebook
 
-            # Extract post text - support formats: ## Tweet, ## Post Text, ## Post Content, ## Content
+            # Extract post text - support formats: ## Proposed Post, ## Tweet, ## Post Text, ## Post Content, ## Content
             post_text = ''
             post_started = False
-            post_sections = ['## Tweet', '## Post Text', '## Post Content', '## Facebook Post', '## Content']
+            post_sections = ['## Proposed Post', '## Tweet', '## Post Text', '## Post Content', '## Facebook Post', '## Content']
 
             for i, line in enumerate(lines[frontmatter_end:]):
                 if any(section in line for section in post_sections):
