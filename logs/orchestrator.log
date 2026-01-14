@@ -1,58 +1,78 @@
-INFO:__main__:✓ EmailDrafter available
-INFO:googleapiclient.discovery_cache:file_cache is only supported with oauth2client<4.0.0
-INFO:utils.email_drafter:✓ OpenAI initialized (gpt-4o-mini)
-INFO:__main__:✓ Email Drafter initialized (OpenAI-powered)
-INFO:utils.tweet_drafter:✓ TweetDrafter initialized (OpenAI gpt-4o-mini)
-INFO:__main__:✓ Tweet Drafter initialized (OpenAI-powered)
-INFO:utils.whatsapp_drafter:✓ WhatsAppDrafter initialized (OpenAI gpt-4o-mini)
-INFO:__main__:✓ WhatsApp Drafter initialized (OpenAI-powered)
-INFO:utils.social_post_drafter:✓ SocialPostDrafter initialized (OpenAI gpt-4o-mini)
-INFO:__main__:✓ Social Post Drafter initialized (OpenAI-powered)
-INFO:watchers.whatsapp_watcher:✓ Twilio WhatsApp initialized (+14155238886)
-INFO:__main__:✓ WhatsApp Business API initialized
-INFO:__main__:🔍 Scanning for existing files...
-INFO:__main__:Found 1 existing file(s) in Needs_Action
-INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb9ec9ce1d1dfe.md
-WARNING:__main__:Failed to draft reply for EMAIL_19bb9ec9ce1d1dfe.md
-INFO:__main__:📱 Detected social media post request in: EMAIL_19bb9ec9ce1d1dfe.md
-INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:utils.social_post_drafter:✓ Twitter draft created: TWITTER_DRAFT_20260113_194238.md
-INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:utils.social_post_drafter:✓ Facebook draft created: FACEBOOK_DRAFT_20260113_194242.md
-INFO:__main__:Processing batch of 1 inbox files
-INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb9e67f21b7ca5.md
-WARNING:__main__:Failed to draft reply for EMAIL_19bb9e67f21b7ca5.md
-INFO:__main__:📱 Detected social media post request in: EMAIL_19bb9e67f21b7ca5.md
-INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:utils.social_post_drafter:✓ Twitter draft created: TWITTER_DRAFT_20260113_194244.md
-INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:utils.social_post_drafter:✓ Facebook draft created: FACEBOOK_DRAFT_20260113_194246.md
-INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:utils.social_post_drafter:✓ LinkedIn draft created: LINKEDIN_DRAFT_20260113_194248.md
-INFO:__main__:📱 Generated 3 social media drafts
-INFO:__main__:   ✓ Twitter: TWITTER_DRAFT_20260113_194238.md
-INFO:__main__:   ✓ Facebook: FACEBOOK_DRAFT_20260113_194242.md
-INFO:__main__:   ✓ Linkedin: LINKEDIN_DRAFT_20260113_194248.md
-INFO:__main__:Found 2 existing file(s) in Approved
-INFO:__main__:🚀 Orchestrator started (watching /Users/hparacha/DigitalFTE/vault)
-INFO:__main__:📦 Batching enabled: processes events in batches every 2s or when 50+ events queue
-INFO:__main__:Processing batch of 1 inbox files
-INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb9e67f21b7ca5.md
-WARNING:__main__:Failed to draft reply for EMAIL_19bb9e67f21b7ca5.md
-INFO:__main__:📱 Detected social media post request in: EMAIL_19bb9e67f21b7ca5.md
-INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:utils.social_post_drafter:✓ Twitter draft created: TWITTER_DRAFT_20260113_194250.md
-INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:utils.social_post_drafter:✓ LinkedIn draft created: LINKEDIN_DRAFT_20260113_194252.md
-INFO:__main__:📱 Generated 3 social media drafts
-INFO:__main__:   ✓ Twitter: TWITTER_DRAFT_20260113_194244.md
-INFO:__main__:   ✓ Facebook: FACEBOOK_DRAFT_20260113_194246.md
-INFO:__main__:   ✓ Linkedin: LINKEDIN_DRAFT_20260113_194252.md
-INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:utils.social_post_drafter:✓ Facebook draft created: FACEBOOK_DRAFT_20260113_194253.md
-INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-INFO:utils.social_post_drafter:✓ LinkedIn draft created: LINKEDIN_DRAFT_20260113_194257.md
-INFO:__main__:📱 Generated 3 social media drafts
-INFO:__main__:   ✓ Twitter: TWITTER_DRAFT_20260113_194250.md
-INFO:__main__:   ✓ Facebook: FACEBOOK_DRAFT_20260113_194253.md
-INFO:__main__:   ✓ Linkedin: LINKEDIN_DRAFT_20260113_194257.md
+2026-01-13 20:28:23,739 [__main__] ✓ EmailDrafter available
+2026-01-13 20:28:23,741 [googleapiclient.discovery_cache] file_cache is only supported with oauth2client<4.0.0
+2026-01-13 20:28:23,972 [utils.email_drafter] ✓ OpenAI initialized (gpt-4o-mini)
+2026-01-13 20:28:23,972 [__main__] ✓ Email Drafter initialized (OpenAI-powered)
+2026-01-13 20:28:23,981 [utils.tweet_drafter] ✓ TweetDrafter initialized (OpenAI gpt-4o-mini)
+2026-01-13 20:28:23,981 [__main__] ✓ Tweet Drafter initialized (OpenAI-powered)
+2026-01-13 20:28:23,991 [utils.whatsapp_drafter] ✓ WhatsAppDrafter initialized (OpenAI gpt-4o-mini)
+2026-01-13 20:28:23,991 [__main__] ✓ WhatsApp Drafter initialized (OpenAI-powered)
+2026-01-13 20:28:24,000 [utils.social_post_drafter] ✓ SocialPostDrafter initialized (OpenAI gpt-4o-mini)
+2026-01-13 20:28:24,000 [__main__] ✓ Social Post Drafter initialized (OpenAI-powered)
+2026-01-13 20:28:24,000 [__main__] 🔄 Xero token expiring soon - refreshing...
+2026-01-13 20:28:24,292 [__main__] ✅ Xero token refreshed successfully
+2026-01-13 20:28:24,293 [__main__] ✅ .env updated with fresh Xero token
+2026-01-13 20:28:24,294 [__main__] 🔍 Scanning for existing files...
+2026-01-13 20:28:24,295 [__main__] 🚀 Orchestrator started (watching /Users/hparacha/DigitalFTE/vault)
+2026-01-13 20:28:24,295 [__main__] 📦 Batching enabled: processes events in batches every 2s or when 50+ events queue
+2026-01-13 20:28:37,124 [__main__] Processing batch of 1 inbox files
+2026-01-13 20:28:37,124 [__main__] 💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260113T202837.112102_twilio.md
+2026-01-13 20:28:37,384 [__main__] Processing batch of 1 inbox files
+2026-01-13 20:28:37,929 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:28:37,938 [utils.whatsapp_drafter] ✓ WhatsApp draft created: WHATSAPP_DRAFT_20260113_202837.md [⚪ NORMAL, confidence: 85%]
+2026-01-13 20:28:37,938 [__main__] 💬 WhatsApp draft created: WHATSAPP_DRAFT_20260113_202837.md
+2026-01-13 20:28:44,437 [__main__] ⚡ Executing ⚪ NORMAL action (priority: NORMAL): WHATSAPP_DRAFT_20260113_202837.md
+2026-01-13 20:28:44,437 [__main__] 💬 Sending WhatsApp message to +16475683720
+2026-01-13 20:28:44,437 [__main__]    Message preview: Hi there! How can I help you today?...
+2026-01-13 20:28:44,438 [__main__] WhatsApp execution failed: WhatsApp Business API not initialized
+2026-01-13 20:28:44,438 [__main__] Action error: WhatsApp Business API not initialized
+2026-01-13 20:30:43,737 [__main__] Processing batch of 1 inbox files
+2026-01-13 20:30:43,738 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bb9ec9ce1d1dfe.md
+2026-01-13 20:30:43,738 [__main__] Failed to draft reply for EMAIL_19bb9ec9ce1d1dfe.md
+2026-01-13 20:30:43,739 [__main__] 📱 Detected social media post request in: EMAIL_19bb9ec9ce1d1dfe.md
+2026-01-13 20:30:43,840 [__main__] Processing batch of 1 inbox files
+2026-01-13 20:30:44,864 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:30:44,869 [utils.social_post_drafter] ✓ Twitter draft created: TWITTER_DRAFT_20260113_203044.md
+2026-01-13 20:30:47,911 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:30:47,914 [utils.social_post_drafter] ✓ Facebook draft created: FACEBOOK_DRAFT_20260113_203047.md
+2026-01-13 20:30:53,346 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:30:53,352 [utils.social_post_drafter] ✓ LinkedIn draft created: LINKEDIN_DRAFT_20260113_203053.md
+2026-01-13 20:30:53,352 [__main__] 📱 Generated 3 social media drafts
+2026-01-13 20:30:53,352 [__main__]    ✓ Twitter: TWITTER_DRAFT_20260113_203044.md
+2026-01-13 20:30:53,352 [__main__]    ✓ Facebook: FACEBOOK_DRAFT_20260113_203047.md
+2026-01-13 20:30:53,352 [__main__]    ✓ Linkedin: LINKEDIN_DRAFT_20260113_203053.md
+2026-01-13 20:30:55,423 [__main__] Processing batch of 9 inbox files
+2026-01-13 20:30:55,424 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bb9e67f21b7ca5.md
+2026-01-13 20:30:55,424 [__main__] Failed to draft reply for EMAIL_19bb9e67f21b7ca5.md
+2026-01-13 20:30:55,425 [__main__] 📱 Detected social media post request in: EMAIL_19bb9e67f21b7ca5.md
+2026-01-13 20:30:56,922 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:30:56,925 [utils.social_post_drafter] ✓ Twitter draft created: TWITTER_DRAFT_20260113_203056.md
+2026-01-13 20:31:00,975 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:31:00,985 [utils.social_post_drafter] ✓ Facebook draft created: FACEBOOK_DRAFT_20260113_203100.md
+2026-01-13 20:31:05,012 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:31:05,019 [utils.social_post_drafter] ✓ LinkedIn draft created: LINKEDIN_DRAFT_20260113_203105.md
+2026-01-13 20:31:05,019 [__main__] 📱 Generated 3 social media drafts
+2026-01-13 20:31:05,019 [__main__]    ✓ Twitter: TWITTER_DRAFT_20260113_203056.md
+2026-01-13 20:31:05,019 [__main__]    ✓ Facebook: FACEBOOK_DRAFT_20260113_203100.md
+2026-01-13 20:31:05,019 [__main__]    ✓ Linkedin: LINKEDIN_DRAFT_20260113_203105.md
+2026-01-13 20:31:05,020 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bb9d0dd13e6243.md
+2026-01-13 20:31:05,020 [__main__] Failed to draft reply for EMAIL_19bb9d0dd13e6243.md
+2026-01-13 20:31:05,020 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bb9c94d7b54909.md
+2026-01-13 20:31:05,021 [__main__] 🧾 Invoice draft created: INVOICE_DRAFT_20260113_203105.md (amount: $116299.00)
+2026-01-13 20:31:05,021 [__main__] Failed to draft reply for EMAIL_19bb9c94d7b54909.md
+2026-01-13 20:31:05,021 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bb916767611710.md
+2026-01-13 20:31:05,021 [__main__] Failed to draft reply for EMAIL_19bb916767611710.md
+2026-01-13 20:31:05,021 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bb82fcc3aed9d0.md
+2026-01-13 20:31:05,021 [__main__] 🧾 Invoice draft created: INVOICE_DRAFT_20260113_203105.md (amount: $249497.00)
+2026-01-13 20:31:05,021 [__main__] Failed to draft reply for EMAIL_19bb82fcc3aed9d0.md
+2026-01-13 20:31:05,021 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bb818060384ef4.md
+2026-01-13 20:31:05,022 [__main__] 🧾 Invoice draft created: INVOICE_DRAFT_20260113_203105.md (amount: $2412.00)
+2026-01-13 20:31:05,022 [__main__] Failed to draft reply for EMAIL_19bb818060384ef4.md
+2026-01-13 20:31:05,022 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bb813ca88aae8d.md
+2026-01-13 20:31:05,022 [__main__] 🧾 Invoice draft created: INVOICE_DRAFT_20260113_203105.md (amount: $100.00)
+2026-01-13 20:31:05,022 [__main__] Failed to draft reply for EMAIL_19bb813ca88aae8d.md
+2026-01-13 20:31:05,022 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bb81139737099c.md
+2026-01-13 20:31:05,022 [__main__] 🧾 Invoice draft created: INVOICE_DRAFT_20260113_203105.md (amount: $100.00)
+2026-01-13 20:31:05,022 [__main__] Failed to draft reply for EMAIL_19bb81139737099c.md
+2026-01-13 20:31:05,023 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bb80053907aecf.md
+2026-01-13 20:31:05,023 [__main__] 🧾 Invoice draft created: INVOICE_DRAFT_20260113_203105.md (amount: $100.00)
+2026-01-13 20:31:05,023 [__main__] Failed to draft reply for EMAIL_19bb80053907aecf.md

@@ -5,36 +5,32 @@ echo ""
 cd /Users/hparacha/DigitalFTE
 
 # Kill any existing processes
-pkill -f "scripts/orchestrator"
-pkill -f "watchers/gmail_watcher"
-pkill -f "watchers/whatsapp_watcher"
-pkill -f "watchers/linkedin_watcher"
-pkill -f "scripts/webhook_server"
-pkill -f "scripts/watchdog"
+pkill -f "agents/orchestrator"
+pkill -f "agents/gmail_watcher"
+pkill -f "agents/whatsapp_watcher"
+pkill -f "agents/webhook_server"
+pkill -f "agents/watchdog"
 sleep 2
 
-# Start all services
+# Start all services from agents/ folder
 echo "Starting Orchestrator..."
-python3 scripts/orchestrator.py > logs/orchestrator.log 2>&1 &
+python3 agents/orchestrator.py > logs/orchestrator.log 2>&1 &
 
 echo "Starting Gmail Watcher..."
-python3 watchers/gmail_watcher.py > logs/gmail_watcher.log 2>&1 &
+python3 agents/gmail_watcher.py > logs/gmail_watcher.log 2>&1 &
 
 echo "Starting Webhook Server..."
-python3 scripts/webhook_server.py > logs/webhook_server.log 2>&1 &
+python3 agents/webhook_server.py > logs/webhook_server.log 2>&1 &
 
 echo "Starting WhatsApp Watcher..."
-python3 watchers/whatsapp_watcher.py > logs/whatsapp_watcher.log 2>&1 &
+python3 agents/whatsapp_watcher.py > logs/whatsapp_watcher.log 2>&1 &
 
 echo "Starting Watchdog..."
-python3 scripts/watchdog.py > logs/watchdog.log 2>&1 &
-
-echo "Starting Weekly Audit Scheduler..."
-python3 scripts/weekly_audit.py > logs/weekly_audit.log 2>&1 &
+python3 agents/watchdog.py > logs/watchdog.log 2>&1 &
 
 sleep 3
 echo ""
 echo "✅ All services started!"
 echo ""
-ps aux | grep -E "(orchestrator|gmail_watcher|whatsapp_watcher|webhook_server|watchdog|linkedin_watcher)" | grep -v grep | wc -l
+ps aux | grep -E "(orchestrator|gmail_watcher|whatsapp_watcher|webhook_server|watchdog)" | grep -v grep | wc -l
 echo "services running"
