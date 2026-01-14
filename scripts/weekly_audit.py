@@ -334,77 +334,100 @@ def get_xero_financials() -> dict:
 
 def get_bank_transactions(vault: Path) -> dict:
     """
-    Read Bank_Transactions.md per hackathon spec.
+    Generate Bank_Transactions.md from Xero API.
     This is the PRIMARY source for financial reporting.
     """
-    bank_file = vault / 'Bank_Transactions.md'
-    
-    if not bank_file.exists():
+    if not HAS_XERO:
         return {
             'summary': """### Revenue Tracking
-- **Status**: Bank_Transactions.md not found
-- Create `/vault/Bank_Transactions.md` to enable financial reporting"""
+- **Status**: Xero not available
+- Install xero-python: pip install xero-python"""
         }
-    
-    try:
-        content = bank_file.read_text()
-        
-        # Parse summary section
-        summary_lines = []
-        this_week_revenue = 0.0
-        this_week_expenses = 0.0
-        
-        in_summary = False
-        for line in content.split('\n'):
-            if '## Monthly Summary' in line:
-                in_summary = True
-                continue
-            if in_summary and '##' in line and 'Monthly' not in line:
-                break
-            if in_summary and '| Revenue |' in line:
-                # Extract revenue amount
-                parts = line.split('|')
-                if len(parts) > 1:
-                    try:
-                        amount_str = parts[1].strip().replace('+$', '').split()[0]
-                        # This is monthly, divide by 4 for weekly estimate
-                        this_week_revenue = float(amount_str) / 4
-                    except:
-                        pass
-            if in_summary and '| Subscriptions |' in line:
-                # Extract subscription expenses
-                parts = line.split('|')
-                if len(parts) > 1:
-                    try:
-                        amount_str = parts[1].strip().replace('-$', '').split()[0]
-                        this_week_expenses = float(amount_str) / 4
-                    except:
-                        pass
-        
-        # Build summary
-        summary = f"""### Revenue This Week
-- **Revenue**: ${this_week_revenue:,.2f}
-- **Expenses**: ${this_week_expenses:,.2f}
-- **Net**: ${(this_week_revenue - this_week_expenses):,.2f}
 
-### Data Source
-- **File**: Bank_Transactions.md
-- **Last Updated**: {content.split('last_updated:')[1].split('\\n')[0].strip() if 'last_updated:' in content else 'Unknown'}
-- **Status**: ✅ Synced"""
-        
+    try:
+        xero = XeroClient()
+        if not xero.access_token:
+            return {
+                'summary': """### Revenue Tracking
+- **Status**: Xero not authenticated
+- Run: python auth/xero.py"""
+            }
+
+        # Get this month's transactions
+        today = datetime.now()
+        month_start = today.replace(day=1)
+        transactions = xero.get_bank_transactions(since_date=month_start)
+
+        if not transactions:
+            return {
+                'summary': """### Revenue Tracking
+- **Status**: No Xero transactions this month
+- Check your Xero account"""
+            }
+
+        # Calculate totals
+        revenue = sum(float(t.get('Total', 0)) for t in transactions if t.get('Type') == 'RECEIVE')
+        expenses = sum(abs(float(t.get('Total', 0))) for t in transactions if t.get('Type') == 'SPEND')
+        net = revenue - expenses
+
+        # Generate Bank_Transactions.md
+        tx_rows = []
+        for tx in transactions[:20]:  # Show last 20 transactions
+            date_str = tx.get('Date', '')[:10]
+            reference = tx.get('Reference', '-')[:35]
+            amount = float(tx.get('Total', 0))
+            tx_type = tx.get('Type', 'UNKNOWN')
+            status = '✅' if tx.get('Status') == 'AUTHORISED' else '⏳'
+            tx_rows.append(f"| {date_str} | {reference} | ${abs(amount):,.2f} | {tx_type} | {status} |")
+
+        bank_content = f"""---
+source: Xero API
+period: {month_start.strftime('%Y-%m')}
+last_updated: {today.isoformat()}Z
+currency: USD
+---
+
+# Bank Transactions - {month_start.strftime('%B %Y')}
+
+## Monthly Summary
+
+| Category | Amount |
+|----------|--------|
+| **Revenue** | +${revenue:,.2f} |
+| **Expenses** | -${expenses:,.2f} |
+| **Net** | **+${net:,.2f}** |
+
+## Transactions
+
+| Date | Description | Amount | Type | Status |
+|------|-------------|--------|------|--------|
+{chr(10).join(tx_rows)}
+
+---
+
+*Auto-generated from Xero API - {today.strftime('%Y-%m-%d %H:%M')}*
+"""
+
+        # Save to vault
+        bank_file = vault / 'Bank_Transactions.md'
+        bank_file.write_text(bank_content)
+        logger.info(f"✅ Bank_Transactions.md synced from Xero ({len(transactions)} txns)")
+
         return {
-            'summary': summary,
-            'revenue': this_week_revenue,
-            'expenses': this_week_expenses,
-            'net': this_week_revenue - this_week_expenses
+            'summary': f"""### Revenue Tracking (Xero)
+- **Period**: {month_start.strftime('%B %Y')}
+- **Revenue**: +${revenue:,.2f}
+- **Expenses**: -${expenses:,.2f}
+- **Net**: +${net:,.2f}
+- **Transactions**: {len(transactions)}"""
         }
-    
+
     except Exception as e:
-        logger.error(f"Error reading Bank_Transactions.md: {e}")
+        logger.error(f"Xero error: {e}")
         return {
             'summary': f"""### Revenue Tracking
-- **Status**: Error reading Bank_Transactions.md
-- **Error**: {str(e)[:50]}"""
+- **Status**: Xero sync failed
+- **Error**: {str(e)[:40]}"""
         }
 
 
