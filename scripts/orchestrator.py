@@ -843,7 +843,7 @@ status: pending_approval
                 self._execute_payment(filepath, content)
             elif 'INVOICE' in filepath.name:
                 self._execute_invoice(filepath, content)
-            elif 'POST' in filepath.name:
+            elif any(platform in filepath.name.upper() for platform in ['POST', 'TWITTER', 'FACEBOOK', 'LINKEDIN', 'INSTAGRAM']):
                 self._execute_post(filepath, content)
             else:
                 logger.warning(f"Unknown action type: {filepath.name}")
