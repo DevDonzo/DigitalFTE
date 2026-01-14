@@ -43,7 +43,8 @@ class TweetDrafter:
     def _load_processed(self) -> set:
         """Load set of already-processed tweet request filenames"""
         if self.processed_file.exists():
-            return set(self.processed_file.read_text().strip().split('\n'))
+            ids = [line.strip() for line in self.processed_file.read_text().strip().split('\n') if line.strip()]
+            return set(ids)
         return set()
 
     def _mark_processed(self, filename: str):
