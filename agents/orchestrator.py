@@ -13,7 +13,6 @@ from email.mime.text import MIMEText
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
-
 # Avoid local scripts/watchdog.py shadowing watchdog package when running as script.
 scripts_dir = Path(__file__).resolve().parent
 if sys.path and Path(sys.path[0]).resolve() == scripts_dir:
@@ -43,9 +42,12 @@ except ImportError:
 
 # Import Gmail watcher for marking emails as read
 try:
-    from watchers.gmail_watcher import GmailWatcher
+    from agents.gmail_watcher import GmailWatcher
 except ImportError:
-    GmailWatcher = None
+    try:
+        from gmail_watcher import GmailWatcher
+    except ImportError:
+        GmailWatcher = None
 
 # Add utils to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -74,10 +76,14 @@ except ImportError:
     HAS_SOCIAL_DRAFTER = False
 
 try:
-    from watchers.whatsapp_watcher import WhatsAppWatcher as WhatsAppBusinessAPI
+    from agents.whatsapp_watcher import WhatsAppWatcher as WhatsAppBusinessAPI
     HAS_WHATSAPP_API = True
 except ImportError:
-    HAS_WHATSAPP_API = False
+    try:
+        from whatsapp_watcher import WhatsAppWatcher as WhatsAppBusinessAPI
+        HAS_WHATSAPP_API = True
+    except ImportError:
+        HAS_WHATSAPP_API = False
 
 logging.basicConfig(
     level=logging.INFO,
@@ -1112,7 +1118,15 @@ status: pending_approval
             raise RuntimeError("LINKEDIN_ACCESS_TOKEN not configured in .env")
 
         try:
-            from watchers.linkedin_watcher import LinkedInAPI
+            # Try different import paths to handle various execution contexts
+            try:
+                from .linkedin_watcher import LinkedInAPI
+            except (ImportError, ValueError):
+                try:
+                    from linkedin_watcher import LinkedInAPI
+                except ImportError:
+                    from agents.linkedin_watcher import LinkedInAPI
+
             linkedin = LinkedInAPI(access_token)
 
             # Check for link in metadata
