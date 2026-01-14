@@ -160,6 +160,8 @@ class VaultHandler(FileSystemEventHandler):
         self.processed_hashes = set()
         self.executed_files = set()  # Track executed files to avoid double processing
         self.invoice_drafts_created = set()  # Track (source_file, message_id) pairs to prevent duplication
+        self.recently_processed_files = {}  # Track (filename: timestamp) to prevent duplicate drafting
+        self.dedup_window = 5.0  # Prevent reprocessing same file within 5 seconds
         self.last_batch_time = time.time()
         self.batch_timeout = 2.0  # Batch events every 2 seconds
 
@@ -477,6 +479,24 @@ class VaultHandler(FileSystemEventHandler):
     def _process_inbox(self, filepath):
         """Needs_Action item detected → Route to appropriate drafter"""
         try:
+            # Deduplication: Skip if file was recently processed (within dedup_window)
+            with self.dedup_lock:
+                current_time = time.time()
+                if filepath.name in self.recently_processed_files:
+                    last_processed = self.recently_processed_files[filepath.name]
+                    if current_time - last_processed < self.dedup_window:
+                        logger.debug(f"⏭️ Skipping recently processed file: {filepath.name}")
+                        return
+
+                # Clean up old entries (older than 30 seconds)
+                self.recently_processed_files = {
+                    fname: ftime for fname, ftime in self.recently_processed_files.items()
+                    if current_time - ftime < 30.0
+                }
+
+                # Mark this file as processed now
+                self.recently_processed_files[filepath.name] = current_time
+
             content = filepath.read_text()
 
             # Check file type based on content or filename
