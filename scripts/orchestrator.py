@@ -1071,14 +1071,15 @@ status: pending_approval
         import json
         import subprocess
 
-        access_token = os.getenv('FACEBOOK_ACCESS_TOKEN')
-        page_id = os.getenv('FACEBOOK_PAGE_ID')
+        # Support both META_ and FACEBOOK_ naming conventions
+        access_token = os.getenv('META_ACCESS_TOKEN') or os.getenv('FACEBOOK_ACCESS_TOKEN')
+        page_id = os.getenv('META_PAGE_ID') or os.getenv('FACEBOOK_PAGE_ID')
         ig_account_id = os.getenv('INSTAGRAM_BUSINESS_ACCOUNT_ID')
 
         if not access_token:
-            raise RuntimeError("FACEBOOK_ACCESS_TOKEN not configured in .env")
+            raise RuntimeError("META_ACCESS_TOKEN or FACEBOOK_ACCESS_TOKEN not configured in .env")
         if not page_id:
-            raise RuntimeError("FACEBOOK_PAGE_ID not configured in .env")
+            raise RuntimeError("META_PAGE_ID or FACEBOOK_PAGE_ID not configured in .env")
 
         try:
             # Determine platform from metadata or default to Facebook
