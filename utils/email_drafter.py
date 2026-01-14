@@ -52,7 +52,8 @@ class EmailDrafter:
     def _load_processed_emails(self) -> set:
         """Load set of already-processed email filenames"""
         if self.processed_emails_file.exists():
-            return set(self.processed_emails_file.read_text().strip().split('\n'))
+            ids = [line.strip() for line in self.processed_emails_file.read_text().strip().split('\n') if line.strip()]
+            return set(ids)
         return set()
 
     def _mark_email_processed(self, email_filename: str):

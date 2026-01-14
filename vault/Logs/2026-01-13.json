@@ -424,3 +424,147 @@
 {"timestamp": "2026-01-13T16:39:19.268888+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T113918.135503_twilio.md", "result": "success", "error": null}
 {"timestamp": "2026-01-13T16:39:19.349291+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T113918.135503_twilio.md", "result": "success", "error": null}
 {"timestamp": "2026-01-13T16:39:36.613596+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260113_113919.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-13T17:24:38.919756+00:00", "action_type": "whatsapp_draft_failed", "actor": "orchestrator", "target": "WHATSAPP_20260113T113918.135503_twilio.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-13T17:24:38.991229+00:00", "action_type": "whatsapp_draft_failed", "actor": "orchestrator", "target": "WHATSAPP_20260113T113918.135503_twilio.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-13T20:39:10.170581+00:00", "action_type": "whatsapp_draft_failed", "actor": "orchestrator", "target": "WHATSAPP_20260113T113918.135503_twilio.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-13T20:41:57.249276Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-13T20:41:57.366853Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-13T20:41:57.491616Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-13T20:41:57.605426Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-13T20:41:57.715263Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-13T20:41:57.826689Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-13T20:41:57.933900Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-13T20:41:58.037197Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-13T20:41:58.150824Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-13T20:42:00.010784+00:00", "action_type": "email_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb916767611710.md", "result": "success", "error": null}
+{"timestamp": "2026-01-13T20:42:00.144243+00:00", "action_type": "email_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb916767611710.md", "result": "success", "error": null}
+{"timestamp": "2026-01-13T20:42:22.258905+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "EMAIL_DRAFT_20260113_154200.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-13T20:43:27.633930+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T154326.481078_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-13T20:43:27.754919+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T154326.481078_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-13T20:43:33.532160+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260113_154327.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-13T20:44:07.357054+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T154406.504767_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-13T20:44:07.559010+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T154406.504767_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-13T20:44:14.313177+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260113_154407.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-13T20:44:59.821693Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-13T20:44:59.834995+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb7f88d1f6660d.md", "result": "success", "error": "INVOICE_DRAFT_20260113_154459.md"}
+{"timestamp": "2026-01-13T20:44:59.835521+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb7f88d1f6660d.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-13T23:55:41.284296Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-13T23:55:41.299536+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "success", "error": "INVOICE_DRAFT_20260113_185541.md"}
+{"timestamp": "2026-01-13T23:55:43.322287+00:00", "action_type": "email_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "success", "error": null}
+{"timestamp": "2026-01-13T23:55:43.379315+00:00", "action_type": "email_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "success", "error": null}
+{"timestamp": "2026-01-13T23:56:40.919906+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T185639.431286_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-13T23:56:41.114332+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T185639.431286_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-13T23:56:56.980526+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260113_185640.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T00:02:29.312108+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T190228.202650_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T00:02:29.591006+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T190228.202650_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T00:02:45.172058+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260113_190229.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T00:03:31.563386Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:03:31.681304Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:03:31.813112Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:03:31.929117Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:03:32.052427Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:03:32.168608Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:03:32.338817Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:03:32.463277Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:03:32.579716Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:04:13.529103Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:04:15.458003+00:00", "action_type": "email_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9d0dd13e6243.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T00:04:15.657956+00:00", "action_type": "email_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9d0dd13e6243.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T00:04:36.828815+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "EMAIL_DRAFT_20260113_190415.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T00:27:43.957125Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:27:46.157671+00:00", "action_type": "email_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T00:27:46.681108+00:00", "action_type": "email_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T00:27:55.676816+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:27:56.338770+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:30:27.237643+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "TWITTER_DRAFT_20260113_192747.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T00:30:57.429999+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "FACEBOOK_DRAFT_20260113_192752.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T00:32:58.656444+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "EMAIL_DRAFT_20260113_192746.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T00:33:13.780903+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "FACEBOOK_DRAFT_20260113_192751.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T00:33:23.851263+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "LINKEDIN_DRAFT_20260113_192755.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T00:34:27.207581Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:34:29.531130+00:00", "action_type": "email_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T00:34:39.358636+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:35:28.455137+00:00", "action_type": "action_error", "actor": "orchestrator", "target": "FACEBOOK_DRAFT_20260113_193433.md", "result": "failure", "error": "No post text found"}
+{"timestamp": "2026-01-14T00:38:01.415059+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:38:05.309703+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:38:09.173113+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:38:15.202214+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:38:19.111910+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:38:23.545935+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:42:36.593547+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:42:36.595414+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:42:42.524575Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:42.643015Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:42.654434+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:42:42.654437+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:42:42.757769Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:42.867552Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:42.979332Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.076125Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.088659Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.178389Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.193702Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.284454Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.304565Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.419178Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.419184Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.520295Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.537152Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.646412Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.752723Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.860295Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:43.967182Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:44.096535Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:42:48.004365+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:42:48.006309+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:42:48.848990+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:42:48.849695+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:42:52.093688+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:42:52.156946+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:42:57.282779+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:42:57.733239+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:44:12.830103+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:44:22.092822+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:44:22.095210+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb81139737099c.md", "result": "success", "error": "INVOICE_DRAFT_20260113_194422.md"}
+{"timestamp": "2026-01-14T00:44:22.095452+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb81139737099c.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:44:22.096739+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb813ca88aae8d.md", "result": "success", "error": "INVOICE_DRAFT_20260113_194422.md"}
+{"timestamp": "2026-01-14T00:44:22.097219+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb813ca88aae8d.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:44:22.098058+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9d0dd13e6243.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:44:22.099196+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb818060384ef4.md", "result": "success", "error": "INVOICE_DRAFT_20260113_194422.md"}
+{"timestamp": "2026-01-14T00:44:22.099344+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb818060384ef4.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:44:22.099737+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb916767611710.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:44:22.100169+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:44:30.555248+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:44:30.556360+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb80053907aecf.md", "result": "success", "error": "INVOICE_DRAFT_20260113_194430.md"}
+{"timestamp": "2026-01-14T00:44:30.556500+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb80053907aecf.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:44:30.557623+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb82fcc3aed9d0.md", "result": "success", "error": "INVOICE_DRAFT_20260113_194430.md"}
+{"timestamp": "2026-01-14T00:44:30.557764+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb82fcc3aed9d0.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:44:30.558426+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "success", "error": "INVOICE_DRAFT_20260113_194430.md"}
+{"timestamp": "2026-01-14T00:44:30.558536+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:44:45.663329+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "FACEBOOK_DRAFT_20260113_193810.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T00:48:08.459249Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:48:08.541593+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:48:08.574476Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:48:08.696609Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:48:09.067056Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:48:09.222674Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:48:09.334898Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:48:09.458610Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:48:09.567354Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:48:09.747441Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:48:09.885347Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T00:48:18.660319+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:48:20.980379+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:48:31.065773+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T00:48:31.067190+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9d0dd13e6243.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:48:31.068261+00:00", "action_type": "inbox_error", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "failure", "error": "[Errno 2] No such file or directory: '/Users/hparacha/DigitalFTE/vault/Needs_Action/EMAIL_19bb9c94d7b54909.md'"}
+{"timestamp": "2026-01-14T00:48:31.068610+00:00", "action_type": "inbox_error", "actor": "orchestrator", "target": "EMAIL_19bb916767611710.md", "result": "failure", "error": "[Errno 2] No such file or directory: '/Users/hparacha/DigitalFTE/vault/Needs_Action/EMAIL_19bb916767611710.md'"}
+{"timestamp": "2026-01-14T00:48:31.068842+00:00", "action_type": "inbox_error", "actor": "orchestrator", "target": "EMAIL_19bb82fcc3aed9d0.md", "result": "failure", "error": "[Errno 2] No such file or directory: '/Users/hparacha/DigitalFTE/vault/Needs_Action/EMAIL_19bb82fcc3aed9d0.md'"}
+{"timestamp": "2026-01-14T00:48:31.069039+00:00", "action_type": "inbox_error", "actor": "orchestrator", "target": "EMAIL_19bb818060384ef4.md", "result": "failure", "error": "[Errno 2] No such file or directory: '/Users/hparacha/DigitalFTE/vault/Needs_Action/EMAIL_19bb818060384ef4.md'"}
+{"timestamp": "2026-01-14T00:48:31.070790+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb813ca88aae8d.md", "result": "success", "error": "INVOICE_DRAFT_20260113_194831.md"}
+{"timestamp": "2026-01-14T00:48:31.071372+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb813ca88aae8d.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T00:48:31.071735+00:00", "action_type": "inbox_error", "actor": "orchestrator", "target": "EMAIL_19bb81139737099c.md", "result": "failure", "error": "[Errno 2] No such file or directory: '/Users/hparacha/DigitalFTE/vault/Needs_Action/EMAIL_19bb81139737099c.md'"}
+{"timestamp": "2026-01-14T00:48:31.072026+00:00", "action_type": "inbox_error", "actor": "orchestrator", "target": "EMAIL_19bb80053907aecf.md", "result": "failure", "error": "[Errno 2] No such file or directory: '/Users/hparacha/DigitalFTE/vault/Needs_Action/EMAIL_19bb80053907aecf.md'"}
+{"timestamp": "2026-01-14T00:49:01.934822+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "FACEBOOK_DRAFT_20260113_194813.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T00:49:13.443593+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "LINKEDIN_DRAFT_20260113_194818.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T00:49:32.836119+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "TWITTER_DRAFT_20260113_194809.md", "result": "success", "error": "urgency=NORMAL"}
