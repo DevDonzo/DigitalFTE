@@ -40,6 +40,7 @@ coloredlogs>=15.0.1
 
 # Scheduling
 APScheduler>=3.10.0
+schedule>=1.2.0  # For simple weekly scheduling in weekly_audit
 
 # Database (optional - for future)
 sqlalchemy>=2.0.0

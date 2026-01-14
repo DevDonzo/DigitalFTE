@@ -46,11 +46,11 @@ PROCESSES = {
         'max_restarts': 5,
         'restart_window': 3600
     },
-    'linkedin_watcher': {
-        'cmd': 'python3 watchers/linkedin_watcher.py',
-        'pid_file': Path('/tmp/digitalfte_linkedin_watcher.pid'),
-        'restart_delay': 3,
-        'max_restarts': 5,
+    'weekly_audit': {
+        'cmd': 'python3 scripts/weekly_audit.py',
+        'pid_file': Path('/tmp/digitalfte_weekly_audit.pid'),
+        'restart_delay': 5,
+        'max_restarts': 3,
         'restart_window': 3600
     },
     'webhook_server': {

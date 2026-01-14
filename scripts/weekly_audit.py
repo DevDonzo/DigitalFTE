@@ -550,4 +550,18 @@ Check `/Logs` for detailed activity logs.
 
 
 if __name__ == '__main__':
+    import time
+    import schedule
+
+    # Generate briefing on startup
     generate_ceo_briefing()
+
+    # Schedule to run every Monday at 9:00 AM
+    schedule.every().monday.at("09:00").do(generate_ceo_briefing)
+
+    logger.info("📊 Weekly audit scheduler started (runs every Monday @ 9:00 AM)")
+
+    # Keep running
+    while True:
+        schedule.run_pending()
+        time.sleep(60)  # Check every minute

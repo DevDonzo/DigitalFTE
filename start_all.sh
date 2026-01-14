@@ -29,8 +29,8 @@ python3 watchers/whatsapp_watcher.py > logs/whatsapp_watcher.log 2>&1 &
 echo "Starting Watchdog..."
 python3 scripts/watchdog.py > logs/watchdog.log 2>&1 &
 
-echo "Starting LinkedIn Watcher..."
-python3 watchers/linkedin_watcher.py > logs/linkedin_watcher.log 2>&1 &
+echo "Starting Weekly Audit Scheduler..."
+python3 scripts/weekly_audit.py > logs/weekly_audit.log 2>&1 &
 
 sleep 3
 echo ""
