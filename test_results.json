@@ -1,0 +1,228 @@
+{
+  "infrastructure": [
+    {
+      "test": "dir_Needs_Action",
+      "passed": true
+    },
+    {
+      "test": "dir_Pending_Approval",
+      "passed": true
+    },
+    {
+      "test": "dir_Approved",
+      "passed": true
+    },
+    {
+      "test": "dir_Done",
+      "passed": true
+    },
+    {
+      "test": "dir_Logs",
+      "passed": true
+    },
+    {
+      "test": "dir_Briefings",
+      "passed": true
+    },
+    {
+      "test": "dir_Accounting",
+      "passed": true
+    },
+    {
+      "test": "file_Dashboard.md",
+      "passed": true
+    },
+    {
+      "test": "file_Company_Handbook.md",
+      "passed": true
+    },
+    {
+      "test": "file_Business_Goals.md",
+      "passed": true
+    },
+    {
+      "test": "file_Bank_Transactions.md",
+      "passed": true
+    },
+    {
+      "test": "audit_logger",
+      "passed": true
+    },
+    {
+      "test": "logs",
+      "passed": true
+    },
+    {
+      "test": "scripts/watchdog.py",
+      "passed": true
+    },
+    {
+      "test": "scripts/webhook_server.py",
+      "passed": true
+    },
+    {
+      "test": "scripts/orchestrator.py",
+      "passed": true
+    },
+    {
+      "test": "scripts/weekly_audit.py",
+      "passed": true
+    },
+    {
+      "test": "start_all.sh",
+      "passed": true
+    },
+    {
+      "test": "stop_all.sh",
+      "passed": true
+    }
+  ],
+  "xero_integration": [
+    {
+      "test": "import",
+      "passed": true
+    },
+    {
+      "test": "auth",
+      "passed": true
+    },
+    {
+      "test": "bank_file",
+      "passed": true
+    },
+    {
+      "test": "bank_header",
+      "passed": true
+    },
+    {
+      "test": "bank_summary",
+      "passed": true
+    }
+  ],
+  "dashboard": [
+    {
+      "test": "exists",
+      "passed": true
+    },
+    {
+      "test": "header",
+      "passed": true
+    },
+    {
+      "test": "stats",
+      "passed": true
+    },
+    {
+      "test": "status",
+      "passed": true
+    }
+  ],
+  "weekly_audit": [
+    {
+      "test": "import",
+      "passed": true
+    },
+    {
+      "test": "briefings_dir",
+      "passed": true
+    },
+    {
+      "test": "briefings_exist",
+      "passed": true
+    },
+    {
+      "test": "summary",
+      "passed": true
+    },
+    {
+      "test": "metrics",
+      "passed": true
+    },
+    {
+      "test": "financial",
+      "passed": true
+    }
+  ],
+  "orchestrator": [
+    {
+      "test": "import",
+      "passed": true
+    },
+    {
+      "test": "init",
+      "passed": true
+    },
+    {
+      "test": "route_EMAIL_DRAFT_",
+      "passed": true
+    },
+    {
+      "test": "route_TWITTER_DRAFT_",
+      "passed": true
+    },
+    {
+      "test": "route_FACEBOOK_DRAFT_",
+      "passed": true
+    },
+    {
+      "test": "route_LINKEDIN_DRAFT_",
+      "passed": true
+    },
+    {
+      "test": "route_WHATSAPP_",
+      "passed": true
+    },
+    {
+      "test": "route_INVOICE_",
+      "passed": true
+    }
+  ],
+  "watchers": [
+    {
+      "test": "watchers/base_watcher.py",
+      "passed": true
+    },
+    {
+      "test": "watchers/gmail_watcher.py",
+      "passed": true
+    },
+    {
+      "test": "watchers/whatsapp_watcher.py",
+      "passed": true
+    },
+    {
+      "test": "watchers/linkedin_watcher.py",
+      "passed": true
+    }
+  ],
+  "social_media": [
+    {
+      "test": "TWITTER_API_KEY",
+      "passed": true
+    },
+    {
+      "test": "OPENAI_API_KEY",
+      "passed": true
+    },
+    {
+      "test": "META_ACCESS_TOKEN",
+      "passed": true
+    },
+    {
+      "test": "LINKEDIN_ACCESS_TOKEN",
+      "passed": true
+    },
+    {
+      "test": "Twitter_handler",
+      "passed": true
+    },
+    {
+      "test": "Facebook_handler",
+      "passed": true
+    },
+    {
+      "test": "LinkedIn_handler",
+      "passed": true
+    }
+  ]
+}

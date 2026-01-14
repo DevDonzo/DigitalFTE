@@ -568,3 +568,117 @@
 {"timestamp": "2026-01-14T00:49:01.934822+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "FACEBOOK_DRAFT_20260113_194813.md", "result": "success", "error": "urgency=NORMAL"}
 {"timestamp": "2026-01-14T00:49:13.443593+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "LINKEDIN_DRAFT_20260113_194818.md", "result": "success", "error": "urgency=NORMAL"}
 {"timestamp": "2026-01-14T00:49:32.836119+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "TWITTER_DRAFT_20260113_194809.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T01:10:04.095048Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:04.104491+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:04.104549+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:04.206641Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:04.317798Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:04.429787Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:04.543021Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:04.657270Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:04.779319Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:04.894799Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:05.006986Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:05.125291Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:14.824345+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T01:10:15.350172+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T01:10:16.966594+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:17.580380+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.422645+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T01:10:27.423401+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9d0dd13e6243.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.425223+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "success", "error": "INVOICE_DRAFT_20260113_201027.md"}
+{"timestamp": "2026-01-14T01:10:27.425537+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.426083+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb916767611710.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.427197+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb82fcc3aed9d0.md", "result": "success", "error": "INVOICE_DRAFT_20260113_201027.md"}
+{"timestamp": "2026-01-14T01:10:27.427363+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb82fcc3aed9d0.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.428094+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb818060384ef4.md", "result": "success", "error": "INVOICE_DRAFT_20260113_201027.md"}
+{"timestamp": "2026-01-14T01:10:27.428238+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb818060384ef4.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.428905+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb813ca88aae8d.md", "result": "success", "error": "INVOICE_DRAFT_20260113_201027.md"}
+{"timestamp": "2026-01-14T01:10:27.429038+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb813ca88aae8d.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.429631+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb81139737099c.md", "result": "success", "error": "INVOICE_DRAFT_20260113_201027.md"}
+{"timestamp": "2026-01-14T01:10:27.429763+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb81139737099c.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.430955+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb80053907aecf.md", "result": "success", "error": "INVOICE_DRAFT_20260113_201027.md"}
+{"timestamp": "2026-01-14T01:10:27.431132+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb80053907aecf.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.632911+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T01:10:27.633307+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9d0dd13e6243.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.634603+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "success", "error": "INVOICE_DRAFT_20260113_201027.md"}
+{"timestamp": "2026-01-14T01:10:27.634750+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.634973+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb916767611710.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.635562+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb82fcc3aed9d0.md", "result": "success", "error": "INVOICE_DRAFT_20260113_201027.md"}
+{"timestamp": "2026-01-14T01:10:27.635692+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb82fcc3aed9d0.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.636225+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb818060384ef4.md", "result": "success", "error": "INVOICE_DRAFT_20260113_201027.md"}
+{"timestamp": "2026-01-14T01:10:27.636351+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb818060384ef4.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.636941+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb813ca88aae8d.md", "result": "success", "error": "INVOICE_DRAFT_20260113_201027.md"}
+{"timestamp": "2026-01-14T01:10:27.637084+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb813ca88aae8d.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.637748+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb81139737099c.md", "result": "success", "error": "INVOICE_DRAFT_20260113_201027.md"}
+{"timestamp": "2026-01-14T01:10:27.637932+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb81139737099c.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:27.639347+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb80053907aecf.md", "result": "success", "error": "INVOICE_DRAFT_20260113_201027.md"}
+{"timestamp": "2026-01-14T01:10:27.639647+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb80053907aecf.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:10:28.249939Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:28.365894Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:28.485969Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:28.599464Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:28.715677Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:28.835313Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:28.961359Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:29.073307Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:29.192254Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:10:29.312996Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:17:45.774185+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T201744.948559_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T01:17:45.774153+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T201744.948559_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T01:17:51.487933+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260113_201745.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T01:17:51.653072+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260113_201745.md", "result": "success", "error": "urgency=NORMAL (file already moved)"}
+{"timestamp": "2026-01-14T01:27:26.269699+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T202725.241520_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T01:27:26.446539+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T202725.241520_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T01:27:51.250309+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260113_202726.md", "result": "success", "error": "urgency=BUSINESS"}
+{"timestamp": "2026-01-14T01:27:51.387226+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260113_202726.md", "result": "success", "error": "urgency=BUSINESS (file already moved)"}
+{"timestamp": "2026-01-14T01:28:37.754863+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T202837.112102_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T01:28:37.939070+00:00", "action_type": "whatsapp_draft_created", "actor": "orchestrator", "target": "WHATSAPP_20260113T202837.112102_twilio.md", "result": "success", "error": null}
+{"timestamp": "2026-01-14T01:28:44.438168+00:00", "action_type": "action_error", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260113_202837.md", "result": "failure", "error": "WhatsApp Business API not initialized"}
+{"timestamp": "2026-01-14T01:28:46.985314+00:00", "action_type": "action_executed", "actor": "orchestrator", "target": "WHATSAPP_DRAFT_20260113_202837.md", "result": "success", "error": "urgency=NORMAL"}
+{"timestamp": "2026-01-14T01:30:43.726555Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:30:43.738634+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:30:43.739722+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:30:43.881933Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:30:43.996348Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:30:44.117477Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:30:44.235373Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:30:45.250387Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:30:45.363017Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:30:45.477703Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:30:45.593836Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:30:45.708285Z", "event_type": "watcher_detected_event", "action_type": "GmailWatcher", "actor": "watcher", "result": "success"}
+{"timestamp": "2026-01-14T01:30:53.352947+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T01:30:53.751975+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9ec9ce1d1dfe.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T01:30:55.425039+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:30:55.781391+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.019967+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T01:31:05.020310+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9d0dd13e6243.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.021242+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "success", "error": "INVOICE_DRAFT_20260113_203105.md"}
+{"timestamp": "2026-01-14T01:31:05.021345+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.021487+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb916767611710.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.021761+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb82fcc3aed9d0.md", "result": "success", "error": "INVOICE_DRAFT_20260113_203105.md"}
+{"timestamp": "2026-01-14T01:31:05.021816+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb82fcc3aed9d0.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.022043+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb818060384ef4.md", "result": "success", "error": "INVOICE_DRAFT_20260113_203105.md"}
+{"timestamp": "2026-01-14T01:31:05.022118+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb818060384ef4.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.022453+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb813ca88aae8d.md", "result": "success", "error": "INVOICE_DRAFT_20260113_203105.md"}
+{"timestamp": "2026-01-14T01:31:05.022530+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb813ca88aae8d.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.022857+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb81139737099c.md", "result": "success", "error": "INVOICE_DRAFT_20260113_203105.md"}
+{"timestamp": "2026-01-14T01:31:05.022934+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb81139737099c.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.023280+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb80053907aecf.md", "result": "success", "error": "INVOICE_DRAFT_20260113_203105.md"}
+{"timestamp": "2026-01-14T01:31:05.023415+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb80053907aecf.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.136909+00:00", "action_type": "social_drafts_created", "actor": "orchestrator", "target": "EMAIL_19bb9e67f21b7ca5.md", "result": "success", "error": "[\"twitter\", \"facebook\", \"linkedin\"]"}
+{"timestamp": "2026-01-14T01:31:05.137366+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9d0dd13e6243.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.138612+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "success", "error": "INVOICE_DRAFT_20260113_203105.md"}
+{"timestamp": "2026-01-14T01:31:05.138810+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb9c94d7b54909.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.138995+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb916767611710.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.139705+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb82fcc3aed9d0.md", "result": "success", "error": "INVOICE_DRAFT_20260113_203105.md"}
+{"timestamp": "2026-01-14T01:31:05.139918+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb82fcc3aed9d0.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.140538+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb818060384ef4.md", "result": "success", "error": "INVOICE_DRAFT_20260113_203105.md"}
+{"timestamp": "2026-01-14T01:31:05.140761+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb818060384ef4.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.141238+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb813ca88aae8d.md", "result": "success", "error": "INVOICE_DRAFT_20260113_203105.md"}
+{"timestamp": "2026-01-14T01:31:05.141348+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb813ca88aae8d.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.141624+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb81139737099c.md", "result": "success", "error": "INVOICE_DRAFT_20260113_203105.md"}
+{"timestamp": "2026-01-14T01:31:05.141677+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb81139737099c.md", "result": "failure", "error": null}
+{"timestamp": "2026-01-14T01:31:05.141894+00:00", "action_type": "invoice_draft_created", "actor": "orchestrator", "target": "EMAIL_19bb80053907aecf.md", "result": "success", "error": "INVOICE_DRAFT_20260113_203105.md"}
+{"timestamp": "2026-01-14T01:31:05.141944+00:00", "action_type": "email_draft_failed", "actor": "orchestrator", "target": "EMAIL_19bb80053907aecf.md", "result": "failure", "error": null}

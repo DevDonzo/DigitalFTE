@@ -1,2 +1,11 @@
-INFO:__main__:✓ Twilio WhatsApp initialized (+14155238886)
-INFO:__main__:Starting Twilio WhatsApp Watcher (checking every 10s)
+Traceback (most recent call last):
+  File "/Users/hparacha/DigitalFTE/agents/whatsapp_watcher.py", line 9, in <module>
+    from .base_watcher import BaseWatcher
+ImportError: attempted relative import with no known parent package
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/hparacha/DigitalFTE/agents/whatsapp_watcher.py", line 11, in <module>
+    from base_watcher import BaseWatcher
+ModuleNotFoundError: No module named 'base_watcher'

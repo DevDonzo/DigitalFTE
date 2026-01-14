@@ -26,35 +26,28 @@ logger = logging.getLogger(__name__)
 # Critical processes to monitor
 PROCESSES = {
     'orchestrator': {
-        'cmd': 'python3 scripts/orchestrator.py',
+        'cmd': 'python3 agents/orchestrator.py',
         'pid_file': Path('/tmp/digitalfte_orchestrator.pid'),
         'restart_delay': 5,
         'max_restarts': 10,
         'restart_window': 3600  # 1 hour
     },
     'gmail_watcher': {
-        'cmd': 'python3 watchers/gmail_watcher.py',
+        'cmd': 'python3 agents/gmail_watcher.py',
         'pid_file': Path('/tmp/digitalfte_gmail_watcher.pid'),
         'restart_delay': 3,
         'max_restarts': 5,
         'restart_window': 3600
     },
     'whatsapp_watcher': {
-        'cmd': 'python3 watchers/whatsapp_watcher.py',
+        'cmd': 'python3 agents/whatsapp_watcher.py',
         'pid_file': Path('/tmp/digitalfte_whatsapp_watcher.pid'),
         'restart_delay': 3,
         'max_restarts': 5,
         'restart_window': 3600
     },
-    'weekly_audit': {
-        'cmd': 'python3 scripts/weekly_audit.py',
-        'pid_file': Path('/tmp/digitalfte_weekly_audit.pid'),
-        'restart_delay': 5,
-        'max_restarts': 3,
-        'restart_window': 3600
-    },
     'webhook_server': {
-        'cmd': 'python3 scripts/webhook_server.py',
+        'cmd': 'python3 agents/webhook_server.py',
         'pid_file': Path('/tmp/digitalfte_webhook.pid'),
         'restart_delay': 5,
         'max_restarts': 10,

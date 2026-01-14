@@ -1,14 +1,5 @@
-2026-01-13 19:42:36,056 [__main__] ============================================================
-2026-01-13 19:42:36,056 [__main__] 🐕 DigitalFTE Watchdog Started
-2026-01-13 19:42:36,056 [__main__] ============================================================
-2026-01-13 19:42:36,056 [__main__] Monitoring processes: orchestrator, gmail_watcher, whatsapp_watcher, linkedin_watcher, webhook_server
-2026-01-13 19:42:36,057 [__main__] 🚀 Starting orchestrator...
-2026-01-13 19:42:36,059 [__main__] ✅ orchestrator started (PID: 98777)
-2026-01-13 19:42:36,060 [__main__] 🚀 Starting gmail_watcher...
-2026-01-13 19:42:36,063 [__main__] ✅ gmail_watcher started (PID: 98778)
-2026-01-13 19:42:36,064 [__main__] 🚀 Starting whatsapp_watcher...
-2026-01-13 19:42:36,068 [__main__] ✅ whatsapp_watcher started (PID: 98779)
-2026-01-13 19:42:36,069 [__main__] 🚀 Starting linkedin_watcher...
-2026-01-13 19:42:36,075 [__main__] ✅ linkedin_watcher started (PID: 98780)
-2026-01-13 19:42:36,076 [__main__] 🚀 Starting webhook_server...
-2026-01-13 19:42:36,086 [__main__] ✅ webhook_server started (PID: 98782)
+2026-01-13 20:28:23,587 [__main__] ============================================================
+2026-01-13 20:28:23,587 [__main__] 🐕 DigitalFTE Watchdog Started
+2026-01-13 20:28:23,587 [__main__] ============================================================
+2026-01-13 20:28:23,587 [__main__] Monitoring processes: orchestrator, gmail_watcher, whatsapp_watcher, webhook_server
+2026-01-13 20:33:23,632 [__main__] 📊 Status: 4/4 processes running
