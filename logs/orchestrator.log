@@ -76,3 +76,104 @@
 2026-01-13 20:31:05,023 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bb80053907aecf.md
 2026-01-13 20:31:05,023 [__main__] 🧾 Invoice draft created: INVOICE_DRAFT_20260113_203105.md (amount: $100.00)
 2026-01-13 20:31:05,023 [__main__] Failed to draft reply for EMAIL_19bb80053907aecf.md
+2026-01-13 20:45:17,629 [__main__] Processing batch of 1 inbox files
+2026-01-13 20:45:17,631 [__main__] 💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260113T204517.617785_twilio.md
+2026-01-13 20:45:17,999 [__main__] Processing batch of 1 inbox files
+2026-01-13 20:45:19,146 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:45:19,150 [utils.whatsapp_drafter] ✓ WhatsApp draft created: WHATSAPP_DRAFT_20260113_204519.md [⚪ NORMAL, confidence: 85%]
+2026-01-13 20:45:19,151 [__main__] 💬 WhatsApp draft created: WHATSAPP_DRAFT_20260113_204519.md
+2026-01-13 20:46:02,292 [__main__] ⚡ Executing ⚪ NORMAL action (priority: NORMAL): WHATSAPP_DRAFT_20260113_204519.md
+2026-01-13 20:46:02,293 [__main__] 💬 Sending WhatsApp message to +16475683720
+2026-01-13 20:46:02,293 [__main__]    Message preview: Hi! I'm an AI assistant for Hamza. I'll make sure to add the team building event on February 15 to t...
+2026-01-13 20:46:02,293 [__main__] WhatsApp execution failed: WhatsApp Business API not initialized
+2026-01-13 20:46:02,293 [__main__] Action error: WhatsApp Business API not initialized
+2026-01-13 20:49:33,332 [__main__] Processing batch of 1 inbox files
+2026-01-13 20:49:33,334 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bba317258b933f.md
+2026-01-13 20:49:33,334 [utils.email_drafter] 📧 Drafting reply for: EMAIL_19bba317258b933f.md
+2026-01-13 20:49:33,833 [__main__] Processing batch of 1 inbox files
+2026-01-13 20:49:35,254 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:49:35,256 [utils.email_drafter] ✓ Draft generated via OpenAI API (gpt-4o-mini)
+2026-01-13 20:49:35,257 [utils.email_drafter] ✓ Draft created (pending approval): EMAIL_DRAFT_20260113_204935.md
+2026-01-13 20:49:35,257 [__main__] ✉️ Draft created: EMAIL_DRAFT_20260113_204935.md
+2026-01-13 20:49:35,258 [__main__] 📱 Detected social media post request in: EMAIL_19bba317258b933f.md
+2026-01-13 20:49:36,371 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:49:36,379 [utils.social_post_drafter] ✓ Twitter draft created: TWITTER_DRAFT_20260113_204936.md
+2026-01-13 20:49:39,556 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:49:39,575 [utils.social_post_drafter] ✓ Facebook draft created: FACEBOOK_DRAFT_20260113_204939.md
+2026-01-13 20:49:43,927 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:49:43,929 [utils.social_post_drafter] ✓ LinkedIn draft created: LINKEDIN_DRAFT_20260113_204943.md
+2026-01-13 20:49:43,929 [__main__] 📱 Generated 3 social media drafts
+2026-01-13 20:49:43,930 [__main__]    ✓ Twitter: TWITTER_DRAFT_20260113_204936.md
+2026-01-13 20:49:43,930 [__main__]    ✓ Facebook: FACEBOOK_DRAFT_20260113_204939.md
+2026-01-13 20:49:43,930 [__main__]    ✓ Linkedin: LINKEDIN_DRAFT_20260113_204943.md
+2026-01-13 20:51:34,668 [__main__] Processing batch of 1 inbox files
+2026-01-13 20:51:34,670 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bba336d526b46f.md
+2026-01-13 20:51:34,671 [utils.email_drafter] 📧 Drafting reply for: EMAIL_19bba336d526b46f.md
+2026-01-13 20:51:34,722 [__main__] Processing batch of 1 inbox files
+2026-01-13 20:51:35,990 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:51:35,997 [utils.email_drafter] ✓ Draft generated via OpenAI API (gpt-4o-mini)
+2026-01-13 20:51:35,998 [utils.email_drafter] ✓ Draft created (pending approval): EMAIL_DRAFT_20260113_205135.md
+2026-01-13 20:51:35,998 [__main__] ✉️ Draft created: EMAIL_DRAFT_20260113_205135.md
+2026-01-13 20:51:35,998 [__main__] 📱 Detected social media post request in: EMAIL_19bba336d526b46f.md
+2026-01-13 20:51:38,134 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:51:38,136 [utils.social_post_drafter] ✓ Twitter draft created: TWITTER_DRAFT_20260113_205138.md
+2026-01-13 20:51:42,836 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:51:42,844 [utils.social_post_drafter] ✓ Facebook draft created: FACEBOOK_DRAFT_20260113_205142.md
+2026-01-13 20:51:49,301 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 20:51:49,307 [utils.social_post_drafter] ✓ LinkedIn draft created: LINKEDIN_DRAFT_20260113_205149.md
+2026-01-13 20:51:49,307 [__main__] 📱 Generated 3 social media drafts
+2026-01-13 20:51:49,307 [__main__]    ✓ Twitter: TWITTER_DRAFT_20260113_205138.md
+2026-01-13 20:51:49,307 [__main__]    ✓ Facebook: FACEBOOK_DRAFT_20260113_205142.md
+2026-01-13 20:51:49,307 [__main__]    ✓ Linkedin: LINKEDIN_DRAFT_20260113_205149.md
+2026-01-13 21:03:40,303 [__main__] Processing batch of 1 inbox files
+2026-01-13 21:03:40,305 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bba3e688428ca4.md
+2026-01-13 21:03:40,307 [__main__] 🧾 Invoice draft created: INVOICE_DRAFT_20260113_210340.md (amount: $100.00)
+2026-01-13 21:03:40,308 [utils.email_drafter] 📧 Drafting reply for: EMAIL_19bba3e688428ca4.md
+2026-01-13 21:03:40,547 [__main__] Processing batch of 1 inbox files
+2026-01-13 21:03:42,426 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 21:03:42,428 [utils.email_drafter] ✓ Draft generated via OpenAI API (gpt-4o-mini)
+2026-01-13 21:03:42,429 [utils.email_drafter] ✓ Draft created (pending approval): EMAIL_DRAFT_20260113_210342.md
+2026-01-13 21:03:42,430 [__main__] ✉️ Draft created: EMAIL_DRAFT_20260113_210342.md
+2026-01-13 21:03:44,570 [__main__] Processing batch of 1 inbox files
+2026-01-13 21:03:44,571 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bba3e66aaf537a.md
+2026-01-13 21:03:44,571 [utils.email_drafter] 📧 Drafting reply for: EMAIL_19bba3e66aaf537a.md
+2026-01-13 21:03:46,569 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 21:03:46,574 [utils.email_drafter] ✓ Draft generated via OpenAI API (gpt-4o-mini)
+2026-01-13 21:03:46,575 [utils.email_drafter] ✓ Draft created (pending approval): EMAIL_DRAFT_20260113_210346.md
+2026-01-13 21:03:46,575 [__main__] ✉️ Draft created: EMAIL_DRAFT_20260113_210346.md
+2026-01-13 21:03:46,576 [__main__] 📱 Detected social media post request in: EMAIL_19bba3e66aaf537a.md
+2026-01-13 21:03:48,395 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 21:03:48,397 [utils.social_post_drafter] ✓ Twitter draft created: TWITTER_DRAFT_20260113_210348.md
+2026-01-13 21:03:52,053 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 21:03:52,056 [utils.social_post_drafter] ✓ Facebook draft created: FACEBOOK_DRAFT_20260113_210352.md
+2026-01-13 21:03:59,048 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 21:03:59,051 [utils.social_post_drafter] ✓ LinkedIn draft created: LINKEDIN_DRAFT_20260113_210359.md
+2026-01-13 21:03:59,051 [__main__] 📱 Generated 3 social media drafts
+2026-01-13 21:03:59,051 [__main__]    ✓ Twitter: TWITTER_DRAFT_20260113_210348.md
+2026-01-13 21:03:59,051 [__main__]    ✓ Facebook: FACEBOOK_DRAFT_20260113_210352.md
+2026-01-13 21:03:59,051 [__main__]    ✓ Linkedin: LINKEDIN_DRAFT_20260113_210359.md
+2026-01-13 21:04:01,169 [__main__] Processing batch of 1 inbox files
+2026-01-13 21:04:01,170 [__main__] 💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260113T210401.158476_twilio.md
+2026-01-13 21:04:01,568 [__main__] Processing batch of 1 inbox files
+2026-01-13 21:04:02,191 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 21:04:02,194 [utils.whatsapp_drafter] ✓ WhatsApp draft created: WHATSAPP_DRAFT_20260113_210402.md [⚪ NORMAL, confidence: 85%]
+2026-01-13 21:04:02,195 [__main__] 💬 WhatsApp draft created: WHATSAPP_DRAFT_20260113_210402.md
+2026-01-13 21:06:42,215 [__main__] Processing batch of 1 inbox files
+2026-01-13 21:06:42,217 [__main__] 🤖 Using AI Assistant to draft reply for: EMAIL_19bba41415626ec5.md
+2026-01-13 21:06:42,217 [utils.email_drafter] 📧 Drafting reply for: EMAIL_19bba41415626ec5.md
+2026-01-13 21:06:42,296 [__main__] Processing batch of 1 inbox files
+2026-01-13 21:06:43,911 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 21:06:43,926 [utils.email_drafter] ✓ Draft generated via OpenAI API (gpt-4o-mini)
+2026-01-13 21:06:43,927 [utils.email_drafter] ✓ Draft created (pending approval): EMAIL_DRAFT_20260113_210643.md
+2026-01-13 21:06:43,927 [__main__] ✉️ Draft created: EMAIL_DRAFT_20260113_210643.md
+2026-01-13 21:06:43,928 [__main__] 📱 Detected social media post request in: EMAIL_19bba41415626ec5.md
+2026-01-13 21:06:45,489 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 21:06:45,491 [utils.social_post_drafter] ✓ Twitter draft created: TWITTER_DRAFT_20260113_210645.md
+2026-01-13 21:06:47,864 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 21:06:47,866 [utils.social_post_drafter] ✓ Facebook draft created: FACEBOOK_DRAFT_20260113_210647.md
+2026-01-13 21:06:54,568 [httpx] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-13 21:06:54,573 [utils.social_post_drafter] ✓ LinkedIn draft created: LINKEDIN_DRAFT_20260113_210654.md
+2026-01-13 21:06:54,573 [__main__] 📱 Generated 3 social media drafts
+2026-01-13 21:06:54,573 [__main__]    ✓ Twitter: TWITTER_DRAFT_20260113_210645.md
+2026-01-13 21:06:54,573 [__main__]    ✓ Facebook: FACEBOOK_DRAFT_20260113_210647.md
+2026-01-13 21:06:54,573 [__main__]    ✓ Linkedin: LINKEDIN_DRAFT_20260113_210654.md
