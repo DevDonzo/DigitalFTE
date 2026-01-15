@@ -209,6 +209,32 @@ Is this from a HUMAN or a BOT/AUTOMATED SYSTEM?"""
 
         return body.strip()[:5000]  # Limit to 5000 chars
 
+    def _get_email_thread(self, thread_id: str) -> list[dict]:
+        """Fetch full thread conversation from Gmail"""
+        try:
+            thread = self.service.users().threads().get(
+                userId='me', id=thread_id, format='full'
+            ).execute()
+
+            messages = []
+            for msg in thread.get('messages', []):
+                headers = {h['name'].lower(): h['value']
+                          for h in msg['payload'].get('headers', [])}
+                body = self._get_email_body(msg.get('payload', {}))
+
+                messages.append({
+                    'from': headers.get('from', 'Unknown'),
+                    'date': headers.get('date', ''),
+                    'subject': headers.get('subject', ''),
+                    'body': body
+                })
+
+            logger.debug(f"✓ Fetched thread {thread_id} with {len(messages)} message(s)")
+            return messages
+        except Exception as e:
+            logger.error(f"Failed to fetch thread {thread_id}: {e}")
+            return []
+
     def create_action_file(self, message) -> Path:
         """Create markdown file for new email"""
         try:
@@ -218,15 +244,35 @@ Is this from a HUMAN or a BOT/AUTOMATED SYSTEM?"""
 
             headers = {h['name']: h['value'] for h in msg['payload'].get('headers', [])}
             snippet = msg.get('snippet', '')
+            thread_id = msg.get('threadId', '')
 
             # Get full body
             full_body = self._get_email_body(msg.get('payload', {}))
             if not full_body:
                 full_body = snippet
 
+            # Fetch thread context if this is part of a thread
+            thread_messages = []
+            is_reply = False
+            if thread_id:
+                thread_messages = self._get_email_thread(thread_id)
+                is_reply = len(thread_messages) > 1
+
+            # Build thread history section if this is a reply
+            thread_history_section = ""
+            if is_reply and thread_messages:
+                thread_history_section = "\n## Thread History (Oldest to Newest)\n\n"
+                # Show all messages except the current one (last message)
+                for i, tmsg in enumerate(thread_messages[:-1], 1):
+                    thread_history_section += f"### Message {i}: {tmsg['date']} from {tmsg['from']}\n\n"
+                    thread_history_section += f"{tmsg['body']}\n\n"
+                    thread_history_section += "---\n\n"
+
             content = f"""---
 type: email
 gmail_message_id: {message['id']}
+thread_id: {thread_id}
+is_reply: {str(is_reply).lower()}
 from: {headers.get('From', 'Unknown')}
 subject: {headers.get('Subject', 'No Subject')}
 received: {datetime.now().isoformat()}
@@ -240,7 +286,9 @@ status: pending
 ## Subject
 {headers.get('Subject', 'No Subject')}
 
-## Body
+{thread_history_section}
+
+## Current Message
 {full_body}
 
 ## Actions

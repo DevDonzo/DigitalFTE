@@ -10,6 +10,9 @@ import sys
 import base64
 import threading
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
@@ -851,7 +854,9 @@ status: pending_approval
             # Parse YAML frontmatter
             lines = content.split('\n')
             metadata = {}
+            attachments = []
             in_frontmatter = False
+            in_attachments = False
             frontmatter_end = 0
 
             for i, line in enumerate(lines):
@@ -861,9 +866,19 @@ status: pending_approval
                     else:
                         frontmatter_end = i
                         break
-                elif in_frontmatter and ':' in line:
-                    key, val = line.split(':', 1)
-                    metadata[key.strip()] = val.strip()
+                elif in_frontmatter:
+                    if line.strip() == 'attachments:':
+                        in_attachments = True
+                    elif in_attachments and line.strip().startswith('- '):
+                        attachment = line.strip().lstrip('- ').strip()
+                        if attachment:
+                            attachments.append(attachment)
+                    elif in_attachments and not line.strip().startswith('- '):
+                        in_attachments = False
+
+                    if ':' in line and not in_attachments:
+                        key, val = line.split(':', 1)
+                        metadata[key.strip()] = val.strip()
 
             # Extract reply text - support both formats:
             # 1. New format: ## Proposed Response (from Email Drafter)
@@ -906,8 +921,28 @@ status: pending_approval
             logger.info(f"   Subject: {subject}")
             logger.info(f"   Body preview: {reply_text[:100]}...")
 
-            # Call Email MCP via Python
-            self._call_email_mcp(recipient, subject, reply_text)
+            # Validate and prepare attachments
+            validated_attachments = []
+            if attachments:
+                try:
+                    from utils.attachment_finder import validate_attachment
+                    for attachment_path in attachments:
+                        filepath_obj = Path(attachment_path)
+                        validation = validate_attachment(filepath_obj)
+
+                        if validation['valid']:
+                            validated_attachments.append(attachment_path)
+                            if validation['warnings']:
+                                for warning in validation['warnings']:
+                                    logger.warning(f"⚠️  {filepath_obj.name}: {warning}")
+                        else:
+                            logger.error(f"❌ Invalid attachment {filepath_obj.name}: {validation['warnings'][0]}")
+                            # Continue without this attachment
+                except Exception as e:
+                    logger.warning(f"Attachment validation error: {e}")
+
+            # Call Email MCP via Python with attachments
+            self._call_email_mcp(recipient, subject, reply_text, validated_attachments)
 
             logger.info(f"✉️ Email sent successfully to {recipient}")
              
@@ -938,16 +973,43 @@ status: pending_approval
         except Exception as e:
             logger.warning(f"Failed to move original email from Needs_Action: {e}")
 
-    def _call_email_mcp(self, to: str, subject: str, body: str):
-        """Send email via Gmail API"""
+    def _call_email_mcp(self, to: str, subject: str, body: str, attachments: list[str] = None):
+        """Send email via Gmail API with optional attachments"""
         if not self.gmail_service:
             raise RuntimeError("Gmail service not initialized - cannot send email")
 
         try:
-            # Create MIME message
-            message = MIMEText(body)
-            message['to'] = to
-            message['subject'] = subject
+            # Create MIME message with attachment support
+            if attachments:
+                message = MIMEMultipart()
+                message['to'] = to
+                message['subject'] = subject
+
+                # Attach body as plain text
+                message.attach(MIMEText(body, 'plain'))
+
+                # Attach files
+                for attachment_path in attachments:
+                    filepath = Path(attachment_path)
+                    try:
+                        with open(filepath, 'rb') as f:
+                            part = MIMEBase('application', 'octet-stream')
+                            part.set_payload(f.read())
+                            encoders.encode_base64(part)
+                            part.add_header(
+                                'Content-Disposition',
+                                f'attachment; filename={filepath.name}'
+                            )
+                            message.attach(part)
+                            logger.info(f"📎 Attached: {filepath.name}")
+                    except Exception as e:
+                        logger.error(f"Failed to attach {filepath.name}: {e}")
+                        # Continue with other attachments
+            else:
+                # Plain text email (no attachments)
+                message = MIMEText(body)
+                message['to'] = to
+                message['subject'] = subject
 
             # Encode and send
             raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
@@ -965,10 +1027,12 @@ status: pending_approval
             sent_file = self.vault / 'Logs' / 'emails_sent.jsonl'
             sent_file.parent.mkdir(parents=True, exist_ok=True)
 
+            attachment_names = [Path(a).name for a in (attachments or [])]
             email_log = {
                 'to': to,
                 'subject': subject,
                 'body': body[:200] + '...' if len(body) > 200 else body,
+                'attachments': attachment_names if attachment_names else None,
                 'timestamp': datetime.now(timezone.utc).isoformat(),
                 'status': 'sent',
                 'message_id': message_id
