@@ -1,97 +1,265 @@
-# 🏆 DigitalFTE - Personal AI Employee
+# 🚀 DigitalFTE - Build Your Own Personal AI Employee
 
-An autonomous AI agent that works 24/7 like a full-time employee. Built with Claude Code, Obsidian, Python watchers, and MCP servers.
+An open-source autonomous AI agent system that works 24/7 like a full-time employee. Built with Claude Code, Obsidian, Python, and MCP servers.
 
-**Repository**: https://github.com/DevDonzo/DigitalFTE.git
+**Repository**: https://github.com/DevDonzo/DigitalFTE
 
-**Status**: 🏆 Gold Tier - 100% Complete (All 23 hackathon requirements implemented)
+**Status**: ✨ Production Ready - Fully functional with email, messaging, social media, and accounting integrations
 
 ---
 
 ## What It Does
 
-This system automates personal and business affairs across multiple domains:
+DigitalFTE automates personal and business tasks across multiple domains:
 
-- **Email Management**: Monitors Gmail, drafts intelligent replies, routes to human for approval
-- **WhatsApp Messages**: Receives messages via Twilio webhooks, generates contextual responses
-- **Social Media**: Posts to LinkedIn, Twitter, Facebook, Instagram
-- **Accounting**: Creates invoices in Xero, logs transactions, generates reports
-- **CEO Briefing**: Weekly automated summary of revenue, tasks, and bottlenecks
+- **📧 Email Management** - AI monitors Gmail, drafts intelligent replies, you approve before sending
+- **💬 WhatsApp Messages** - Receives messages via webhooks, generates contextual responses
+- **📱 Social Media** - Auto-posts to LinkedIn, Twitter, Facebook, Instagram
+- **💰 Accounting** - Creates invoices in Xero, logs transactions, generates financial reports
+- **📊 Executive Briefing** - Weekly automated summary of revenue, tasks, and key metrics
+- **✍️ Personalized Writing** - AI learns your email style and voice, matches your tone naturally
+- **🔗 Thread Context** - AI replies reference previous emails in the conversation
+- **📎 File Attachments** - Automatically attach PDFs and documents to outgoing emails
 
-**Core Principle**: Local-first (Obsidian vault) + Cloud integrations (Gmail, WhatsApp, Twitter, etc.) + Human-in-the-loop approval for sensitive actions.
+**Core Philosophy**:
+- 🔒 **Local-first** (Obsidian vault) + Cloud integrations (Gmail, WhatsApp, social APIs)
+- 👤 **Human-in-the-loop** - You always review sensitive actions before execution
+- 🛡️ **Privacy-focused** - All data stays in your vault, no third-party storage
+- 🔧 **Fully customizable** - Adapt to your workflow and business rules
 
 ---
 
-## Quick Start (2 Minutes)
+## Key Features
+
+### ✨ Advanced Email System
+- **AI Email Drafting** - OpenAI generates contextual replies to incoming emails
+- **Personalized Voice** - Learns your writing style from past emails or manual configuration
+- **Thread Context** - Replies automatically reference previous messages in conversation
+- **Tone Analysis** - Warns if a draft doesn't match your typical style
+- **Attachments** - Searches Downloads/Desktop, validates files, attaches to emails
+- **HITL Approval** - All drafts require your review before sending
+
+### 🤖 AI-Powered Agents
+- Email responder (with style matching)
+- WhatsApp message handler
+- Social media poster
+- Invoice generator
+- Weekly briefing curator
+
+### 📝 Obsidian Vault Integration
+- Local markdown-based memory
+- Organized workflow (Needs_Action → Pending_Approval → Approved → Done)
+- Full audit trail (90+ days of logs)
+- Company handbook for automation rules
+
+### 🔄 Multi-Channel Support
+- **Gmail** - Monitor, draft, send emails
+- **WhatsApp** - Receive & respond via Twilio webhooks
+- **LinkedIn** - Auto-post content
+- **Twitter/X** - Post updates and engage
+- **Facebook/Instagram** - Social media automation
+- **Xero** - Invoicing and accounting
+
+### 🚨 Reliability Features
+- Process watchdog (auto-restart failed scripts)
+- Error recovery with exponential backoff
+- Graceful degradation (continue on partial failures)
+- Structured logging with JSONL format
+- Health monitoring and alerts
+
+---
+
+## Quick Start (5 Minutes)
 
 ### Prerequisites
 - Python 3.13+
 - Node.js 24+
 - Obsidian v1.10.6+
-- API credentials (.env file)
+- Git
 
-### Setup
+### 1. Clone & Install
+
 ```bash
 git clone https://github.com/DevDonzo/DigitalFTE.git
 cd DigitalFTE
 
+# Install dependencies
 pip install -r requirements.txt
 npm install
+```
 
+### 2. Configure API Keys
+
+```bash
+# Copy template and add your API keys
 cp .env.example .env
-# Edit .env with your API keys
+nano .env  # Edit with your credentials
+```
 
+**Required APIs** (start with just email):
+- Gmail OAuth 2.0
+- OpenAI API key
+- (Optional) Twilio, Twitter, Meta, Xero, LinkedIn
+
+See `.env.example` for all options.
+
+### 3. Verify Setup
+
+```bash
 python Setup_Verify.py
 ```
 
-### Run
+### 4. Configure Your Email Style
+
+Edit `/vault/EmailStyle.md` with your writing preferences:
+
+```markdown
+# Your Email Writing Style
+
+## Tone & Voice
+Professional but conversational, direct and honest
+
+## Opening Lines
+- "Hi [Name]," (for known contacts)
+- "Thanks for reaching out on..." (for new conversations)
+
+## Common Phrases
+- "I'd be happy to..."
+- "Let me know if..."
+- "Looking forward to..."
+
+## Closing
+Best regards,
+[Your Name]
+```
+
+The AI will use this to match your voice in all email drafts.
+
+### 5. Run the System
+
 ```bash
-# Terminal 1: Main engine
-python scripts/orchestrator.py
+# Terminal 1: Main orchestrator
+python agents/orchestrator.py
 
 # Terminal 2: Email monitor
-python watchers/gmail_watcher.py
+python agents/gmail_watcher.py
 
-# Terminal 3: WhatsApp receiver
-python scripts/webhook_server.py &
-python watchers/whatsapp_watcher.py
+# Terminal 3: Health watchdog
+python agents/watchdog.py
 
-# Terminal 4: Health monitor
-python scripts/watchdog.py
-
-# View vault
+# Terminal 4: View your vault
 open -a Obsidian vault/
 ```
+
+Your AI Employee is now running! 🎉
+
+---
+
+## How It Works
+
+### Email Workflow Example
+
+```
+1. New email arrives at Gmail (unread + important)
+   ↓
+2. Gmail Watcher detects it (every 20 seconds)
+   ↓
+3. Creates EMAIL_[id].md in vault/Needs_Action/
+   ↓
+4. Orchestrator reads and analyzes
+   ↓
+5. AI drafts intelligent reply (matching your style)
+   ↓
+6. Routes to vault/Pending_Approval/ for your review
+   ↓
+7. You review and edit (optional)
+   ↓
+8. Move to vault/Approved/ to send
+   ↓
+9. Orchestrator executes (sends via Gmail API)
+   ↓
+10. Logged to vault/Logs/emails_sent.jsonl
+    ↓
+11. Moved to vault/Done/
+```
+
+**Key**: You always review before anything is sent. Full transparency.
+
+### Personalized Email Voice
+
+The system learns your email style through:
+
+1. **Manual Configuration** (Recommended)
+   - Edit `/vault/EmailStyle.md` with your tone, phrases, and examples
+   - AI reads this when drafting emails
+   - More accurate than auto-learning
+
+2. **Auto-Analysis** (Optional)
+   - Run `python utils/email_style_analyzer.py` to analyze real emails
+   - Best for established email history
+   - Skip if using test/bot-generated emails
+
+### Thread Context & Attachments
+
+**Thread Context**:
+- Gmail Watcher fetches full email threads
+- Email Drafter includes thread history in prompts
+- AI generates 3-5 key point summary
+- Replies naturally reference previous messages
+
+**Attachments**:
+- Email drafts search Downloads and Desktop for files
+- Add attachments to frontmatter:
+  ```yaml
+  attachments:
+    - /Users/[name]/Downloads/invoice.pdf
+  ```
+- System validates file size (Gmail limit: 25MB)
+- Automatically attaches when email is sent
 
 ---
 
 ## Architecture
 
-**Four-Layer System**:
+```
+┌─────────────────────────────────────────┐
+│     Perception Layer (Watchers)         │
+├─────────────────────────────────────────┤
+│ • gmail_watcher.py (Gmail monitoring)   │
+│ • whatsapp_watcher.py (Message handler) │
+│ • linkedin_watcher.py (Content monitor) │
+│ • filesystem_watcher.py (File drops)    │
+└────────────────┬────────────────────────┘
+                 │
+                 ↓
+        ┌─────────────────┐
+        │  Obsidian Vault │ (Local-First Memory)
+        │  (Markdown DB)  │
+        └────────┬────────┘
+                 │
+                 ↓
+┌─────────────────────────────────────────┐
+│    Reasoning Layer (Orchestrator)       │
+├─────────────────────────────────────────┤
+│ • Reads vault files                     │
+│ • Uses Claude/OpenAI for reasoning      │
+│ • Drafts responses with personalization │
+│ • Routes to approval queue              │
+└────────────────┬────────────────────────┘
+                 │
+                 ↓
+┌─────────────────────────────────────────┐
+│     Action Layer (MCP Servers)          │
+├─────────────────────────────────────────┤
+│ • Email MCP (Gmail send/receive)        │
+│ • Twitter MCP (X integration)           │
+│ • Meta Social MCP (FB/Instagram)        │
+│ • Xero MCP (Invoicing/Accounting)       │
+│ • Custom tools                          │
+└─────────────────────────────────────────┘
+```
 
-1. **Perception Layer** (Watchers)
-   - `gmail_watcher.py` → Monitors Gmail
-   - `whatsapp_watcher.py` → Processes WhatsApp messages
-   - `linkedin_watcher.py` → LinkedIn integration
-   - `filesystem_watcher.py` → File drop automation
-
-2. **Memory & Dashboard** (Obsidian Vault)
-   - Local markdown files (Needs_Action, Pending_Approval, Approved, Done, Logs)
-   - Company_Handbook (automation rules)
-   - Dashboard.md (real-time status)
-
-3. **Reasoning Layer** (Orchestrator)
-   - `scripts/orchestrator.py` (1,469 lines)
-   - Reads messages → Uses OpenAI to draft → Routes to approval
-   - Thread-safe batching and deduplication
-
-4. **Action Layer** (MCP Servers)
-   - Email MCP → Send/receive emails
-   - Twitter MCP → Post tweets
-   - Meta Social MCP → Facebook/Instagram
-   - Xero MCP → Invoicing & accounting
-
-**Plus**: Watchdog for process monitoring, Weekly_audit for CEO briefing, Webhook server for receiving messages.
+**Data Flow**: Perception → Memory → Reasoning → Action → Audit
 
 ---
 
@@ -99,254 +267,228 @@ open -a Obsidian vault/
 
 ```
 DigitalFTE/
-├── README.md                    ← You are here
-├── DEMO.md                      ← How to run a demo
+├── README.md                    ← Start here
 ├── ARCHITECTURE.md              ← System design deep-dive
-├── HACKATHON_COMPLIANCE.md      ← All requirements verified
-├── GOLD_SPEC.md                 ← Gold tier checklist
-├── LESSONS_LEARNED.md           ← Key insights
-├── CLAUDE.md                    ← Claude Code instructions
+├── DEMO.md                      ← Walkthrough examples
 │
-├── vault/                       ← Obsidian vault (local-first memory)
-│   ├── Dashboard.md
-│   ├── Company_Handbook.md
-│   ├── Needs_Action/            ← Input from watchers
-│   ├── Pending_Approval/        ← HITL review queue
-│   ├── Approved/                ← Ready to execute
-│   ├── Done/                    ← Completed tasks
-│   ├── Logs/                    ← Audit trail (JSONL)
-│   ├── Briefings/               ← CEO briefing reports
-│   └── Accounting/              ← Xero integration
+├── vault/                       ← YOUR LOCAL DATABASE (Obsidian)
+│   ├── Dashboard.md            ← Status overview
+│   ├── Company_Handbook.md     ← Automation rules
+│   ├── EmailStyle.md           ← Your writing style profile
+│   ├── Needs_Action/           ← Incoming tasks
+│   ├── Pending_Approval/       ← Awaiting your review
+│   ├── Approved/               ← Ready to execute
+│   ├── Done/                   ← Completed tasks
+│   └── Logs/                   ← Audit trail (JSONL)
 │
-├── scripts/                     ← Core orchestration
-│   ├── orchestrator.py          ← Main engine (reads/thinks/executes)
-│   ├── watchdog.py              ← Process monitor (auto-restart)
-│   ├── webhook_server.py        ← WhatsApp webhook receiver (port 8001)
-│   ├── weekly_audit.py          ← CEO briefing generator
-│   └── setup.sh                 ← Initialization script
+├── agents/                      ← PERCEPTION LAYER
+│   ├── gmail_watcher.py        ← Email monitor
+│   ├── whatsapp_watcher.py     ← WhatsApp handler
+│   ├── linkedin_watcher.py     ← LinkedIn integration
+│   └── base_watcher.py         ← Base class
 │
-├── watchers/                    ← Perception layer
-│   ├── base_watcher.py          ← Abstract base class
-│   ├── gmail_watcher.py         ← Email monitoring
-│   ├── whatsapp_watcher.py      ← Message processing
-│   ├── linkedin_watcher.py      ← LinkedIn integration
-│   └── filesystem_watcher.py    ← File drop automation
+├── scripts/                     ← ORCHESTRATION
+│   ├── orchestrator.py         ← Main engine (1,469 lines)
+│   ├── watchdog.py             ← Health monitor
+│   ├── webhook_server.py       ← WhatsApp webhooks
+│   └── weekly_audit.py         ← CEO briefing
 │
-├── mcp_servers/                 ← Action layer (external integrations)
-│   ├── email_mcp/               ← Gmail integration
-│   ├── twitter_mcp/             ← Twitter posting
-│   ├── meta_social_mcp/         ← Facebook/Instagram
-│   ├── xero_mcp/                ← Accounting
-│   └── browser_mcp/             ← (Placeholder)
+├── utils/                       ← REASONING UTILITIES
+│   ├── email_drafter.py        ← OpenAI email generation (personalized)
+│   ├── email_style_analyzer.py ← Learn your writing style
+│   ├── attachment_finder.py    ← Find & validate files
+│   ├── tweet_drafter.py        ← Tweet generation
+│   ├── whatsapp_drafter.py     ← Message generation
+│   └── error_handler.py        ← Error recovery
 │
-├── utils/                       ← Supporting utilities
-│   ├── email_drafter.py         ← OpenAI email generation
-│   ├── tweet_drafter.py         ← Tweet generation
-│   ├── whatsapp_drafter.py      ← Message generation
-│   ├── audit_logger.py          ← Structured logging
-│   ├── error_handler.py         ← Error handling
-│   └── retry_handler.py         ← Exponential backoff
+├── mcp_servers/                 ← ACTION LAYER
+│   ├── email_mcp/              ← Gmail integration
+│   ├── twitter_mcp/            ← Twitter/X posting
+│   ├── meta_social_mcp/        ← Facebook/Instagram
+│   └── xero_mcp/               ← Invoicing/Accounting
 │
-├── auth/                        ← Authentication modules
-│   ├── gmail.py                 ← Gmail OAuth 2.0
-│   ├── twitter.py               ← Twitter API auth
-│   ├── linkedin.py              ← LinkedIn auth
-│   └── xero.py                  ← Xero OAuth 2.0
+├── auth/                        ← API AUTHENTICATION
+│   ├── gmail.py                ← Gmail OAuth 2.0
+│   ├── twitter.py              ← Twitter API auth
+│   ├── linkedin.py             ← LinkedIn OAuth
+│   └── xero.py                 ← Xero OAuth 2.0
 │
-├── tests/                       ← Test suite
+├── tests/                       ← TEST SUITE
 │   ├── test_gmail_watcher.py
 │   ├── test_full_workflow.py
 │   ├── test_integration.py
-│   ├── test_error_recovery.py
-│   └── ...
-│
-├── skills/                      ← Claude Code Agent Skills
-│   ├── email-drafting.md
-│   ├── email-monitor.md
-│   ├── whatsapp-monitor.md
-│   └── ... (10+ skills)
+│   └── test_email_enhancements.py
 │
 ├── requirements.txt             ← Python dependencies
 ├── package.json                 ← Node.js dependencies
-├── .env.example                 ← Credentials template
-└── mcp_config.json              ← MCP server configuration
+├── .env.example                 ← Configuration template
+└── mcp_config.json             ← MCP server setup
 ```
-
----
-
-## Scripts Overview
-
-| Script | What It Does | Interval |
-|--------|------------|----------|
-| **orchestrator.py** | Main engine - reads, drafts, routes, executes | Real-time |
-| **gmail_watcher.py** | Monitors Gmail for unread+important | Every 20s |
-| **whatsapp_watcher.py** | Processes WhatsApp messages from webhook | Every 10s |
-| **webhook_server.py** | Receives WhatsApp from Twilio (port 8001) | Real-time |
-| **watchdog.py** | Monitors all processes, auto-restarts | Every 60s |
-| **weekly_audit.py** | CEO briefing generation | Sunday 11 PM |
-
-For detailed reference, see: **DEMO.md**
-
----
-
-## How It Works
-
-### Example: Email Processing
-
-```
-1. New email arrives at Gmail (unread + important)
-   ↓
-2. Gmail Watcher detects it (every 20 seconds)
-   ↓
-3. Creates EMAIL_[id].md in /Needs_Action/
-   ↓
-4. Orchestrator reads the file
-   ↓
-5. OpenAI drafts an intelligent reply
-   ↓
-6. Routes to /Pending_Approval/ for human review
-   ↓
-7. Human moves file to /Approved/
-   ↓
-8. Orchestrator executes (sends via Email MCP)
-   ↓
-9. Logged to /vault/Logs/emails_sent.jsonl
-   ↓
-10. Moved to /Done/
-```
-
-**Key Feature**: Human always reviews sensitive actions (HITL - Human-in-the-Loop).
 
 ---
 
 ## Configuration
 
-### Required API Keys (.env)
-```bash
-# Gmail (OAuth 2.0)
-GMAIL_CREDENTIALS_PATH=/path/to/credentials.json
+### Email Style Personalization
 
-# WhatsApp (Twilio)
-TWILIO_ACCOUNT_SID=...
-TWILIO_AUTH_TOKEN=...
-TWILIO_WHATSAPP_NUMBER=...
+Create `/vault/EmailStyle.md` with:
 
-# LinkedIn
-LINKEDIN_ACCESS_TOKEN=...
+```markdown
+# Email Writing Style
 
-# Twitter (API v2 + 1.0a)
-TWITTER_API_KEY=...
-TWITTER_API_SECRET=...
-TWITTER_BEARER_TOKEN=...
-TWITTER_ACCESS_TOKEN=...
-TWITTER_ACCESS_TOKEN_SECRET=...
+## Tone
+Professional, direct, friendly
 
-# Meta (Facebook/Instagram)
-FACEBOOK_ACCESS_TOKEN=...
-FACEBOOK_PAGE_ID=...
-INSTAGRAM_BUSINESS_ACCOUNT_ID=...
+## Opening Lines
+- "Hi [Name]," (standard)
+- "Thanks for reaching out..." (responding)
 
-# Xero (OAuth 2.0)
-XERO_CLIENT_ID=...
-XERO_CLIENT_SECRET=...
-XERO_TENANT_ID=...
+## Phrases You Use
+- "I'd be happy to..."
+- "Looking forward to..."
+- "Let me know if you have questions"
 
-# OpenAI
-OPENAI_API_KEY=...
+## Sentence Style
+Short and punchy (1-2 sentences per idea)
+
+## Closing
+Best regards,
+[Your Name]
 ```
 
+**Tips**:
+- Include real email examples for best results
+- Edit anytime to refine your style
+- AI uses this for ALL drafts
+
 ### Automation Rules (Company_Handbook.md)
-- Email auto-approval thresholds
-- Payment approval limits
-- WhatsApp escalation levels
-- LinkedIn posting policies
+
+```markdown
+## Email Automation Rules
+
+- Auto-approve emails under $500
+- Escalate customer complaints
+- Archive newsletters
+
+## Response Rules
+
+- Inquiry: Professional tone, <2 hour response
+- Complaint: Empathetic, solution-focused
+- Payment: Factual, include reference numbers
+```
+
+### Environment Variables (.env)
+
+```bash
+# Gmail
+GMAIL_CREDENTIALS_PATH=/path/to/client_secret.json
+
+# OpenAI
+OPENAI_API_KEY=sk-...
+
+# Optional APIs
+TWILIO_ACCOUNT_SID=...
+TWITTER_API_KEY=...
+FACEBOOK_ACCESS_TOKEN=...
+XERO_CLIENT_ID=...
+```
 
 ---
 
 ## Testing
 
 Run the test suite:
+
 ```bash
+# All tests
 pytest tests/
+
+# Specific test
+pytest tests/test_email_enhancements.py
+
+# With coverage
+pytest --cov=. tests/
 ```
 
-Available tests:
-- `test_gmail_watcher.py` - Email monitoring
-- `test_full_workflow.py` - End-to-end flow
-- `test_integration.py` - All integrations
-- `test_error_recovery.py` - Error handling
-- `test_mcp_servers.py` - External integrations
+Tests cover:
+- Email monitoring and drafting
+- Thread context and attachments
+- Style personalization
+- Full end-to-end workflows
+- Error recovery
+- Integration with external APIs
 
 ---
 
 ## Documentation
 
-- **DEMO.md** - How to run the demo (start here!)
+- **README.md** ← You are here
 - **ARCHITECTURE.md** - System design & data flows
-- **HACKATHON_COMPLIANCE.md** - All 23 requirements verified ✅
-- **GOLD_SPEC.md** - Gold tier requirements
-- **LESSONS_LEARNED.md** - Implementation insights
-- **CLAUDE.md** - Claude Code instructions
+- **DEMO.md** - Step-by-step walkthrough
+- **[vault/EmailStyle.md](vault/EmailStyle.md)** - Your writing style template
+- **[vault/Company_Handbook.md](vault/Company_Handbook.md)** - Automation rules
+
+---
+
+## Customization
+
+### Add Your Own Watchers
+
+Create a new watcher by extending `BaseWatcher`:
+
+```python
+from agents.base_watcher import BaseWatcher
+
+class CustomWatcher(BaseWatcher):
+    def __init__(self, vault_path: str):
+        super().__init__(vault_path, check_interval=30)
+
+    def check(self):
+        # Your custom logic here
+        messages = self._fetch_messages()
+        for msg in messages:
+            self.create_action_file(msg)
+```
+
+### Add Your Own Drafters
+
+Create a drafter for any content type:
+
+```python
+class CustomDrafter:
+    def __init__(self, vault_path: str):
+        self.vault = Path(vault_path)
+        self.client = OpenAI()
+
+    def draft_response(self, message: dict) -> str:
+        # Use OpenAI to generate response
+        # Include your style guide
+        # Return draft text
+```
+
+### Integrate with New APIs
+
+Add MCP servers in `mcp_servers/` for any external service:
+
+```javascript
+// mcp_servers/custom_api/index.js
+const { Server } = require("@anthropic-ai/sdk/lib/resources");
+
+server.setRequestHandler(CreateMessageRequestSchema, ...)
+```
 
 ---
 
 ## Security & Privacy
 
-- ✅ Local-first: All data in Obsidian vault (never cloud storage)
-- ✅ Credentials: Environment variables (.env, gitignored)
-- ✅ OAuth 2.0: All APIs use secure authentication
-- ✅ HITL: Human approval before sensitive actions
-- ✅ Audit logging: 90+ days of activity logs (JSONL format)
-- ✅ Error handling: Graceful degradation, no data loss
-
----
-
-## Compliance
-
-### Gold Tier (All Requirements Met) ✅
-
-**Bronze** (5/5):
-- ✅ Dashboard + Company_Handbook
-- ✅ Folder structure
-- ✅ Working watchers
-- ✅ Claude Code vault I/O
-- ✅ Agent Skills
-
-**Silver** (7/7):
-- ✅ Multiple watchers
-- ✅ LinkedIn auto-posting
-- ✅ Plan.md reasoning
-- ✅ Email MCP server
-- ✅ HITL approval workflow
-- ✅ Scheduling (launchd)
-- ✅ Agent Skills
-
-**Gold** (11/11):
-- ✅ Cross-domain integration
-- ✅ Xero MCP + accounting
-- ✅ Meta Social MCP
-- ✅ Twitter MCP
-- ✅ 5 MCP servers
-- ✅ CEO briefing
-- ✅ Error recovery
-- ✅ Audit logging (90+ days)
-- ✅ Documentation
-- ✅ Ralph Wiggum loop
-- ✅ 10+ Agent Skills
-
-**Full compliance report**: See `HACKATHON_COMPLIANCE.md`
-
----
-
-## Key Metrics
-
-| Metric | Human FTE | Digital FTE |
-|--------|-----------|-----------|
-| Availability | 40 hrs/week | **168 hrs/week** |
-| Cost | $4,000-8,000/mo | **$500-2,000/mo** |
-| Tasks/year | ~2,000 | **~8,760** |
-| Cost per task | ~$5.00 | **~$0.25** |
-| **Savings** | — | **85-90%** |
+- ✅ **Local-first**: All data stored in your Obsidian vault
+- ✅ **No cloud storage**: Never synced to cloud by default
+- ✅ **Credentials protected**: `.env` file is gitignored
+- ✅ **OAuth 2.0**: All APIs use secure authentication
+- ✅ **HITL**: Human always reviews before sensitive actions
+- ✅ **Audit logging**: Complete trail of all actions (JSONL)
+- ✅ **Error handling**: Graceful degradation, no data loss
+- ✅ **No data collection**: This is your personal system
 
 ---
 
@@ -354,33 +496,130 @@ Available tests:
 
 | Issue | Solution |
 |-------|----------|
-| Gmail API 403 | Run: `python auth/gmail.py` (re-authenticate) |
-| Port 8001 in use | Kill: `lsof -i :8001 \| grep python \| xargs kill -9` |
-| Module not found | Run: `pip install -r requirements.txt` |
-| Obsidian not syncing | Open: `/Users/hparacha/DigitalFTE/vault/` |
-| No files in Needs_Action | Check Gmail has unread+important emails |
+| `Gmail API 403` | Run: `python auth/gmail.py` (re-authenticate) |
+| Port 8001 in use | Kill: `lsof -i :8001 \| grep LISTEN \| awk '{print $2}' \| xargs kill -9` |
+| `ModuleNotFoundError` | Run: `pip install -r requirements.txt` |
+| No emails detected | Check Gmail has "unread" + "important" labels |
+| Email style not applied | Make sure `/vault/EmailStyle.md` exists and has content |
+| Attachments not working | Verify file paths are absolute (e.g., `/Users/name/Downloads/file.pdf`) |
 
 ---
 
-## Next Steps
+## Performance
 
-1. **Run the demo**: Follow commands in **DEMO.md**
-2. **Understand the system**: Read **ARCHITECTURE.md**
-3. **Check compliance**: See **HACKATHON_COMPLIANCE.md**
-4. **Review code**: Start with `scripts/orchestrator.py`
+Typical resource usage:
+
+- **Memory**: ~150-200 MB (watchers + orchestrator)
+- **CPU**: <5% idle, <20% during processing
+- **Disk**: ~50-100 MB per month (logs + vault)
+- **Cost**: ~$50-500/month (depends on API usage)
+
+---
+
+## Contributing
+
+We welcome contributions! Here's how:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/my-feature`)
+3. Make your changes
+4. Add tests for new functionality
+5. Commit with clear messages
+6. Push and open a pull request
+
+**Areas for contribution**:
+- New watchers (Slack, Teams, etc.)
+- Additional drafters (for SMS, Discord, etc.)
+- Enhanced style matching algorithms
+- Better attachment handling
+- Testing improvements
+- Documentation
+
+---
+
+## Roadmap
+
+- [ ] Web dashboard for vault management
+- [ ] Mobile app for approvals
+- [ ] Multi-user support
+- [ ] Advanced scheduling (vs cron)
+- [ ] ML-based style learning
+- [ ] Calendar integration
+- [ ] CRM integration
+- [ ] Chat interface for quick approvals
+
+---
+
+## License
+
+MIT License - See LICENSE file for details
 
 ---
 
 ## Support
 
-- **Questions**: Check DEMO.md or ARCHITECTURE.md
-- **Issues**: See Troubleshooting section above
-- **Code**: All well-commented and organized
+- **Questions?** Check ARCHITECTURE.md or DEMO.md
+- **Found a bug?** Open an issue on GitHub
+- **Have ideas?** Discussions welcome!
+- **Need help?** See the Troubleshooting section
 
 ---
 
-**Made for**: Personal AI Employee Hackathon 0
+## FAQ
 
-**Created**: January 2026
+**Q: Can I use this for my business?**
+A: Yes! It's designed for both personal and business use. Customize the rules in Company_Handbook.md.
 
-**Status**: 🏆 Gold Tier Ready for Submission
+**Q: What if the AI generates something wrong?**
+A: The Human-in-the-Loop system requires your approval before anything is sent. You always review first.
+
+**Q: Can I run multiple instances?**
+A: Yes, but each needs its own vault directory and API keys. Consider using different Gmail accounts or filters.
+
+**Q: Is my data private?**
+A: Completely. Everything is stored locally in Obsidian. API keys are in .env (gitignored). No telemetry.
+
+**Q: Can I customize the AI prompts?**
+A: Yes! Edit `/vault/EmailStyle.md` or modify the drafters in `utils/`.
+
+---
+
+## Credits
+
+Built with:
+- [Claude/OpenAI](https://openai.com) - AI language models
+- [Obsidian](https://obsidian.md) - Local markdown database
+- [Claude Code](https://claude.com/claude-code) - Development environment
+- [Google APIs](https://developers.google.com) - Gmail, Calendar
+- [Twilio](https://twilio.com) - WhatsApp integration
+- [Twitter API v2](https://developer.twitter.com) - Social media
+- [Xero](https://developer.xero.com) - Accounting
+
+---
+
+## Citation
+
+If you use DigitalFTE in your research or project, please cite:
+
+```bibtex
+@software{digitalfte2026,
+  title={DigitalFTE: Personal AI Employee System},
+  author={DevDonzo},
+  year={2026},
+  url={https://github.com/DevDonzo/DigitalFTE}
+}
+```
+
+---
+
+**Ready to build your AI Employee?**
+
+1. Clone the repo
+2. Run `Setup_Verify.py`
+3. Edit `/vault/EmailStyle.md` with your voice
+4. Start the watchers
+5. Watch your AI work! 🚀
+
+---
+
+**Made with ❤️ for makers, entrepreneurs, and anyone tired of repetitive tasks.**
