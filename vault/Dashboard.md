@@ -5,6 +5,10 @@
 
 ---
 
+
+## Scheduled Events
+- Team Building Event - February 15
+- Team Building Event - February 16
 ## Quick Stats (This Week)
 
 | Metric | Count |
