@@ -281,17 +281,14 @@ DigitalFTE/
 │   ├── Done/                   ← Completed tasks
 │   └── Logs/                   ← Audit trail (JSONL)
 │
-├── agents/                      ← PERCEPTION LAYER
+├── agents/                      ← SYSTEM AGENTS & WATCHERS
+│   ├── orchestrator.py         ← Main engine (1,469 lines)
 │   ├── gmail_watcher.py        ← Email monitor
 │   ├── whatsapp_watcher.py     ← WhatsApp handler
 │   ├── linkedin_watcher.py     ← LinkedIn integration
-│   └── base_watcher.py         ← Base class
-│
-├── scripts/                     ← ORCHESTRATION
-│   ├── orchestrator.py         ← Main engine (1,469 lines)
 │   ├── watchdog.py             ← Health monitor
 │   ├── webhook_server.py       ← WhatsApp webhooks
-│   └── weekly_audit.py         ← CEO briefing
+│   └── base_watcher.py         ← Base class
 │
 ├── utils/                       ← REASONING UTILITIES
 │   ├── email_drafter.py        ← OpenAI email generation (personalized)
@@ -299,6 +296,7 @@ DigitalFTE/
 │   ├── attachment_finder.py    ← Find & validate files
 │   ├── tweet_drafter.py        ← Tweet generation
 │   ├── whatsapp_drafter.py     ← Message generation
+│   ├── social_post_drafter.py  ← Multi-platform posts
 │   └── error_handler.py        ← Error recovery
 │
 ├── mcp_servers/                 ← ACTION LAYER
@@ -381,7 +379,9 @@ Best regards,
 
 ```bash
 # Gmail
-GMAIL_CREDENTIALS_PATH=/path/to/client_secret.json
+GMAIL_CLIENT_ID=your_client_id.apps.googleusercontent.com
+GMAIL_CLIENT_SECRET=GOCSPX-your_secret
+GMAIL_PROJECT_ID=your-project-id
 
 # OpenAI
 OPENAI_API_KEY=sk-...

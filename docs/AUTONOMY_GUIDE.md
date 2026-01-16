@@ -20,10 +20,10 @@ FileSystem Watcher (Real-time) |
 ```
 
 **Components**:
-- `watchers/gmail_watcher.py` - Polls Gmail API for unread important messages
-- `watchers/whatsapp_watcher.py` - Receives messages via Twilio webhook
-- `watchers/linkedin_watcher.py` - Polls LinkedIn API for notifications
-- `watchers/base_watcher.py` - Abstract base class with common functionality
+- `agents/gmail_watcher.py` - Polls Gmail API for unread important messages
+- `agents/whatsapp_watcher.py` - Receives messages via Twilio webhook
+- `agents/linkedin_watcher.py` - Polls LinkedIn API for profile activity
+- `agents/base_watcher.py` - Abstract base class with common functionality
 
 **Output**: Files created in `vault/Needs_Action/` with standardized markdown format
 
@@ -54,7 +54,7 @@ vault/Pending_Approval/ (awaiting human review)
 5. Draft file created in `vault/Pending_Approval/`
 
 **Files**:
-- `scripts/orchestrator.py` - Main coordination engine
+- `agents/orchestrator.py` - Main coordination engine
 - `utils/email_drafter.py` - Email response generation
 - `utils/whatsapp_drafter.py` - WhatsApp response generation
 - `utils/tweet_drafter.py` - Social media post generation
@@ -153,7 +153,7 @@ Watchdog (30s check interval)
     Recovery time: 3-5 seconds
 ```
 
-**File**: `scripts/watchdog.py`
+**File**: `agents/watchdog.py`
 
 **Configuration**: `scripts/com.digitalfte.watchdog.plist` (macOS launchd)
 
@@ -166,10 +166,10 @@ Watchdog (30s check interval)
 Weekly CEO briefing runs on fixed schedule:
 
 ```
-Every Monday 8:00 AM (macOS launchd)
+Every Monday 8:00 AM (Built into Orchestrator)
     |
     v
-weekly_audit.py
+orchestrator.py (_periodic_check)
     |
     +-- Count emails processed
     +-- Count tasks completed
@@ -321,18 +321,18 @@ vault/Done/ + vault/Logs/
 **Manual (for debugging)**:
 ```bash
 # Terminal 1
-python3 scripts/orchestrator.py
+python3 agents/orchestrator.py
 
 # Terminal 2
-python3 watchers/gmail_watcher.py &
-python3 watchers/whatsapp_watcher.py &
-python3 watchers/linkedin_watcher.py &
+python3 agents/gmail_watcher.py &
+python3 agents/whatsapp_watcher.py &
+python3 agents/linkedin_watcher.py &
 
 # Terminal 3
-python3 scripts/webhook_server.py
+python3 agents/webhook_server.py
 
 # Terminal 4
-python3 scripts/watchdog.py
+python3 agents/watchdog.py
 ```
 
 **Production (auto-start on boot)**:
@@ -384,9 +384,9 @@ Key configuration in `.env`:
 
 ```bash
 # Gmail
-GMAIL_CLIENT_ID=xxx
-GMAIL_CLIENT_SECRET=xxx
-GMAIL_CREDENTIALS_PATH=./credentials.json
+GMAIL_CLIENT_ID=xxx.apps.googleusercontent.com
+GMAIL_CLIENT_SECRET=GOCSPX-xxx
+GMAIL_PROJECT_ID=your-project-id
 
 # OpenAI (for AI drafting)
 OPENAI_API_KEY=xxx

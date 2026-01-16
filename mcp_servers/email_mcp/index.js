@@ -67,23 +67,24 @@ const tools = [
 ];
 
 /**
- * Get access token from credentials file or environment
+ * Get access token from token file
+ * Note: OAuth credentials are now stored in .env and used by Python scripts
+ * This server only needs the access token from ~/.gmail_token.json
  */
 function getAccessToken() {
-  const credPath = process.env.GMAIL_CREDENTIALS_PATH ||
-    process.env.GMAIL_CREDENTIALS ||
-    path.join(os.homedir(), '.gmail_token.json');
+  const tokenPath = path.join(os.homedir(), '.gmail_token.json');
 
-  if (!fs.existsSync(credPath)) {
-    console.error('Warning: Gmail credentials not found at', credPath);
+  if (!fs.existsSync(tokenPath)) {
+    console.error('Warning: Gmail token not found at', tokenPath);
+    console.error('Run: python auth/gmail.py to authenticate');
     return null;
   }
 
   try {
-    const creds = JSON.parse(fs.readFileSync(credPath, 'utf8'));
+    const creds = JSON.parse(fs.readFileSync(tokenPath, 'utf8'));
     return creds.access_token || creds.token;
   } catch (e) {
-    console.error('Error reading credentials:', e.message);
+    console.error('Error reading token:', e.message);
     return null;
   }
 }
@@ -99,7 +100,7 @@ async function processTool(name, args) {
   }
 
   try {
-    switch(name) {
+    switch (name) {
       case 'send_email': {
         if (!args.to || !args.subject || !args.body) {
           return { error: 'Missing required fields: to, subject, body' };

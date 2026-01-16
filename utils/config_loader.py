@@ -8,7 +8,8 @@ def load_config():
     load_dotenv()
     return {
         'VAULT_PATH': os.getenv('VAULT_PATH', './vault'),
-        'GMAIL_CREDENTIALS_PATH': os.getenv('GMAIL_CREDENTIALS_PATH'),
+        'GMAIL_CLIENT_ID': os.getenv('GMAIL_CLIENT_ID'),
+        'GMAIL_CLIENT_SECRET': os.getenv('GMAIL_CLIENT_SECRET'),
         'XERO_CLIENT_ID': os.getenv('XERO_CLIENT_ID'),
         'LOG_LEVEL': os.getenv('LOG_LEVEL', 'INFO'),
     }

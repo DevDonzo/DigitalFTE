@@ -35,9 +35,8 @@ class EmailStyleAnalyzer:
 
     SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
-    def __init__(self, vault_path: str, credentials_path: str):
+    def __init__(self, vault_path: str):
         self.vault = Path(vault_path)
-        self.credentials_path = Path(credentials_path)
         self.gmail_service = self._authenticate()
 
         # Initialize OpenAI for style analysis
@@ -49,8 +48,29 @@ class EmailStyleAnalyzer:
             logger.error("OPENAI_API_KEY not found - cannot analyze style")
             self.ai_client = None
 
+    def _get_client_config(self) -> dict:
+        """Build OAuth client config from environment variables"""
+        client_id = os.getenv('GMAIL_CLIENT_ID')
+        client_secret = os.getenv('GMAIL_CLIENT_SECRET')
+        project_id = os.getenv('GMAIL_PROJECT_ID', 'gmail-watcher')
+        
+        if not client_id or not client_secret:
+            raise ValueError("GMAIL_CLIENT_ID and GMAIL_CLIENT_SECRET must be set in .env")
+        
+        return {
+            "installed": {
+                "client_id": client_id,
+                "project_id": project_id,
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                "client_secret": client_secret,
+                "redirect_uris": ["http://localhost"]
+            }
+        }
+
     def _authenticate(self):
-        """Authenticate with Gmail API"""
+        """Authenticate with Gmail API using environment variables"""
         try:
             creds = None
             token_file = Path.home() / '.gmail_token.json'
@@ -63,10 +83,10 @@ class EmailStyleAnalyzer:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
 
-            # New auth flow
+            # New auth flow using config from env vars
             if not creds or not creds.valid:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    str(self.credentials_path), self.SCOPES)
+                client_config = self._get_client_config()
+                flow = InstalledAppFlow.from_client_config(client_config, self.SCOPES)
                 creds = flow.run_local_server(port=0)
                 with open(token_file, 'w') as token:
                     token.write(creds.to_json())
@@ -273,22 +293,16 @@ def main():
 
     vault_path = os.getenv('VAULT_PATH', './vault')
 
-    # Find credentials file
-    creds_dir = Path(__file__).parent.parent
-    creds_file = None
+    # Check for required environment variables
+    client_id = os.getenv('GMAIL_CLIENT_ID')
+    client_secret = os.getenv('GMAIL_CLIENT_SECRET')
 
-    # Search for credentials JSON file
-    for file in creds_dir.glob('client_secret_*.json'):
-        creds_file = str(file)
-        break
-
-    if not creds_file:
-        print("❌ Error: Could not find Gmail credentials file (client_secret_*.json)")
-        print(f"   Expected in: {creds_dir}")
+    if not client_id or not client_secret:
+        print("❌ Error: GMAIL_CLIENT_ID and GMAIL_CLIENT_SECRET must be set in .env")
         print("\n📝 To get credentials:")
         print("   1. Go to Google Cloud Console")
         print("   2. Create OAuth 2.0 Client ID (Desktop app)")
-        print("   3. Download JSON and save to this directory")
+        print("   3. Copy Client ID and Client Secret to .env")
         sys.exit(1)
 
     if not os.getenv('OPENAI_API_KEY'):
@@ -299,10 +313,10 @@ def main():
     print("\n📊 Email Style Analyzer")
     print("=" * 50)
     print(f"Vault: {vault_path}")
-    print(f"Credentials: {creds_file}")
+    print(f"Gmail Client ID: {client_id[:20]}...")
     print("=" * 50 + "\n")
 
-    analyzer = EmailStyleAnalyzer(vault_path, creds_file)
+    analyzer = EmailStyleAnalyzer(vault_path)
     result = analyzer.create_style_guide()
 
     if result:

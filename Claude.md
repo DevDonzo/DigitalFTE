@@ -37,7 +37,7 @@
 #### For Scripts:
 - Orchestrator: Use watchdog for file monitoring (simple, reliable)
 - Watchdog process manager: Use PM2 (npm install -g pm2) - don't build from scratch
-- Weekly audit: Template-based, just read files and generate markdown
+- Weekly audit: Built-in to orchestrator.py, generate markdown briefings periodically
 
 ### 4. TESTING STRATEGY
 - **Mock external APIs** - Don't require live API keys for unit tests

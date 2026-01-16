@@ -97,7 +97,7 @@ Master process that coordinates everything:
 - Maintains process health & auto-restarts failures
 - Routes alerts to human
 
-### Monitoring Layer (Watchdog.py)
+### Monitoring Layer (agents/watchdog.py)
 
 System health monitor:
 
@@ -158,9 +158,9 @@ If HITL:
 ### CEO Briefing Flow
 
 ```
-Sunday 11 PM (cron job)
+Monday 9 AM (Periodic check in Orchestrator)
   ↓
-weekly_audit.py starts
+orchestrator.py (generate_ceo_briefing)
   ↓
 Reads:
 - /vault/Business_Goals.md (targets)
