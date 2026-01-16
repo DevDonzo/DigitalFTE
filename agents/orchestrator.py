@@ -158,8 +158,7 @@ class VaultHandler(FileSystemEventHandler):
         self.gmail_watcher = None
         if GmailWatcher:
             try:
-                creds_path = os.getenv('GMAIL_CREDENTIALS_PATH', 'credentials.json')
-                self.gmail_watcher = GmailWatcher(str(vault_path), creds_path)
+                self.gmail_watcher = GmailWatcher(str(vault_path))
                 logger.info("✓ Gmail Watcher initialized (for marking emails as read)")
             except Exception as e:
                 logger.warning(f"Could not initialize Gmail Watcher: {e}")

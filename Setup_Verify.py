@@ -81,13 +81,12 @@ class SetupVerifier:
         
         # Python modules
         print("\n🐍 Python Modules:")
-        self.check_directory_exists(self.root / 'watchers', 'watchers/')
-        self.check_directory_exists(self.root / 'scripts', 'scripts/')
+        self.check_directory_exists(self.root / 'agents', 'agents/')
         self.check_directory_exists(self.root / 'utils', 'utils/')
         self.check_directory_exists(self.root / 'skills', 'skills/')
         self.check_directory_exists(self.root / 'tests', 'tests/')
         
-        self.check_file_exists(self.root / 'watchers/base_watcher.py', 'watchers/base_watcher.py')
+        self.check_file_exists(self.root / 'agents/base_watcher.py', 'agents/base_watcher.py')
         self.check_file_exists(self.root / 'utils/audit_logger.py', 'utils/audit_logger.py')
         
         # MCP servers

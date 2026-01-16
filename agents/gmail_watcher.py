@@ -40,9 +40,8 @@ class GmailWatcher(BaseWatcher):
         'https://www.googleapis.com/auth/gmail.send'
     ]
     
-    def __init__(self, vault_path: str, credentials_path: str):
+    def __init__(self, vault_path: str):
         super().__init__(vault_path, check_interval=20)
-        self.credentials_path = Path(credentials_path)
         self.service = self._authenticate()
 
         # Initialize OpenAI for smart email filtering
@@ -53,9 +52,30 @@ class GmailWatcher(BaseWatcher):
         else:
             self.ai_client = None
             logger.warning("⚠️  OpenAI API key not found - using basic filtering")
+    
+    def _get_client_config(self) -> dict:
+        """Build OAuth client config from environment variables"""
+        client_id = os.getenv('GMAIL_CLIENT_ID')
+        client_secret = os.getenv('GMAIL_CLIENT_SECRET')
+        project_id = os.getenv('GMAIL_PROJECT_ID', 'gmail-watcher')
+        
+        if not client_id or not client_secret:
+            raise ValueError("GMAIL_CLIENT_ID and GMAIL_CLIENT_SECRET must be set in .env")
+        
+        return {
+            "installed": {
+                "client_id": client_id,
+                "project_id": project_id,
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                "client_secret": client_secret,
+                "redirect_uris": ["http://localhost"]
+            }
+        }
         
     def _authenticate(self):
-        """Authenticate with Gmail API"""
+        """Authenticate with Gmail API using environment variables"""
         try:
             creds = None
             token_file = Path.home() / '.gmail_token.json'
@@ -68,10 +88,10 @@ class GmailWatcher(BaseWatcher):
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             
-            # New auth flow
+            # New auth flow using config from env vars
             if not creds or not creds.valid:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    str(self.credentials_path), self.SCOPES)
+                client_config = self._get_client_config()
+                flow = InstalledAppFlow.from_client_config(client_config, self.SCOPES)
                 creds = flow.run_local_server(port=0)
                 with open(token_file, 'w') as token:
                     token.write(creds.to_json())
@@ -325,12 +345,12 @@ status: pending
 
 if __name__ == '__main__':
     vault_path = os.getenv('VAULT_PATH', './vault')
-    creds_path = os.getenv('GMAIL_CREDENTIALS_PATH', 'client_secret_422551643914-rbbbl6v58bbltpgoqga0antlcmq5l7je.apps.googleusercontent.com.json')
     
-    if not Path(creds_path).exists():
-        print(f"ERROR: credentials.json not found at {creds_path}")
-        print("Download from Google Cloud Console: https://console.cloud.google.com/")
+    # Validate required env vars
+    if not os.getenv('GMAIL_CLIENT_ID') or not os.getenv('GMAIL_CLIENT_SECRET'):
+        print("ERROR: GMAIL_CLIENT_ID and GMAIL_CLIENT_SECRET must be set in .env")
+        print("Get these from Google Cloud Console: https://console.cloud.google.com/")
         exit(1)
     
-    watcher = GmailWatcher(vault_path, creds_path)
+    watcher = GmailWatcher(vault_path)
     watcher.run()

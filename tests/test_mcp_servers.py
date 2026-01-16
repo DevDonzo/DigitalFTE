@@ -23,6 +23,6 @@ def test_mcp_config_env_alignment():
     config = json.loads((root / 'mcp_config.json').read_text())
     envs = {s['name']: s.get('env', {}) for s in config.get('servers', [])}
 
-    assert 'GMAIL_CREDENTIALS_PATH' in envs.get('email', {})
+    assert 'GMAIL_CLIENT_ID' in envs.get('email', {})
     assert 'XERO_ACCESS_TOKEN' in envs.get('xero', {})
     assert 'XERO_TENANT_ID' in envs.get('xero', {})
