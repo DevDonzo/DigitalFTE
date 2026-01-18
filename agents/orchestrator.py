@@ -176,96 +176,6 @@ class VaultHandler(FileSystemEventHandler):
         # Lock for thread-safe deduplication (prevents race conditions when multiple events fire simultaneously)
         self.dedup_lock = threading.Lock()
 
-        # Refresh Xero token at startup (30-min expiry)
-        self._refresh_xero_token_if_needed()
-
-    def _refresh_xero_token_if_needed(self):
-        """Refresh Xero OAuth token if expired or expiring soon"""
-        try:
-            import json
-            import time as time_module
-            
-            token_file = os.path.expanduser('~/.xero_token.json')
-            if not os.path.exists(token_file):
-                logger.debug("Xero token file not found - skipping refresh")
-                return
-            
-            with open(token_file) as f:
-                tokens = json.load(f)
-            
-            # Check if token is expired or expiring within 5 minutes
-            access_token = tokens.get('access_token', '')
-            if not access_token:
-                return
-            
-            # Decode JWT to check expiration
-            try:
-                parts = access_token.split('.')
-                if len(parts) != 3:
-                    return
-                
-                payload = parts[1] + '==' * (4 - len(parts[1]) % 4)
-                decoded = json.loads(__import__('base64').urlsafe_b64decode(payload))
-                exp_time = decoded.get('exp', 0)
-                current_time = time_module.time()
-                
-                # Refresh if expired or expiring within 5 minutes (300 sec)
-                if current_time > exp_time - 300:
-                    logger.info("🔄 Xero token expiring soon - refreshing...")
-                    self._call_xero_refresh_token()
-            except Exception as e:
-                logger.debug(f"Could not check token expiration: {e}")
-        except Exception as e:
-            logger.warning(f"Xero token refresh check failed: {e}")
-    
-    def _call_xero_refresh_token(self):
-        """Refresh Xero token via auth script"""
-        try:
-            auth_script = Path(__file__).parent.parent / 'auth' / 'xero.py'
-            result = subprocess.run(
-                [sys.executable, str(auth_script), 'refresh'],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
-            if result.returncode == 0:
-                logger.info("✅ Xero token refreshed successfully")
-                
-                # Update .env with new token
-                import json
-                token_file = os.path.expanduser('~/.xero_token.json')
-                with open(token_file) as f:
-                    tokens = json.load(f)
-                
-                new_token = tokens.get('access_token', '')
-                if new_token:
-                    # Update .env
-                    env_path = Path(__file__).parent.parent / '.env'
-                    if env_path.exists():
-                        with open(env_path) as f:
-                            env_content = f.read()
-                        
-                        # Replace token using regex
-                        import re
-                        env_content = re.sub(
-                            r'XERO_ACCESS_TOKEN=.*',
-                            f'XERO_ACCESS_TOKEN={new_token}',
-                            env_content
-                        )
-                        
-                        with open(env_path, 'w') as f:
-                            f.write(env_content)
-                        
-                        # Reload environment
-                        os.environ['XERO_ACCESS_TOKEN'] = new_token
-                        logger.info("✅ .env updated with fresh Xero token")
-            else:
-                logger.warning(f"Xero token refresh failed: {result.stderr}")
-        except subprocess.TimeoutExpired:
-            logger.warning("Xero token refresh timed out")
-        except Exception as e:
-            logger.warning(f"Failed to refresh Xero token: {e}")
-
     def _extract_gmail_message_id(self, email_content: str) -> str:
         """Extract gmail_message_id from email file content"""
         lines = email_content.split('\n')
@@ -1313,7 +1223,7 @@ status: pending_approval
             logger.warning(f"Failed to move original WhatsApp message from Needs_Action: {e}")
 
     def _execute_payment(self, filepath, content):
-        """Execute payment action - Log transaction via Xero MCP"""
+        """Execute payment action - Log transaction via Odoo MCP"""
         try:
             # Parse YAML frontmatter
             lines = content.split('\n')
@@ -1343,8 +1253,8 @@ status: pending_approval
             logger.info(f"   Amount: {amount}")
             logger.info(f"   Account: {account}")
 
-            # Call Xero MCP to log transaction
-            self._call_xero_mcp_log_transaction(
+            # Call Odoo MCP to log transaction
+            self._call_odoo_mcp_log_transaction(
                 float(amount),
                 description,
                 account,
@@ -1358,7 +1268,7 @@ status: pending_approval
             logger.error(f"Payment execution failed: {e}")
             raise
 
-    def _call_xero_mcp_log_transaction(
+    def _call_odoo_mcp_log_transaction(
         self,
         amount: float,
         description: str,
@@ -1366,21 +1276,23 @@ status: pending_approval
         transaction_type: str = 'BANK',
         bank_account_code: str = ''
     ):
-        """Log transaction via Xero MCP server"""
+        """Log transaction via Odoo MCP server"""
         import os
         import json
         import subprocess
 
         try:
-            xero_access_token = os.getenv('XERO_ACCESS_TOKEN')
-            xero_tenant_id = os.getenv('XERO_TENANT_ID')
+            odoo_url = os.getenv('ODOO_URL', 'http://localhost:8069')
+            odoo_db = os.getenv('ODOO_DB', 'gte')
+            odoo_username = os.getenv('ODOO_USERNAME')
+            odoo_password = os.getenv('ODOO_PASSWORD')
 
-            if not xero_access_token or not xero_tenant_id:
-                logger.warning("Xero credentials not configured - missing XERO_ACCESS_TOKEN or XERO_TENANT_ID")
+            if not odoo_username or not odoo_password:
+                logger.warning("Odoo credentials not configured")
                 return
 
-            # Create request for Xero MCP
-            mcp_path = Path(__file__).parent.parent / 'mcp_servers' / 'xero_mcp' / 'index.js'
+            # Create request for Odoo MCP
+            mcp_path = Path(__file__).parent.parent / 'mcp_servers' / 'odoo_mcp' / 'index.js'
 
             tool_request = {
                 'tool': 'log_transaction',
@@ -1396,8 +1308,10 @@ status: pending_approval
 
             # Execute via Node.js subprocess
             env = os.environ.copy()
-            env['XERO_ACCESS_TOKEN'] = xero_access_token
-            env['XERO_TENANT_ID'] = xero_tenant_id
+            env['ODOO_URL'] = odoo_url
+            env['ODOO_DB'] = odoo_db
+            env['ODOO_USERNAME'] = odoo_username
+            env['ODOO_PASSWORD'] = odoo_password
 
             process = subprocess.Popen(
                 ['node', str(mcp_path), '--legacy-stdio'],
@@ -1411,7 +1325,7 @@ status: pending_approval
             stdout, stderr = process.communicate(input=json.dumps(tool_request), timeout=30)
 
             if process.returncode != 0 or not stdout.strip():
-                logger.warning(f"Xero MCP returned non-zero status: {stderr}")
+                logger.warning(f"Odoo MCP returned non-zero status: {stderr}")
                 return
 
             response = json.loads(stdout.strip())
@@ -1420,16 +1334,16 @@ status: pending_approval
                 error = response.get('error', 'Unknown error')
                 detail = response.get('detail')
                 if detail:
-                    logger.warning(f"Xero transaction logging returned: {error} ({detail})")
+                    logger.warning(f"Odoo transaction logging returned: {error} ({detail})")
                 else:
-                    logger.warning(f"Xero transaction logging returned: {error}")
+                    logger.warning(f"Odoo transaction logging returned: {error}")
                 return
 
             transaction_id = response.get('transaction_id', 'unknown')
-            logger.info(f"✅ Transaction logged in Xero (ID: {transaction_id})")
+            logger.info(f"✅ Transaction logged in Odoo (ID: {transaction_id})")
 
             # Log the transaction
-            log_file = self.vault / 'Logs' / 'xero_transactions.jsonl'
+            log_file = self.vault / 'Logs' / 'odoo_transactions.jsonl'
             log_file.parent.mkdir(parents=True, exist_ok=True)
 
             txn_log = {
@@ -1446,12 +1360,12 @@ status: pending_approval
                 f.write(json.dumps(txn_log) + '\n')
 
         except subprocess.TimeoutExpired:
-            logger.error("Xero MCP request timed out")
+            logger.error("Odoo MCP request timed out")
         except Exception as e:
-            logger.warning(f"Failed to log transaction via Xero MCP: {e}")
+            logger.warning(f"Failed to log transaction via Odoo MCP: {e}")
 
     def _execute_invoice(self, filepath, content):
-        """Execute invoice action - Create invoice in Xero MCP"""
+        """Execute invoice action - Create invoice in Odoo MCP"""
         try:
             lines = content.split('\n')
             metadata = {}
@@ -1480,30 +1394,32 @@ status: pending_approval
                 raise ValueError("Missing amount in invoice draft")
 
             amount = float(amount_raw)
-            logger.info(f"🧾 Creating Xero invoice for {contact_name} ({amount:.2f})")
+            logger.info(f"🧾 Creating Odoo invoice for {contact_name} ({amount:.2f})")
 
-            self._call_xero_mcp_create_invoice(contact_name, amount, description, due_date)
+            self._call_odoo_mcp_create_invoice(contact_name, amount, description, due_date)
             logger.info("✅ Invoice created successfully")
 
         except Exception as e:
             logger.error(f"Invoice execution failed: {e}")
             raise
 
-    def _call_xero_mcp_create_invoice(self, contact_name, amount, description, due_date):
-        """Create invoice via Xero MCP server"""
+    def _call_odoo_mcp_create_invoice(self, contact_name, amount, description, due_date):
+        """Create invoice via Odoo MCP server"""
         import os
         import json
         import subprocess
 
         try:
-            xero_access_token = os.getenv('XERO_ACCESS_TOKEN')
-            xero_tenant_id = os.getenv('XERO_TENANT_ID')
+            odoo_url = os.getenv('ODOO_URL', 'http://localhost:8069')
+            odoo_db = os.getenv('ODOO_DB', 'gte')
+            odoo_username = os.getenv('ODOO_USERNAME')
+            odoo_password = os.getenv('ODOO_PASSWORD')
 
-            if not xero_access_token or not xero_tenant_id:
-                logger.warning("Xero credentials not configured - missing XERO_ACCESS_TOKEN or XERO_TENANT_ID")
+            if not odoo_username or not odoo_password:
+                logger.warning("Odoo credentials not configured")
                 return
 
-            mcp_path = Path(__file__).parent.parent / 'mcp_servers' / 'xero_mcp' / 'index.js'
+            mcp_path = Path(__file__).parent.parent / 'mcp_servers' / 'odoo_mcp' / 'index.js'
 
             tool_request = {
                 'tool': 'create_invoice',
@@ -1516,8 +1432,10 @@ status: pending_approval
             }
 
             env = os.environ.copy()
-            env['XERO_ACCESS_TOKEN'] = xero_access_token
-            env['XERO_TENANT_ID'] = xero_tenant_id
+            env['ODOO_URL'] = odoo_url
+            env['ODOO_DB'] = odoo_db
+            env['ODOO_USERNAME'] = odoo_username
+            env['ODOO_PASSWORD'] = odoo_password
 
             process = subprocess.Popen(
                 ['node', str(mcp_path), '--legacy-stdio'],
@@ -1531,7 +1449,7 @@ status: pending_approval
             stdout, stderr = process.communicate(input=json.dumps(tool_request), timeout=30)
 
             if process.returncode != 0 or not stdout.strip():
-                logger.warning(f"Xero MCP returned non-zero status: {stderr}")
+                logger.warning(f"Odoo MCP returned non-zero status: {stderr}")
                 return
 
             response = json.loads(stdout.strip())
@@ -1539,18 +1457,18 @@ status: pending_approval
                 error = response.get('error', 'Unknown error')
                 detail = response.get('detail')
                 if detail:
-                    logger.warning(f"Xero invoice creation returned: {error} ({detail})")
+                    logger.warning(f"Odoo invoice creation returned: {error} ({detail})")
                 else:
-                    logger.warning(f"Xero invoice creation returned: {error}")
+                    logger.warning(f"Odoo invoice creation returned: {error}")
                 return
 
             invoice_id = response.get('invoice_id', 'unknown')
-            logger.info(f"✅ Invoice created in Xero (ID: {invoice_id})")
+            logger.info(f"✅ Invoice created in Odoo (ID: {invoice_id})")
 
         except subprocess.TimeoutExpired:
-            logger.error("Xero MCP request timed out")
+            logger.error("Odoo MCP request timed out")
         except Exception as e:
-            logger.warning(f"Failed to create invoice via Xero MCP: {e}")
+            logger.warning(f"Failed to create invoice via Odoo MCP: {e}")
     
     def _execute_post(self, filepath, content):
         """Execute social post action - Post to Twitter/X or Facebook"""
@@ -1687,10 +1605,6 @@ def start_orchestrator():
     last_approved_scan = time.time()
     approved_scan_interval = 5  # Scan every 5 seconds
 
-    # Track last Xero token refresh
-    last_xero_refresh = time.time()
-    xero_refresh_interval = 1200  # Refresh every 20 minutes (token valid for 30 min)
-
     # Track last briefing generation (Monday 9 AM)
     last_briefing_check = time.time()
     briefing_check_interval = 300  # Check every 5 minutes if it's Monday 9 AM
@@ -1703,11 +1617,6 @@ def start_orchestrator():
                 for queue_type in ['inbox', 'approved']:
                     if handler.event_queue[queue_type]:
                         handler._process_batch(queue_type)
-
-            # Periodically refresh Xero token to prevent expiration
-            if (current_time - last_xero_refresh) > xero_refresh_interval:
-                handler._refresh_xero_token_if_needed()
-                last_xero_refresh = current_time
 
             # Periodically check if it's Monday 9 AM for briefing generation
             if (current_time - last_briefing_check) > briefing_check_interval:
@@ -1748,9 +1657,7 @@ def start_orchestrator():
 # ============================================================================
 
 def generate_ceo_briefing(vault: Path) -> Path:
-    """Generate Monday morning CEO briefing with Xero data"""
-    from utils.xero_client import XeroClient
-
+    """Generate Monday morning CEO briefing with Odoo data"""
     today = datetime.now()
     week_start = today - timedelta(days=7)
 
@@ -1763,31 +1670,22 @@ def generate_ceo_briefing(vault: Path) -> Path:
         'linkedin_posts': _count_linkedin_posts(vault, week_start),
     }
 
-    # Get Xero financial data
+    # Get Odoo financial data (placeholder - will be implemented in Odoo MCP)
     try:
-        xero = XeroClient()
-        if xero.access_token:
-            weekly = xero.get_weekly_summary()
-            monthly = xero.get_monthly_summary()
-            draft_invoices = xero.get_invoices(status='DRAFT')
-            draft_total = sum(float(inv.get('Total', 0)) for inv in draft_invoices) if draft_invoices else 0
+        odoo_summary = """### This Week
+- **Invoices Paid**: Pending Odoo integration
+- **Revenue**: Pending Odoo integration
+- **Net**: Pending Odoo integration
 
-            xero_summary = f"""### This Week
-- **Invoices Paid**: {weekly['invoices_paid']}
-- **Revenue**: ${weekly['revenue']:,.2f}
-- **Net**: ${weekly['net']:,.2f}
-
-### Month to Date ({monthly['month']})
-- **Revenue**: ${monthly['revenue']:,.2f}
-- **Outstanding**: ${monthly['outstanding_amount']:,.2f}
+### Month to Date
+- **Revenue**: Pending Odoo integration
+- **Outstanding**: Pending Odoo integration
 
 ### Draft Invoices (Ready to Send)
-- **Count**: {len(draft_invoices)}
-- **Total**: ${draft_total:,.2f}"""
-        else:
-            xero_summary = "Xero not connected"
+- **Count**: Pending Odoo integration
+- **Total**: Pending Odoo integration"""
     except Exception as e:
-        xero_summary = f"Xero error: {str(e)[:50]}"
+        odoo_summary = f"Odoo integration pending: {str(e)[:50]}"
 
     briefing = f"""# Monday Morning CEO Briefing
 
@@ -1799,7 +1697,7 @@ def generate_ceo_briefing(vault: Path) -> Path:
 
 ## 💰 Financial Summary
 
-{xero_summary}
+{odoo_summary}
 
 ---
 
