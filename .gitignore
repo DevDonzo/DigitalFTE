@@ -23,9 +23,18 @@ build/
 # Node
 node_modules/
 
-# Logs (keep structure, ignore contents)
-vault/Logs/*.out
-vault/Logs/*.log
+# Vault (ignore all inbox/task data)
+vault/Logs/
+vault/Needs_Action/
+vault/Pending_Approval/
+vault/Done/
+vault/Inbox/
+vault/Approved/
+vault/Rejected/
+vault/Briefings/
+vault/Plans/
+vault/Social_Media/
+vault/.processed_emails
 
 # Credentials (never commit)
 *.json.backup
