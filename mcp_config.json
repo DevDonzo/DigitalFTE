@@ -24,19 +24,18 @@
       "description": "Navigate, click, fill forms, and take screenshots"
     },
     {
-      "name": "xero",
+      "name": "odoo",
       "command": "node",
       "args": [
-        "${MCP_SERVERS_DIR}/xero_mcp/index.js"
+        "${MCP_SERVERS_DIR}/odoo_mcp/index.js"
       ],
       "env": {
-        "XERO_ACCESS_TOKEN": "${XERO_ACCESS_TOKEN}",
-        "XERO_TENANT_ID": "${XERO_TENANT_ID}",
-        "XERO_CLIENT_ID": "${XERO_CLIENT_ID}",
-        "XERO_CLIENT_SECRET": "${XERO_CLIENT_SECRET}",
-        "XERO_REDIRECT_URI": "${XERO_REDIRECT_URI}"
+        "ODOO_URL": "${ODOO_URL}",
+        "ODOO_DB": "${ODOO_DB}",
+        "ODOO_USERNAME": "${ODOO_USERNAME}",
+        "ODOO_PASSWORD": "${ODOO_PASSWORD}"
       },
-      "description": "Accounting operations: fetch accounts, create invoices, log transactions"
+      "description": "Accounting operations via Odoo: create invoices, bills, journal entries, fetch reports"
     },
     {
       "name": "meta_social",

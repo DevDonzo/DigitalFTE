@@ -2,7 +2,7 @@
 
 ## Core Design Principles
 
-1. **Local-first**: All data stored locally in Obsidian vault
+1. **Local-first**: All data stoclean red locally in Obsidian vault
 2. **HITL (Human-in-the-Loop)**: Sensitive actions require human approval
 3. **Modular**: Each component (watcher, MCP, skill) is independent
 4. **Resilient**: Graceful degradation when components fail

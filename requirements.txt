@@ -20,9 +20,6 @@ uvicorn>=0.27.0
 # File System Monitoring
 watchdog>=3.0.0
 
-# Xero Integration
-xero-python>=4.0.0
-
 # Social Media (Twitter)
 tweepy>=4.14.0
 
