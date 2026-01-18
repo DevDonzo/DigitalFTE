@@ -1,0 +1,65 @@
+version: '3.9'
+
+services:
+  # PostgreSQL Database for Odoo
+  postgres:
+    image: postgres:15-alpine
+    container_name: odoo_postgres
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo_password_change_me
+      POSTGRES_DB: gte
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d gte"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - odoo_network
+    restart: unless-stopped
+
+  # Odoo Community Edition
+  odoo:
+    image: odoo:19.0
+    container_name: odoo_app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      HOST: postgres
+      PORT: 5432
+      USER: odoo
+      PASSWORD: odoo_password_change_me
+    ports:
+      - "8069:8069"  # HTTP
+      - "8071:8071"  # JSON-RPC (used by MCP)
+    volumes:
+      - odoo_data:/var/lib/odoo
+      - odoo_addons:/mnt/extra-addons
+      - ./odoo.conf:/etc/odoo/odoo.conf:ro
+    command: >
+      odoo --db_host=postgres --db_port=5432 --db_user=odoo
+      --db_password=odoo_password_change_me --database=gte
+      --addons-path=/mnt/extra-addons --without-demo=all
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - odoo_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  odoo_data:
+  odoo_addons:
+
+networks:
+  odoo_network:
+    driver: bridge
