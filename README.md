@@ -4,7 +4,7 @@ An open-source autonomous AI agent system that works 24/7 like a full-time emplo
 
 **Repository**: https://github.com/DevDonzo/DigitalFTE
 
-**Status**: ✨ Production Ready - Fully functional with email, messaging, social media, and accounting integrations
+**Status**: 🏆 Platinum Tier (Phase 1) - Cloud + Local split architecture with 24/7 cloud agent, local approval/execution, Odoo accounting, and git-based vault sync
 
 ---
 
@@ -15,7 +15,7 @@ DigitalFTE automates personal and business tasks across multiple domains:
 - **📧 Email Management** - AI monitors Gmail, drafts intelligent replies, you approve before sending
 - **💬 WhatsApp Messages** - Receives messages via webhooks, generates contextual responses
 - **📱 Social Media** - Auto-posts to LinkedIn, Twitter, Facebook, Instagram
-- **💰 Accounting** - Creates invoices in Xero, logs transactions, generates financial reports
+- **💰 Accounting** - Creates invoices & bills in Odoo Community, logs transactions, generates P&L reports (via Odoo JSON-RPC API)
 - **📊 Executive Briefing** - Weekly automated summary of revenue, tasks, and key metrics
 - **✍️ Personalized Writing** - AI learns your email style and voice, matches your tone naturally
 - **🔗 Thread Context** - AI replies reference previous emails in the conversation
