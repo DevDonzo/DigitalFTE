@@ -1,0 +1,429 @@
+INFO:__main__:✓ EmailDrafter available
+INFO:googleapiclient.discovery_cache:file_cache is only supported with oauth2client<4.0.0
+INFO:utils.email_drafter:✓ OpenAI initialized (gpt-4o-mini)
+INFO:__main__:✓ Email Drafter initialized (OpenAI-powered)
+INFO:utils.tweet_drafter:✓ TweetDrafter initialized (OpenAI gpt-4o-mini)
+INFO:__main__:✓ Tweet Drafter initialized (OpenAI-powered)
+INFO:utils.whatsapp_drafter:✓ WhatsAppDrafter initialized (OpenAI gpt-4o-mini)
+INFO:__main__:✓ WhatsApp Drafter initialized (OpenAI-powered)
+INFO:watchers.whatsapp_watcher:✓ Twilio WhatsApp initialized (+14155238886)
+INFO:__main__:✓ WhatsApp Business API initialized
+INFO:__main__:🔍 Scanning for existing files...
+INFO:__main__:Found 1 existing file(s) in Inbox
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_DEMO_001.md
+WARNING:__main__:Failed to draft reply for EMAIL_DEMO_001.md
+INFO:__main__:Found 11 existing file(s) in Needs_Action
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bae96ddc542d67.md
+WARNING:__main__:Failed to draft reply for EMAIL_19bae96ddc542d67.md
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bab6c5aadbec25.md
+WARNING:__main__:Failed to draft reply for EMAIL_19bab6c5aadbec25.md
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260111T151410.208131_twilio.md
+INFO:__main__:🧾 Invoice draft already exists for WHATSAPP_20260111T151410.208131_twilio.md; skipping
+WARNING:__main__:Failed to draft WhatsApp reply for WHATSAPP_20260111T151410.208131_twilio.md
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260111T151800.335946_twilio.md
+INFO:__main__:🧾 Invoice draft already exists for WHATSAPP_20260111T151800.335946_twilio.md; skipping
+WARNING:__main__:Failed to draft WhatsApp reply for WHATSAPP_20260111T151800.335946_twilio.md
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260111T151730.316033_twilio.md
+INFO:__main__:🧾 Invoice draft already exists for WHATSAPP_20260111T151730.316033_twilio.md; skipping
+WARNING:__main__:Failed to draft WhatsApp reply for WHATSAPP_20260111T151730.316033_twilio.md
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260111T143728.687525_twilio.md
+WARNING:__main__:Failed to draft WhatsApp reply for WHATSAPP_20260111T143728.687525_twilio.md
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bab7ea28f8e09c.md
+WARNING:__main__:Failed to draft reply for EMAIL_19bab7ea28f8e09c.md
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19badd3fbc88fdb2.md
+WARNING:__main__:Failed to draft reply for EMAIL_19badd3fbc88fdb2.md
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260111T151500.230315_twilio.md
+INFO:__main__:🧾 Invoice draft already exists for WHATSAPP_20260111T151500.230315_twilio.md; skipping
+WARNING:__main__:Failed to draft WhatsApp reply for WHATSAPP_20260111T151500.230315_twilio.md
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260111T144327.174729_twilio.md
+WARNING:__main__:Failed to draft WhatsApp reply for WHATSAPP_20260111T144327.174729_twilio.md
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bab59dde71bbe0.md
+WARNING:__main__:Failed to draft reply for EMAIL_19bab59dde71bbe0.md
+INFO:__main__:🚀 Orchestrator started (watching /Users/hparacha/DigitalFTE/vault)
+INFO:__main__:📦 Batching enabled: processes events in batches every 2s or when 50+ events queue
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260111T152030.416985_twilio.md
+INFO:__main__:🧾 Invoice draft created: INVOICE_DRAFT_20260111_152030.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260111T152030.416985_twilio.md
+INFO:__main__:🧾 Invoice draft already exists for WHATSAPP_20260111T152030.416985_twilio.md; skipping
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260111_152031.md [🟠 BUSINESS, confidence: 70%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260111_152031.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260111_152032.md [🟠 BUSINESS, confidence: 70%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260111_152032.md
+INFO:__main__:⚡ Executing ⚪ NORMAL action (priority: NORMAL): INVOICE_DRAFT_20260111_152030.md
+INFO:__main__:🧾 Creating Xero invoice for +16475683720 (100.00)
+INFO:__main__:✅ Invoice created in Xero (ID: 6af198f8-878b-4675-9ea9-82e2e37acbca)
+INFO:__main__:✅ Invoice created successfully
+INFO:__main__:✔️ Done: INVOICE_DRAFT_20260111_152030.md [⚪ NORMAL]
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19baf11301a969fe.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19baf11301a969fe.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19baf11301a969fe.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19baf11301a969fe.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260111_165852.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260111_165852.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260111_165852.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260111_165852.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19baf12d339ed76d.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19baf12d339ed76d.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19baf12d339ed76d.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19baf12d339ed76d.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260111_170259.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260111_170259.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260111_170308.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260111_170308.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bafceadc4cd77a.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bafceadc4cd77a.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bafceadc4cd77a.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bafceadc4cd77a.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260111_202527.md
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260111_202527.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260111_202527.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260111_202527.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb05bda8cf8e2a.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb05bda8cf8e2a.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb05bda8cf8e2a.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb05bda8cf8e2a.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260111_225953.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260111_225953.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260111_225953.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260111_225953.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb0a10597db66d.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb0a10597db66d.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb0a10597db66d.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb0a10597db66d.md
+INFO:openai._base_client:Retrying request to /chat/completions in 0.432558 seconds
+INFO:openai._base_client:Retrying request to /chat/completions in 0.387878 seconds
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_034738.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_034738.md
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_034738.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_034738.md
+INFO:__main__:Processing batch of 2 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb0f82916a9f3c.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb0f82916a9f3c.md
+INFO:openai._base_client:Retrying request to /chat/completions in 0.420692 seconds
+INFO:openai._base_client:Retrying request to /chat/completions in 0.820607 seconds
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_040502.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_040502.md
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb0ccc43dbbbff.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb0ccc43dbbbff.md
+INFO:openai._base_client:Retrying request to /chat/completions in 0.448394 seconds
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_053146.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_053146.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb255d78081138.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb255d78081138.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb255d78081138.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb255d78081138.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_092227.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_092227.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_092227.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_092227.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260112T093653.393134_twilio.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260112T093653.393134_twilio.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260112_093655.md [⚪ NORMAL, confidence: 85%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260112_093655.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260112_093655.md [⚪ NORMAL, confidence: 85%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260112_093655.md
+INFO:__main__:⚡ Executing ⚪ NORMAL action (priority: NORMAL): WHATSAPP_DRAFT_20260112_093654.md
+INFO:__main__:💬 Sending WhatsApp message to +16475683720
+INFO:__main__:   Message preview: Hey there! 👋 How can I help you today?...
+INFO:watchers.whatsapp_watcher:✅ WhatsApp sent to +16475683720
+INFO:watchers.whatsapp_watcher:   SID: SM007aff7ed3308bf891acb88fc510f5a4
+INFO:__main__:✅ WhatsApp message sent successfully to +16475683720
+ERROR:__main__:Action error: [Errno 2] No such file or directory: '/Users/hparacha/DigitalFTE/vault/Approved/WHATSAPP_DRAFT_20260112_093654.md' -> '/Users/hparacha/DigitalFTE/vault/Done/WHATSAPP_DRAFT_20260112_093654.md'
+INFO:__main__:⚡ Executing ⚪ NORMAL action (priority: NORMAL): WHATSAPP_DRAFT_20260112_093655.md
+INFO:__main__:💬 Sending WhatsApp message to +16475683720
+INFO:__main__:   Message preview: Hey there! 👋 How can I help you today?...
+INFO:watchers.whatsapp_watcher:✅ WhatsApp sent to +16475683720
+INFO:watchers.whatsapp_watcher:   SID: SMd2e15ec73102c038b7c9e55c4ae41d28
+INFO:__main__:✅ WhatsApp message sent successfully to +16475683720
+ERROR:__main__:Action error: [Errno 2] No such file or directory: '/Users/hparacha/DigitalFTE/vault/Approved/WHATSAPP_DRAFT_20260112_093655.md' -> '/Users/hparacha/DigitalFTE/vault/Done/WHATSAPP_DRAFT_20260112_093655.md'
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260112T093956.126578_twilio.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260112T093956.126578_twilio.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260112_093956.md [⚪ NORMAL, confidence: 85%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260112_093956.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260112_093957.md [⚪ NORMAL, confidence: 85%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260112_093957.md
+INFO:__main__:⚡ Executing ⚪ NORMAL action (priority: NORMAL): WHATSAPP_DRAFT_20260112_093957.md
+INFO:__main__:💬 Sending WhatsApp message to +16475683720
+INFO:__main__:   Message preview: Hey there! How can I assist you today?...
+INFO:watchers.whatsapp_watcher:✅ WhatsApp sent to +16475683720
+INFO:watchers.whatsapp_watcher:   SID: SM4414aeada21474adbcf798398086bc9c
+INFO:__main__:✅ WhatsApp message sent successfully to +16475683720
+ERROR:__main__:Action error: [Errno 2] No such file or directory: '/Users/hparacha/DigitalFTE/vault/Approved/WHATSAPP_DRAFT_20260112_093957.md' -> '/Users/hparacha/DigitalFTE/vault/Done/WHATSAPP_DRAFT_20260112_093957.md'
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260112T094613.645885_twilio.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260112T094613.645885_twilio.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260112_094614.md [⚪ NORMAL, confidence: 85%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260112_094614.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260112_094614.md [⚪ NORMAL, confidence: 85%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260112_094614.md
+INFO:__main__:⚡ Executing ⚪ NORMAL action (priority: NORMAL): WHATSAPP_DRAFT_20260112_094615.md
+INFO:__main__:💬 Sending WhatsApp message to +16475683720
+INFO:__main__:   Message preview: Hey! Not much, just here to help out. What’s up with you?...
+INFO:watchers.whatsapp_watcher:✅ WhatsApp sent to +16475683720
+INFO:watchers.whatsapp_watcher:   SID: SMca357386d80cc85fcd389119a76f528c
+INFO:__main__:✅ WhatsApp message sent successfully to +16475683720
+ERROR:__main__:Action error: [Errno 2] No such file or directory: '/Users/hparacha/DigitalFTE/vault/Approved/WHATSAPP_DRAFT_20260112_094615.md' -> '/Users/hparacha/DigitalFTE/vault/Done/WHATSAPP_DRAFT_20260112_094615.md'
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260112T095136.572985_twilio.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260112T095136.572985_twilio.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260112_095137.md [⚪ NORMAL, confidence: 85%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260112_095137.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260112_095137.md [⚪ NORMAL, confidence: 85%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260112_095137.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260112T095503.993756_twilio.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260112T095503.993756_twilio.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260112_095504.md [⚪ NORMAL, confidence: 85%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260112_095504.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260112_095505.md [⚪ NORMAL, confidence: 85%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260112_095505.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260112T095911.372897_twilio.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:💬 Using AI to draft WhatsApp reply for: WHATSAPP_20260112T095911.372897_twilio.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260112_095912.md [⚪ NORMAL, confidence: 85%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260112_095912.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.whatsapp_drafter:✓ WhatsApp draft created: WHATSAPP_DRAFT_20260112_095913.md [⚪ NORMAL, confidence: 85%]
+INFO:__main__:💬 WhatsApp draft created: WHATSAPP_DRAFT_20260112_095913.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb36c3c39208cb.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb36c3c39208cb.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb36c3c39208cb.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb36c3c39208cb.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_131623.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_131623.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_131623.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_131623.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb37a4bc10582d.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb37a4bc10582d.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb37a4bc10582d.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb37a4bc10582d.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_133145.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_133145.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_133146.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_133146.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb540eb6c470d5.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb540eb6c470d5.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb540eb6c470d5.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb540eb6c470d5.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_214828.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_214828.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_214829.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_214829.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb548104eade2b.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb548104eade2b.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb548104eade2b.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb548104eade2b.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_215612.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_215612.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_215612.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_215612.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb561f35bbf14e.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb561f35bbf14e.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb561f35bbf14e.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb561f35bbf14e.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_222432.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_222432.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_222432.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_222432.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb5a9d6b7dd6cd.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb5a9d6b7dd6cd.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb5a9d6b7dd6cd.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb5a9d6b7dd6cd.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_234303.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_234303.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260112_234303.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260112_234303.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb638695e33696.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb638695e33696.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb638695e33696.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb638695e33696.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260113_021842.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260113_021842.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260113_021843.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260113_021843.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb6ceed138b285.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb6ceed138b285.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb6ceed138b285.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb6ceed138b285.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260113_050315.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260113_050315.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260113_050316.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260113_050316.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb7a57c2d542e4.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb7a57c2d542e4.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb7a57c2d542e4.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb7a57c2d542e4.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260113_090311.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260113_090311.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260113_090312.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260113_090312.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb7c2dbeacc86f.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb7c2dbeacc86f.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb7c2dbeacc86f.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb7c2dbeacc86f.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260113_092940.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260113_092940.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260113_092940.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260113_092940.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb7cfaba9e744a.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb7cfaba9e744a.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb7cfaba9e744a.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb7cfaba9e744a.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260113_094326.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260113_094326.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260113_094326.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260113_094326.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb7e4c4b9008e8.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb7e4c4b9008e8.md
+INFO:__main__:Processing batch of 1 inbox files
+INFO:__main__:🤖 Using AI Assistant to draft reply for: EMAIL_19bb7e4c4b9008e8.md
+INFO:utils.email_drafter:📧 Drafting reply for: EMAIL_19bb7e4c4b9008e8.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260113_100634.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260113_100634.md
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:utils.email_drafter:✓ Draft generated via OpenAI API (gpt-4o-mini)
+INFO:utils.email_drafter:✓ Draft created (pending approval): EMAIL_DRAFT_20260113_100634.md
+INFO:__main__:✉️ Draft created: EMAIL_DRAFT_20260113_100634.md
+INFO:__main__:⚡ Executing ⚪ NORMAL action (priority: NORMAL): EMAIL_DRAFT_20260113_100633.md
+INFO:__main__:📧 Sending email to hparacha@uoguelph.ca
+INFO:__main__:   Subject: Re: Hey
+INFO:__main__:   Body preview: Hi Hamza,
+
+Thanks for reaching out.
+
+It looks like there were no specific questions or actions in yo...
+ERROR:__main__:Failed to send email: ('deleted_client: The OAuth client was deleted.', {'error': 'deleted_client', 'error_description': 'The OAuth client was deleted.'})
+ERROR:__main__:Email execution failed: ('deleted_client: The OAuth client was deleted.', {'error': 'deleted_client', 'error_description': 'The OAuth client was deleted.'})
+ERROR:__main__:Action error: ('deleted_client: The OAuth client was deleted.', {'error': 'deleted_client', 'error_description': 'The OAuth client was deleted.'})

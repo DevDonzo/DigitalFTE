@@ -1,0 +1,9 @@
+INFO:__main__:✓ Twilio WhatsApp initialized (+14155238886)
+INFO:__main__:Starting Twilio WhatsApp Watcher (checking every 10s)
+INFO:__main__:✓ Created action file: WHATSAPP_20260111T151410.208131_twilio.md
+INFO:__main__:✓ Created action file: WHATSAPP_20260111T151500.230315_twilio.md
+INFO:__main__:✓ Created action file: WHATSAPP_20260111T151730.316033_twilio.md
+INFO:__main__:✓ Created action file: WHATSAPP_20260111T151800.335946_twilio.md
+INFO:__main__:✓ Created action file: WHATSAPP_20260111T152030.416985_twilio.md
+INFO:__main__:✓ Created action file: WHATSAPP_20260112T093956.126578_twilio.md
+INFO:__main__:✓ Created action file: WHATSAPP_20260112T095136.572985_twilio.md

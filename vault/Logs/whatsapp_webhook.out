@@ -1,0 +1,68 @@
+2026-01-10 17:36:29,900 [__main__] Starting WhatsApp webhook server on port 8001
+2026-01-10 17:36:29,900 [__main__] Verify token: digitalfte_verify
+2026-01-10 17:36:29,900 [__main__] Vault path: /Users/hparacha/DigitalFTE/vault
+INFO:     Started server process [20094]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+2026-01-10 17:59:36,389 [__main__] Webhook verification: mode=subscribe, token=digitalfte_verify
+2026-01-10 17:59:36,390 [__main__] Webhook verified successfully!
+INFO:     2a03:2880:2ff:9:::0 - "GET /webhook?hub.mode=subscribe&hub.challenge=1202232294&hub.verify_token=digitalfte_verify HTTP/1.1" 200 OK
+2026-01-10 18:02:09,270 [__main__] Webhook received: {
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "0",
+      "changes": [
+        {
+          "field": "messages",
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "16505551111",
+              "phone_number_id": "123456123"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "test user name"
+                },
+                "wa_id": "16315551181"
+              }
+            ],
+            "messages": [
+              {
+                "from": "16315551181",
+                "id": "ABGGFlA5Fpa",
+                "timestamp": "1504902988",
+                "type": "text",
+                "text": {
+                  "body": "this is a text message"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+2026-01-10 18:02:09,271 [__main__] Message from test user name (16315551181): this is a text message
+2026-01-10 18:02:09,272 [__main__] Created action file: WHATSAPP_20260110_180209_b8e86d7462ae.md
+INFO:     2a03:2880:2ff:::0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-11 11:11:13,339 [__main__] Webhook error: Expecting value: line 1 column 1 (char 0)
+INFO:     18.209.106.110:0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-11 11:11:13,340 [__main__] Webhook error: Expecting value: line 1 column 1 (char 0)
+INFO:     100.27.209.52:0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-11 11:11:23,260 [__main__] Webhook error: Expecting value: line 1 column 1 (char 0)
+INFO:     3.91.133.17:0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-11 11:14:11,428 [__main__] Webhook error: Expecting value: line 1 column 1 (char 0)
+INFO:     54.82.7.245:0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-11 11:14:11,622 [__main__] Webhook error: Expecting value: line 1 column 1 (char 0)
+INFO:     54.227.31.11:0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-11 11:14:13,385 [__main__] Webhook error: Expecting value: line 1 column 1 (char 0)
+INFO:     35.171.20.109:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [20094]

@@ -1,0 +1,117 @@
+INFO:googleapiclient.discovery_cache:file_cache is only supported with oauth2client<4.0.0
+INFO:GmailWatcher:Starting GmailWatcher
+INFO:__main__:Created: EMAIL_19bae96ddc542d67.md
+INFO:__main__:Created: EMAIL_19badd3fbc88fdb2.md
+INFO:__main__:Created: EMAIL_19bab7ea28f8e09c.md
+INFO:__main__:Created: EMAIL_19bab6c5aadbec25.md
+INFO:__main__:Created: EMAIL_19bab59dde71bbe0.md
+ERROR:__main__:Gmail check error: [Errno 32] Broken pipe
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+INFO:__main__:Created: EMAIL_19baf11301a969fe.md
+INFO:__main__:Created: EMAIL_19baf12d339ed76d.md
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 32] Broken pipe
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+INFO:__main__:Created: EMAIL_19bafceadc4cd77a.md
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 32] Broken pipe
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+INFO:__main__:Created: EMAIL_19bb05bda8cf8e2a.md
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 32] Broken pipe
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 32] Broken pipe
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+INFO:__main__:Created: EMAIL_19bb0f82916a9f3c.md
+INFO:__main__:Created: EMAIL_19bb0ccc43dbbbff.md
+INFO:__main__:Created: EMAIL_19bb0a10597db66d.md
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 32] Broken pipe
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 32] Broken pipe
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 60] Operation timed out
+ERROR:__main__:Gmail check error: [Errno 60] Operation timed out
+INFO:__main__:Created: EMAIL_19bb255d78081138.md
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: [Errno 60] Operation timed out
+ERROR:__main__:Gmail check error: [Errno 8] nodename nor servname provided, or not known
+INFO:__main__:Created: EMAIL_19bb36c3c39208cb.md
+INFO:__main__:Created: EMAIL_19bb37a4bc10582d.md
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 60] Operation timed out
+ERROR:__main__:Gmail check error: Unable to find the server at gmail.googleapis.com
+ERROR:__main__:Gmail check error: [Errno 49] Can't assign requested address
+ERROR:__main__:Gmail check error: [Errno 49] Can't assign requested address
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: Unable to find the server at oauth2.googleapis.com
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 32] Broken pipe
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+INFO:__main__:Created: EMAIL_19bb540eb6c470d5.md
+INFO:__main__:Created: EMAIL_19bb548104eade2b.md
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+INFO:__main__:Created: EMAIL_19bb561f35bbf14e.md
+INFO:__main__:Created: EMAIL_19bb5a9d6b7dd6cd.md
+INFO:__main__:Created: EMAIL_19bb638695e33696.md
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 32] Broken pipe
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+INFO:__main__:Created: EMAIL_19bb6ceed138b285.md
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 32] Broken pipe
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+ERROR:__main__:Gmail check error: Unable to find the server at gmail.googleapis.com
+ERROR:__main__:Gmail check error: [Errno 49] Can't assign requested address
+ERROR:__main__:Gmail check error: [Errno 54] Connection reset by peer
+INFO:__main__:Created: EMAIL_19bb7a57c2d542e4.md
+INFO:__main__:Created: EMAIL_19bb7c2dbeacc86f.md
+INFO:__main__:Created: EMAIL_19bb7cfaba9e744a.md
+INFO:__main__:Created: EMAIL_19bb7e4c4b9008e8.md

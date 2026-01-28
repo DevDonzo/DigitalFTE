@@ -1,0 +1,82 @@
+---
+type: email
+gmail_message_id: 19bc8645f72edf33
+from: GitGuardian <security@getgitguardian.com>
+subject: [DevDonzo/DigitalFTE] Google OAuth2 Keys exposed on GitHub
+received: 2026-01-16T15:02:06.901637
+priority: high
+status: pending
+---
+
+## From
+GitGuardian <security@getgitguardian.com>
+
+## Subject
+[DevDonzo/DigitalFTE] Google OAuth2 Keys exposed on GitHub
+
+## Body
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; margin: 0">
+
+<head>
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>[DevDonzo/DigitalFTE] Google OAuth2 Keys exposed on GitHub</title>
+    <style type="text/css">
+        @media only screen and (max-width: 640px) {
+            body {
+                padding: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body itemscope itemtype="http://schema.org/EmailMessage"
+    style="height:100%; width:100% !important; line-height:1.6em; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; background-color:#f6f6f6; box-sizing: border-box; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: none; width: 100% !important; margin: 0">
+    <table class="body-wrap" style="font-size:16px; width: 100%; background-color: #f6f6f6; margin: 0"bgcolor="#f6f6f6">
+        <tr style="margin: 0">
+            <td style="vertical-align: top; margin: 0" valign="top"></td>
+            <td class="container" width="600"
+                style="vertical-align: top; display: block !important; max-width: 600px !important; clear: both !important; margin: 0 auto" valign="top">
+                <div class="content" style="max-width: 600px; display: block; margin: 0 auto; padding: 25px">
+                    <table class="main" width="100%" cellpadding="0" cellspacing="0" style="border-radius: 5px; background-color: #fff; margin: 0" bgcolor="#ffffff">
+                        <tr style="margin: 0">
+                            
+                        </tr>
+                        <tr style="margin: 0">
+                            <td style="vertical-align: top; margin: 0; padding: 15px 25px 20px 25px" valign="top">
+                                <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0">
+                                    <tr style="margin: 0">
+                                        <td style="vertical-align: top; margin: 0; padding: 0 0 20px" valign="top">
+                                           <strong>GitGuardian has detected the following Google OAuth2 Keys exposed within your GitHub account.</strong>
+                                        </td>
+                                    </tr>
+                                    <tr style="margin: 0">
+                                        <td style="vertical-align: top; margin: 0; padding: 0 0 20px; font-size: 14px" valign="top">
+                                            <p style="margin:0"><strong>Details</strong></p>
+                                            <p style="margin:0">- Secret type: <a href="https://github.com/DevDonzo/DigitalFTE/commit/cfabd5d6c0ed362a1d076f63925460b55984f9ef#diff-4ca71d11592681f90fe361e179d11d514e4526f8365f42c2ed6fe37ca3028747">Google OAuth2 Keys</a></p>
+                                            <p style="margin:0">- Repository: DevDonzo/DigitalFTE</p>
+                                            <p style="margin:0">- Pushed date: January 8th 2026, 16:02:08 UTC</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="margin: 0">
+                                        <td style="vertical-align: top; margin: 0; padding: 0 0 20px" valign="top">
+                                        <a href="https://dashboard.gitguardian.com/api/v1/auth/user/github_login/authorize/?utm_source=alerting&utm_medium=newdomainemail&utm_campaign=IncidentLanding&ca_github_repo_id=1130512937&ca_leak_hash=jBLqLfUQPWspCuCmREJtUxvKhuOfMy1GAmJx4N3YGg7bSY3DpzPhLK%2Fj1c9tpT7Y&ca_github_repo_name=DevDonzo%2FDigitalFTE&email=parachaham%40gmail.com"
+                                                class="btn-primary"
+                                                style="font-size: 18px; color: #FFF; text-decoration: none; line-height: 2em; font-weight: bold; cursor: pointer; display: inline-block; border-radius: 6px; text-transform: capitalize; background-color: #0D6EF5; margin: 0; border-color: #0D6EF5; border-style: solid; border-width: 10px 30px">Fix this secret leak</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="width: 100%; color: #87888E; margin: 0; clear: both; margin: 0; padding: 0px 25px 10px 25px; border-radius: 0 0 5px 5px; line-height: 1em; background-color:#FFF;" bgcolor="#FFF">
+                        <tr style="margin: 0">
+                            <td style="font-size: 14px">
+                                <p style="margin-top:5
+
+## Actions
+- [ ] Reply
+- [ ] Forward
+- [ ] Archive

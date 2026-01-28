@@ -1,0 +1,77 @@
+2026-01-11 15:13:50,318 [__main__] 🚀 Starting webhook server on port 8001
+2026-01-11 15:13:50,318 [__main__]    Webhook URL: http://localhost:8001/webhook
+INFO:     Started server process [76227]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+2026-01-11 15:14:02,079 [__main__] 📱 Incoming message from +16475683720: hey, i just sent you an invoice for 1000 dollars
+2026-01-11 15:14:02,080 [__main__] ✓ Message SM81dd51a691dcd1ebb31480320794946d marked as processed
+2026-01-11 15:14:02,081 [__main__] Queued WhatsApp message SM81dd51a691dcd1ebb31480320794946d for watcher processing
+INFO:     54.144.74.217:0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-11 15:14:53,963 [__main__] 📱 Incoming message from +16475683720: hey i just sent an invoice for $1000000
+2026-01-11 15:14:53,964 [__main__] ✓ Message SM16730d85a93d2d209ddf9529fe8ac701 marked as processed
+2026-01-11 15:14:53,964 [__main__] Queued WhatsApp message SM16730d85a93d2d209ddf9529fe8ac701 for watcher processing
+INFO:     98.88.31.243:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     3.88.186.139:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     34.228.170.163:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     98.93.154.17:0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-11 15:17:29,000 [__main__] 📱 Incoming message from +16475683720: hey i just sent an invoice for $1000000
+2026-01-11 15:17:29,001 [__main__] ✓ Message SMeebf325950da9607ed3c21e7f819683b marked as processed
+2026-01-11 15:17:29,002 [__main__] Queued WhatsApp message SMeebf325950da9607ed3c21e7f819683b for watcher processing
+INFO:     13.221.26.239:0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-11 15:17:58,628 [__main__] 📱 Incoming message from +16475683720: hey, just sent an invoice of $1000
+2026-01-11 15:17:58,629 [__main__] ✓ Message SMfab35afede9f09f385b991cf5a797d2e marked as processed
+2026-01-11 15:17:58,630 [__main__] Queued WhatsApp message SMfab35afede9f09f385b991cf5a797d2e for watcher processing
+INFO:     3.88.112.30:0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-11 15:20:24,308 [__main__] 📱 Incoming message from +16475683720: hey, just sent an invoice of $1000
+2026-01-11 15:20:24,308 [__main__] ✓ Message SMf3f9b0dba585413bc9a4461a5c93cf94 marked as processed
+2026-01-11 15:20:24,309 [__main__] Queued WhatsApp message SMf3f9b0dba585413bc9a4461a5c93cf94 for watcher processing
+INFO:     35.172.184.77:0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-12 09:36:52,950 [__main__] 📱 Incoming message from +16475683720: Hey!👋
+2026-01-12 09:36:52,952 [__main__] ✓ Message SM6f359845afcff53c4d0792bcc2251633 marked as processed
+2026-01-12 09:36:52,953 [__main__] Queued WhatsApp message SM6f359845afcff53c4d0792bcc2251633 for watcher processing
+INFO:     54.80.198.194:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.196.221.3:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     52.91.56.177:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     100.30.205.144:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.80.198.194:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     100.27.209.52:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     34.201.125.253:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     34.207.129.26:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.82.7.245:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.224.247.248:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     35.172.184.77:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.224.247.248:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     18.212.17.102:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.204.197.39:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     98.93.19.249:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     98.93.154.17:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.91.248.176:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.82.7.245:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     98.93.89.58:0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-12 09:39:55,375 [__main__] 📱 Incoming message from +16475683720: Hey
+2026-01-12 09:39:55,376 [__main__] ✓ Message SMe51297445fb24775e9390f9780710eac marked as processed
+2026-01-12 09:39:55,377 [__main__] Queued WhatsApp message SMe51297445fb24775e9390f9780710eac for watcher processing
+INFO:     184.72.151.146:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.90.47.83:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     98.90.194.221:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     3.94.8.49:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     35.171.20.109:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.144.236.211:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.227.31.11:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.167.74.201:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     98.93.89.58:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     18.212.17.102:0 - "POST /webhook HTTP/1.1" 200 OK
+2026-01-12 09:46:07,939 [__main__] 📱 Incoming message from +16475683720: What’s up dude
+2026-01-12 09:46:07,940 [__main__] ✓ Message SM9aed4f3483ad466682c32dbc08b31550 marked as processed
+2026-01-12 09:46:07,941 [__main__] Queued WhatsApp message SM9aed4f3483ad466682c32dbc08b31550 for watcher processing
+INFO:     98.93.89.58:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.80.198.194:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     3.82.119.20:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     54.91.248.176:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     52.90.196.167:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     52.90.196.167:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     98.94.9.214:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     3.93.184.193:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     3.88.186.139:0 - "POST /webhook HTTP/1.1" 200 OK
+INFO:     13.221.119.155:0 - "POST /webhook HTTP/1.1" 200 OK

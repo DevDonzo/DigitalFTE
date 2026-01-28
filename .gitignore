@@ -1,50 +1,59 @@
-# Environment
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Environment & Secrets - NEVER COMMIT
 .env
 .env.local
+.env.cloud
+.env.*.local
+*.token.json
+credentials.json
+auth_tokens/
+whatsapp_session/
 
-# IDE/Editor
-.obsidian/
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-.DS_Store
 
-# Python
-__pycache__/
-*.pyc
-*.pyo
-.pytest_cache/
-.mypy_cache/
-*.egg-info/
-dist/
-build/
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
 
 # Node
 node_modules/
+package-lock.json
 
-# Vault (ignore all inbox/task data)
-vault/Logs/
-vault/Needs_Action/
-vault/Pending_Approval/
-vault/Done/
-vault/Inbox/
-vault/Approved/
-vault/Rejected/
-vault/Briefings/
-vault/Plans/
-vault/Social_Media/
+# Test
+.pytest_cache/
+.coverage
+htmlcov/
+test_results.json
+
+# Vault - Sync only markdown, never secrets
 vault/.processed_emails
+vault/Logs/*.jsonl
+vault/Logs/*.json
 
-# Credentials (never commit)
-*.json.backup
-token.json
-*_token.json
-credentials.json
-.gmail_token.json
-client_secret_*.json
-*.key
-*.secret
+# In Progress - Local state only, don't sync
+vault/In_Progress/**/*.md
+!vault/In_Progress/**/.gitkeep
 
-# Documentation (reference only, don't commit)
-hackathonspecs.md
+# Temporary
+*.tmp
+*.temp
+.cache/
