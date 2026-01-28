@@ -76,7 +76,7 @@ class SetupVerifier:
         self.check_file_exists(self.vault / 'Dashboard.md', 'vault/Dashboard.md')
         self.check_file_exists(self.vault / 'Company_Handbook.md', 'vault/Company_Handbook.md')
         self.check_file_exists(self.vault / 'Business_Goals.md', 'vault/Business_Goals.md')
-        self.check_file_exists(self.vault / 'Accounting/xero_config.md', 'vault/Accounting/xero_config.md')
+        self.check_file_exists(self.vault / 'Accounting/odoo_config.md', 'vault/Accounting/odoo_config.md')
         self.check_file_exists(self.vault / 'Logs/audit_rules.md', 'vault/Logs/audit_rules.md')
         
         # Python modules
@@ -91,14 +91,14 @@ class SetupVerifier:
         
         # MCP servers
         print("\n🔌 MCP Servers:")
-        mcp_servers = ['email_mcp', 'browser_mcp', 'xero_mcp', 'meta_social_mcp', 'twitter_mcp']
+        mcp_servers = ['email_mcp', 'browser_mcp', 'odoo_mcp', 'meta_social_mcp', 'twitter_mcp']
         for mcp in mcp_servers:
             self.check_directory_exists(self.root / f'mcp_servers/{mcp}', f'mcp_servers/{mcp}/')
         
         # Agent Skills
         print("\n🎯 Agent Skills:")
         skills = ['email-monitor', 'filesystem-monitor', 'whatsapp-monitor', 'linkedin-automation',
-                  'xero-integration', 'social-post', 'ceo-briefing', 'request-approval', 'error-recovery']
+                  'odoo-integration', 'social-post', 'ceo-briefing', 'request-approval', 'error-recovery']
         for skill in skills:
             self.check_file_exists(self.root / f'skills/{skill}.md', f'skills/{skill}.md')
         

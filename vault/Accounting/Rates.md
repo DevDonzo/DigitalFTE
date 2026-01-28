@@ -76,7 +76,7 @@
 **Tax (0%)**: $0
 **Total Due**: $X,XXX
 
-**Payment Instructions**: [Add Xero payment link]
+**Payment Instructions**: [Add payment details or Odoo payment link]
 ```
 
 ---

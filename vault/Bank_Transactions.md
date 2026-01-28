@@ -1,5 +1,5 @@
 ---
-source: Xero API
+source: Odoo API
 period: 2026-01
 last_updated: 2026-01-13T20:17:15.995418Z
 currency: USD
@@ -30,4 +30,4 @@ currency: USD
 
 ---
 
-*Auto-generated from Xero API - 2026-01-13 20:17*
+*Auto-generated from Odoo API - 2026-01-13 20:17*

@@ -35,13 +35,13 @@ This document defines the automation rules and escalation thresholds for your AI
 ### Payments & Financial Actions
 - Auto-approve: Recurring bills < $50
 - HITL required: New payees, > $100, amount changes > 10%
-- Always log to Xero
+- Always log to Odoo accounting system
 - Approval timeout: 24 hours
 
 **Payment Thresholds**:
 - < $50: Auto-approve if recurring
 - $50-$500: HITL approval
-- > $500: HITL + Xero verification
+- > $500: HITL + Odoo verification
 
 ### Social Media Posting
 
@@ -72,11 +72,11 @@ This document defines the automation rules and escalation thresholds for your AI
 - Weekly engagement summary in CEO Briefing
 - Audience growth metrics tracked
 
-### Xero Accounting
-- Auto-create invoices from templates
+### Odoo Accounting
+- Auto-create invoices and bills from templates
 - Log all transactions with audit trail
 - HITL for all payments
-- Auto-generate weekly CEO Briefing
+- Auto-generate weekly CEO Briefing with P&L reports
 
 ---
 
