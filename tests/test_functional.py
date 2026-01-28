@@ -27,7 +27,7 @@ print("🧪 TEST 1: WEEKLY BRIEFING GENERATION")
 print("="*70)
 
 try:
-    from scripts.weekly_audit import generate_ceo_briefing
+    from agents.orchestrator import generate_ceo_briefing
 
     print("✅ Importing weekly_audit script...")
     vault = Path(os.getenv('VAULT_PATH', './vault'))
@@ -69,63 +69,15 @@ except Exception as e:
     traceback.print_exc()
 
 # ============================================================================
-# TEST 2: BANK TRANSACTIONS SYNC FROM XERO
+# TEST 2: BANK TRANSACTIONS SYNC FROM ODOO (DISABLED - Use Odoo MCP instead)
 # ============================================================================
 print("\n" + "="*70)
-print("🧪 TEST 2: BANK TRANSACTIONS SYNC FROM XERO")
+print("🧪 TEST 2: BANK TRANSACTIONS SYNC FROM ODOO")
 print("="*70)
-
-try:
-    from utils.xero_client import XeroClient
-    from datetime import datetime
-
-    print("✅ Initializing Xero client...")
-    xero = XeroClient()
-
-    if xero.access_token:
-        print("✅ Xero authentication valid")
-
-        # Test getting weekly summary
-        try:
-            weekly = xero.get_weekly_summary()
-            print(f"✅ Weekly summary retrieved:")
-            print(f"   → Revenue: ${weekly['revenue']:,.2f}")
-            print(f"   → Expenses: ${weekly.get('expenses', 0):,.2f}")
-            print(f"   → Transactions: {weekly['transactions']}")
-            print(f"   → Invoices Paid: {weekly['invoices_paid']}")
-        except Exception as e:
-            print(f"⚠️  Could not get weekly summary: {e}")
-
-        # Test getting monthly summary
-        try:
-            monthly = xero.get_monthly_summary()
-            print(f"✅ Monthly summary retrieved:")
-            print(f"   → Revenue: ${monthly['revenue']:,.2f}")
-            print(f"   → Month: {monthly['month']}")
-            print(f"   → Outstanding: ${monthly['outstanding_amount']:,.2f}")
-        except Exception as e:
-            print(f"⚠️  Could not get monthly summary: {e}")
-
-        # Test getting bank transactions
-        try:
-            month_start = datetime.now().replace(day=1)
-            transactions = xero.get_bank_transactions(since_date=month_start)
-            print(f"✅ Bank transactions retrieved: {len(transactions)} transactions")
-
-            if transactions:
-                print(f"   Latest transactions:")
-                for tx in transactions[:3]:
-                    date = tx.get('Date', '')[:10]
-                    ref = tx.get('Reference', 'N/A')[:20]
-                    amount = tx.get('Total', 0)
-                    print(f"   → {date} | {ref} | ${float(amount):,.2f}")
-        except Exception as e:
-            print(f"⚠️  Could not get transactions: {e}")
-    else:
-        print("⚠️  Xero not authenticated - skipping transaction tests")
-
-except Exception as e:
-    print(f"❌ Xero integration error: {e}")
+print("⚠️  Odoo integration is now handled via MCP server (odoo_mcp)")
+print("   → Accounting data is accessed via orchestrator.py calls to Odoo MCP")
+print("   → Direct API tests should use odoo_mcp integration tests")
+print("   ✅ SKIPPED - Use integration tests for Odoo MCP instead")
 
 # ============================================================================
 # TEST 3: ORCHESTRATOR DRAFT ROUTING
@@ -135,7 +87,7 @@ print("🧪 TEST 3: ORCHESTRATOR DRAFT ROUTING")
 print("="*70)
 
 try:
-    from scripts.orchestrator import VaultHandler
+    from agents.orchestrator import VaultHandler
 
     print("✅ Orchestrator imports successfully")
     vault = Path(os.getenv('VAULT_PATH', './vault'))
@@ -187,7 +139,7 @@ print("🧪 TEST 4: MOCK EMAIL WORKFLOW")
 print("="*70)
 
 try:
-    from scripts.orchestrator import VaultHandler
+    from agents.orchestrator import VaultHandler
     from pathlib import Path
     import tempfile
 

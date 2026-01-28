@@ -15,7 +15,7 @@ DigitalFTE automates personal and business tasks across multiple domains:
 - **📧 Email Management** - AI monitors Gmail, drafts intelligent replies, you approve before sending
 - **💬 WhatsApp Messages** - Receives messages via webhooks, generates contextual responses
 - **📱 Social Media** - Auto-posts to LinkedIn, Twitter, Facebook, Instagram
-- **💰 Accounting** - Creates invoices & bills in Odoo Community, logs transactions, generates P&L reports (via Odoo JSON-RPC API)
+- **💰 Accounting** - Creates invoices & bills in Odoo Community Edition (self-hosted), logs transactions, generates P&L reports (via Odoo JSON-RPC API)
 - **📊 Executive Briefing** - Weekly automated summary of revenue, tasks, and key metrics
 - **✍️ Personalized Writing** - AI learns your email style and voice, matches your tone naturally
 - **🔗 Thread Context** - AI replies reference previous emails in the conversation
@@ -58,7 +58,7 @@ DigitalFTE automates personal and business tasks across multiple domains:
 - **LinkedIn** - Auto-post content
 - **Twitter/X** - Post updates and engage
 - **Facebook/Instagram** - Social media automation
-- **Xero** - Invoicing and accounting
+- **Odoo Community Edition** - Invoicing and accounting (self-hosted)
 
 ### 🚨 Reliability Features
 - Process watchdog (auto-restart failed scripts)
@@ -99,7 +99,8 @@ nano .env  # Edit with your credentials
 **Required APIs** (start with just email):
 - Gmail OAuth 2.0
 - OpenAI API key
-- (Optional) Twilio, Twitter, Meta, Xero, LinkedIn
+- (Optional) Twilio, Twitter, Meta, LinkedIn
+- Odoo Community Edition (for accounting)
 
 See `.env.example` for all options.
 
@@ -254,7 +255,7 @@ The system learns your email style through:
 │ • Email MCP (Gmail send/receive)        │
 │ • Twitter MCP (X integration)           │
 │ • Meta Social MCP (FB/Instagram)        │
-│ • Xero MCP (Invoicing/Accounting)       │
+│ • Odoo MCP (Invoicing/Accounting)       │
 │ • Custom tools                          │
 └─────────────────────────────────────────┘
 ```
@@ -303,13 +304,13 @@ DigitalFTE/
 │   ├── email_mcp/              ← Gmail integration
 │   ├── twitter_mcp/            ← Twitter/X posting
 │   ├── meta_social_mcp/        ← Facebook/Instagram
-│   └── xero_mcp/               ← Invoicing/Accounting
+│   └── odoo_mcp/               ← Invoicing/Accounting (Odoo)
 │
 ├── auth/                        ← API AUTHENTICATION
 │   ├── gmail.py                ← Gmail OAuth 2.0
 │   ├── twitter.py              ← Twitter API auth
 │   ├── linkedin.py             ← LinkedIn OAuth
-│   └── xero.py                 ← Xero OAuth 2.0
+│   └── odoo.py                 ← Odoo authentication
 │
 ├── tests/                       ← TEST SUITE
 │   ├── test_gmail_watcher.py
@@ -593,7 +594,7 @@ Built with:
 - [Google APIs](https://developers.google.com) - Gmail, Calendar
 - [Twilio](https://twilio.com) - WhatsApp integration
 - [Twitter API v2](https://developer.twitter.com) - Social media
-- [Xero](https://developer.xero.com) - Accounting
+- [Odoo Community Edition](https://www.odoo.com) - ERP & Accounting (self-hosted)
 
 ---
 

@@ -5,7 +5,7 @@ import pytest
 from pathlib import Path
 
 project_root = Path(__file__).resolve().parents[1]
-from scripts.orchestrator import VaultHandler
+from agents.orchestrator import VaultHandler
 
 
 def test_full_email_workflow():

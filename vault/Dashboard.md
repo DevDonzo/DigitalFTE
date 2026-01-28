@@ -1,23 +1,19 @@
 # Digital FTE Dashboard
 
-**Last Updated**: 2026-01-13 20:17
+**Last Updated**: 2026-01-26 09:13
 **Status**: 🟢 Online
 
 ---
 
-
-## Scheduled Events
-- Team Building Event - February 15
-- Team Building Event - February 16
 ## Quick Stats (This Week)
 
 | Metric | Count |
 |--------|-------|
-| Emails Sent | 54 |
-| Emails Drafted | 9 |
-| WhatsApp Messages | 40 |
-| LinkedIn Posts | 4 |
-| Tasks Completed | 27 |
+| Emails Sent | 0 |
+| Emails Drafted | 4 |
+| WhatsApp Messages | 0 |
+| LinkedIn Posts | 0 |
+| Tasks Completed | 0 |
 
 ---
 
@@ -41,7 +37,7 @@ Check `/Logs` for detailed activity logs.
 
 - [Business Goals](Business_Goals.md)
 - [Company Handbook](Company_Handbook.md)
-- [Latest Briefing](Briefings/2026-01-13_briefing.md)
+- [Latest Briefing](Briefings/2026-01-26_briefing.md)
 
 ---
 

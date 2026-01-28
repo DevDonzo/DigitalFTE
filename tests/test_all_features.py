@@ -78,24 +78,16 @@ for f in required_files:
 # ============================================================================
 test_section("2. XERO INTEGRATION")
 
-try:
-    from utils.xero_client import XeroClient
-    xero_imported = test("XeroClient imports successfully", True)
-    test_results['xero_integration'].append(('import', True))
-except Exception as e:
-    xero_imported = test("XeroClient imports successfully", False, str(e))
-    test_results['xero_integration'].append(('import', False))
+# Odoo integration via MCP server (not direct Python client)
+odoo_mcp_exists = (Path(__file__).parent.parent / 'mcp_servers/odoo_mcp/index.js').exists()
+test("Odoo MCP server exists", odoo_mcp_exists)
+test_results['xero_integration'].append(('odoo_mcp', odoo_mcp_exists))
 
-# Check if Xero is configured (has access token)
-try:
-    xero = XeroClient()
-    xero_configured = xero.access_token is not None
-    test("Xero authentication configured", xero_configured,
-         "Access token present" if xero_configured else "No access token")
-    test_results['xero_integration'].append(('auth', xero_configured))
-except Exception as e:
-    test("Xero authentication configured", False, str(e)[:50])
-    test_results['xero_integration'].append(('auth', False))
+# Check Odoo environment variables
+import os
+odoo_configured = bool(os.getenv('ODOO_URL')) and bool(os.getenv('ODOO_DB'))
+test("Odoo environment configured", odoo_configured)
+test_results['xero_integration'].append(('odoo_env', odoo_configured))
 
 # ============================================================================
 # SECTION 3: DASHBOARD GENERATION
@@ -154,7 +146,7 @@ else:
 test_section("5. WEEKLY AUDIT SCHEDULER")
 
 try:
-    from scripts.weekly_audit import generate_ceo_briefing
+    from agents.orchestrator import generate_ceo_briefing
     weekly_audit_imported = test("Weekly audit script imports", True)
     test_results['weekly_audit'].append(('import', True))
 except Exception as e:
@@ -194,7 +186,7 @@ if briefings_dir.exists():
 test_section("6. ORCHESTRATOR")
 
 try:
-    from scripts.orchestrator import VaultHandler
+    from agents.orchestrator import VaultHandler
     orchestrator_imported = test("Orchestrator imports successfully", True)
     test_results['orchestrator'].append(('import', True))
 except Exception as e:
@@ -368,4 +360,5 @@ with open('test_results.json', 'w') as f:
         ]
     json.dump(json_results, f, indent=2)
 
-sys.exit(0 if pass_rate >= 75 else 1)
+if __name__ == '__main__':
+    sys.exit(0 if pass_rate >= 75 else 1)

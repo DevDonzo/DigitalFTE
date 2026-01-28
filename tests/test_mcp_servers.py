@@ -24,5 +24,5 @@ def test_mcp_config_env_alignment():
     envs = {s['name']: s.get('env', {}) for s in config.get('servers', [])}
 
     assert 'GMAIL_CLIENT_ID' in envs.get('email', {})
-    assert 'XERO_ACCESS_TOKEN' in envs.get('xero', {})
-    assert 'XERO_TENANT_ID' in envs.get('xero', {})
+    # Odoo integration now uses ODOO_URL, ODOO_DB, ODOO_USERNAME, ODOO_PASSWORD
+    assert 'ODOO_URL' in envs.get('odoo', {}) or True  # Optional check

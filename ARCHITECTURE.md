@@ -76,7 +76,7 @@ Model Context Protocol servers handle external actions:
 
 - **Email MCP**: Send/draft/search emails (Gmail)
 - **Browser MCP**: Placeholder for future browser automation (not used in Twilio flow)
-- **Xero MCP**: Create invoices, log transactions (Xero API)
+- **Odoo MCP**: Create invoices, bills, log transactions (Odoo JSON-RPC API)
 - **Meta Social MCP**: Post to Facebook/Instagram
 - **Twitter MCP**: Post tweets, fetch metrics
 
@@ -150,9 +150,9 @@ If HITL:
   ↓
   Human reviews and moves to /Approved/
   ↓
-  Xero MCP executes payment
+  Odoo MCP executes payment
   ↓
-  Logs to Xero + audit trail
+  Logs to Odoo + audit trail
 ```
 
 ### CEO Briefing Flow
@@ -166,7 +166,7 @@ Reads:
 - /vault/Business_Goals.md (targets)
 - /vault/Done/ (completed tasks)
 - /vault/Logs/ (daily transactions)
-- Xero API (account balance)
+- Odoo API (account balance, invoices, P&L)
 - Social Media APIs (engagement)
   ↓
 Calculates:
