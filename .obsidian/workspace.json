@@ -185,6 +185,9 @@
   },
   "active": "61b0f1b8ae8a7506",
   "lastOpenFiles": [
+    "RUN_NOW.md",
+    "docker-run.sh",
+    "STATUS.md",
     "PLATINUM_DEPLOYMENT.md",
     "scripts/start_local.sh",
     "scripts/deploy_cloud.sh",
@@ -195,7 +198,6 @@
     "vault/Plans/email",
     "vault/Needs_Action/social",
     "vault/Needs_Action/email",
-    "vault/In_Progress/local",
     "skills/odoo-integration.md",
     "vault/Accounting/odoo_config.md",
     "SUMMARY_OF_CHANGES.md",
@@ -218,8 +220,6 @@
     "vault/Bank_Transactions.md",
     "vault/Company_Handbook.md",
     "vault/Dashboard.md",
-    "vault/Pending_Approval/EMAIL_DRAFT_20260114_125559.md",
-    "vault/Done/EMAIL_DRAFT_20260114_125558.md",
-    "vault/Done/EMAIL_19bbda6461dddb7f.md"
+    "vault/Pending_Approval/EMAIL_DRAFT_20260114_125559.md"
   ]
 }

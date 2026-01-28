@@ -1,36 +1,54 @@
 #!/bin/bash
-echo "🚀 Starting Digital FTE - All Services"
-echo ""
+# Start entire DigitalFTE system (Docker + Agents)
+
+set -e
 
 cd /Users/hparacha/DigitalFTE
 
-# Kill any existing processes
-pkill -f "agents/orchestrator"
-pkill -f "agents/gmail_watcher"
-pkill -f "agents/whatsapp_watcher"
-pkill -f "agents/webhook_server"
-pkill -f "agents/watchdog"
-sleep 2
-
-# Start all services from agents/ folder
-echo "Starting Orchestrator..."
-python3 agents/orchestrator.py > logs/orchestrator.log 2>&1 &
-
-echo "Starting Gmail Watcher..."
-python3 agents/gmail_watcher.py > logs/gmail_watcher.log 2>&1 &
-
-echo "Starting Webhook Server..."
-python3 agents/webhook_server.py > logs/webhook_server.log 2>&1 &
-
-echo "Starting WhatsApp Watcher..."
-python3 agents/whatsapp_watcher.py > logs/whatsapp_watcher.log 2>&1 &
-
-echo "Starting Watchdog..."
-python3 agents/watchdog.py > logs/watchdog.log 2>&1 &
-
-sleep 3
+echo "🚀 Starting DigitalFTE..."
 echo ""
-echo "✅ All services started!"
+
+# Start Docker
+echo "📦 Starting Docker containers..."
+docker-compose up -d
+sleep 5
+
+# Check containers
 echo ""
-ps aux | grep -E "(orchestrator|gmail_watcher|whatsapp_watcher|webhook_server|watchdog)" | grep -v grep | wc -l
-echo "services running"
+echo "✅ Docker Status:"
+docker-compose ps | grep -E "(odoo|postgres)"
+
+echo ""
+echo "🤖 Starting Agents..."
+echo ""
+
+# Create a tmux session or just run in background
+nohup python agents/orchestrator.py > logs/orchestrator.log 2>&1 &
+ORCHESTRATOR_PID=$!
+
+nohup python agents/gmail_watcher.py > logs/gmail_watcher.log 2>&1 &
+GMAIL_PID=$!
+
+nohup python agents/watchdog.py > logs/watchdog.log 2>&1 &
+WATCHDOG_PID=$!
+
+echo "✅ Agents Started"
+echo "   Orchestrator PID: $ORCHESTRATOR_PID"
+echo "   Gmail Watcher PID: $GMAIL_PID"
+echo "   Watchdog PID: $WATCHDOG_PID"
+
+echo ""
+echo "📊 Access Points:"
+echo "   Odoo Web:    http://localhost:8069"
+echo "   Obsidian:    open -a Obsidian vault/"
+echo ""
+echo "📝 Log Files:"
+echo "   tail -f logs/orchestrator.log"
+echo "   tail -f logs/gmail_watcher.log"
+echo "   tail -f logs/watchdog.log"
+echo ""
+echo "🛑 Stop All:"
+echo "   kill $ORCHESTRATOR_PID $GMAIL_PID $WATCHDOG_PID"
+echo "   docker-compose down"
+echo ""
+echo "✅ System Running!"
