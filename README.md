@@ -29,6 +29,72 @@ DigitalFTE automates personal and business tasks across multiple domains:
 
 ---
 
+## 🐳 Run Locally with Docker (Recommended)
+
+DigitalFTE runs **100% locally** using Docker. No cloud services required for core functionality.
+
+### Quick Start (3 Commands)
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/DevDonzo/DigitalFTE.git
+cd DigitalFTE
+
+# 2. Configure your API keys
+cp .env.example .env
+nano .env  # Add your Gmail, OpenAI keys
+
+# 3. Start everything with Docker
+./start_all.sh
+```
+
+**That's it!** The system will:
+- ✅ Start Odoo (accounting) + PostgreSQL in Docker containers
+- ✅ Launch AI agents (orchestrator, email watcher, watchdog)
+- ✅ Connect to your Obsidian vault for local storage
+
+**Access Points:**
+- Odoo Web Interface: http://localhost:8069
+- Vault: `open -a Obsidian vault/`
+- Logs: `tail -f logs/*.log`
+
+**Stop Everything:**
+```bash
+./stop_all.sh
+docker-compose down
+```
+
+### What's Running in Docker?
+
+The `docker-compose.yml` sets up:
+
+1. **PostgreSQL 15** - Database for Odoo accounting
+   - Port: 5432
+   - Persistent storage via Docker volumes
+
+2. **Odoo 19 Community Edition** - Self-hosted ERP/Accounting
+   - Web UI: http://localhost:8069
+   - JSON-RPC API: Port 8071
+   - Used for invoicing, bills, P&L reports
+
+3. **Python Agents** - Run on your host machine (not containerized)
+   - Orchestrator - Main reasoning engine
+   - Gmail Watcher - Email monitoring
+   - Watchdog - Health monitoring
+
+**Why Docker?**
+- ⚡ **Zero setup** - No manual database installation
+- 🔒 **Isolated** - Odoo runs in containers, won't interfere with your system
+- 🔄 **Reproducible** - Same environment everywhere
+- 💾 **Persistent** - Data saved in Docker volumes (survives restarts)
+
+**System Requirements:**
+- Docker Desktop (Mac/Windows) or Docker Engine (Linux)
+- 2GB RAM minimum for containers
+- 5GB disk space for Docker images + data
+
+---
+
 ## Key Features
 
 ### ✨ Advanced Email System
@@ -72,10 +138,13 @@ DigitalFTE automates personal and business tasks across multiple domains:
 ## Quick Start (5 Minutes)
 
 ### Prerequisites
+- **Docker Desktop** (Mac/Windows) or **Docker Engine** (Linux) - [Install Docker](https://docs.docker.com/get-docker/)
 - Python 3.13+
-- Node.js 24+
+- Node.js 24+ (for MCP servers)
 - Obsidian v1.10.6+
 - Git
+
+> **💡 Tip**: If you have Docker installed, skip to the [Docker Local Setup](#-run-locally-with-docker-recommended) section above for the fastest start.
 
 ### 1. Clone & Install
 
