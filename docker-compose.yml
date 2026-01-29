@@ -41,7 +41,7 @@ services:
     volumes:
       - odoo_data:/var/lib/odoo
       - odoo_addons:/mnt/extra-addons
-      - ./odoo.conf:/etc/odoo/odoo.conf:ro
+      - ./config/odoo.conf:/etc/odoo/odoo.conf:ro
     command: >
       odoo --db_host=postgres --db_port=5432 --db_user=odoo
       --db_password=odoo_password_change_me --database=gte

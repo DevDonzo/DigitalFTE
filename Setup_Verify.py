@@ -53,7 +53,7 @@ class SetupVerifier:
         self.check_file_exists(self.root / '.gitignore', '.gitignore (security)')
         self.check_file_exists(self.root / 'requirements.txt', 'requirements.txt (Python deps)')
         self.check_file_exists(self.root / 'package.json', 'package.json (Node deps)')
-        self.check_file_exists(self.root / 'mcp_config.json', 'mcp_config.json (MCP servers)')
+        self.check_file_exists(self.root / 'config/mcp_config.json', 'config/mcp_config.json (MCP servers)')
         
         # Root documentation
         print("\n📚 Root Documentation:")

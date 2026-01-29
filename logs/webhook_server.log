@@ -1,8 +1,0 @@
-2026-01-13 20:28:23,778 [__main__] 🚀 Starting webhook server on port 8001
-2026-01-13 20:28:23,778 [__main__]    Webhook URL: http://localhost:8001/webhook
-INFO:     Started server process [41699]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-ERROR:    [Errno 48] error while attempting to bind on address ('0.0.0.0', 8001): address already in use
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.

@@ -20,7 +20,7 @@ def test_mcp_servers_use_sdk():
 
 def test_mcp_config_env_alignment():
     root = Path(__file__).resolve().parents[1]
-    config = json.loads((root / 'mcp_config.json').read_text())
+    config = json.loads((root / 'config/mcp_config.json').read_text())
     envs = {s['name']: s.get('env', {}) for s in config.get('servers', [])}
 
     assert 'GMAIL_CLIENT_ID' in envs.get('email', {})
