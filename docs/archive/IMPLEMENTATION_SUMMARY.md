@@ -169,7 +169,7 @@ Completed full transition from Xero to Odoo Community Edition and implemented Pl
 **Purpose**: Runs on Oracle Cloud VM 24/7, generates drafts (never executes)
 
 **Watchers**:
-- Gmail: Checks for new emails, drafts replies via Claude
+- Gmail: Checks for new emails, drafts replies via AI
 - Twitter: Checks for mentions, drafts responses
 - LinkedIn: Checks for activity, drafts comments
 
@@ -607,6 +607,6 @@ ls vault/Approved/ # Ready for approvals
 
 ---
 
-**Generated**: 2026-01-18 by Claude Code
+**Generated**: 2026-01-18 by AI Assistant
 **Version**: 1.0
 **Status**: Ready for Phase 2 Deployment

@@ -1,4 +1,4 @@
-# Instructions for Claude Code - Token Efficiency & Smart Work
+# Instructions for AI Assistant - Token Efficiency & Smart Work
 
 **Last Updated**: 2026-01-08
 **Priority**: MAXIMUM EFFICIENCY
@@ -59,7 +59,7 @@
 
 ## MCP Servers as Tools
 
-**Key Insight**: MCP servers are Claude's hands to interact with external systems.
+**Key Insight**: MCP servers are AI's hands to interact with external systems.
 
 - Email MCP → Send/read emails via Gmail API
 - Xero MCP → Create invoices, log transactions
@@ -82,14 +82,14 @@ Use this with GOLD_SPEC.md Part I (Requirements Matrix):
 - [ ] B1: Obsidian vault with Dashboard.md
 - [ ] B2: Company_Handbook.md
 - [ ] B3: One working Watcher
-- [ ] B4: Claude Code reads/writes vault
+- [ ] B4: AI Assistant reads/writes vault
 - [ ] B5: Folder structure (/Needs_Action, /Inbox legacy, /Done)
 - [ ] B6: Agent Skills defined
 
 ### Silver Tier
 - [ ] S1: 2+ Watchers (Gmail + WhatsApp + LinkedIn)
 - [ ] S2: LinkedIn auto-posting
-- [ ] S3: Claude reasoning loop → Plan.md files
+- [ ] S3: AI reasoning loop → Plan.md files
 - [ ] S4: Email MCP server working
 - [ ] S5: HITL approval workflow functional
 - [ ] S6: Scheduled tasks (cron/Task Scheduler)
@@ -155,4 +155,4 @@ Use this with GOLD_SPEC.md Part I (Requirements Matrix):
 
 ---
 
-**Remember**: Every instruction Claude receives costs tokens. Be ruthlessly efficient. Use tools (MCP servers, SDKs, libraries) instead of building from scratch. Focus on requirements, not perfection.
+**Remember**: Every instruction AI receives costs tokens. Be ruthlessly efficient. Use tools (MCP servers, SDKs, libraries) instead of building from scratch. Focus on requirements, not perfection.

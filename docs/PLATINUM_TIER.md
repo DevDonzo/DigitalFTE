@@ -32,7 +32,7 @@ Platinum Tier extends Gold with a **Cloud + Local Split Architecture**:
 │     └─ Creates /Updates/POST_draft.md (post draft)             │
 │                                                                   │
 │  CLOUD ORCHESTRATOR (Subset)                                    │
-│  ├─ Claude reasoning (draft generation)                         │
+│  ├─ AI reasoning (draft generation)                         │
 │  ├─ Email drafting & style matching                             │
 │  ├─ Social post drafting                                        │
 │  └─ Create /Pending_Approval/ files for cloud decisions        │
@@ -147,7 +147,7 @@ AGENT_TYPE=local
 │  ├─ From: alice@corp.example.com
 │  ├─ Subject: Project Proposal
 │  ├─ Body: [email content]
-│  └─ draft_reply: [Claude-generated response]
+│  └─ draft_reply: [AI-generated response]
 │
 └─ Vault Sync Agent (Cloud) pushes to git
    └─ `git add vault/Updates/ && git commit && git push`
@@ -165,7 +165,7 @@ AGENT_TYPE=local
 │
 └─ User opens Obsidian, reviews:
    ├─ Original email from alice@corp.example.com
-   ├─ Suggested reply (drafted by Claude on cloud)
+   ├─ Suggested reply (drafted by AI on cloud)
    └─ [User reads and makes decision]
 
 ─────────────────────────────────────────────
@@ -190,7 +190,7 @@ AGENT_TYPE=local
 │  ├─ Tool: send_email
 │  ├─ To: alice@corp.example.com
 │  ├─ Subject: Re: Project Proposal
-│  ├─ Body: [approved draft from Claude]
+│  ├─ Body: [approved draft from AI]
 │  └─ MCP calls Gmail API (user's credentials)
 │
 ├─ Gmail sends email
@@ -331,7 +331,7 @@ DigitalFTE/
 │   ├── Company_Handbook.md       # Rules
 │   ├── Needs_Action/             # Input queue
 │   ├── Updates/                  # Cloud output (git synced)
-│   ├── Plans/                    # Claude reasoning
+│   ├── Plans/                    # AI reasoning
 │   ├── In_Progress/
 │   │   ├── cloud/                # Cloud claiming
 │   │   └── local/                # Local claiming

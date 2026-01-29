@@ -1,6 +1,6 @@
 # Meta Social MCP Server
 
-Provides Claude Code with tools to post to Facebook and Instagram using the Meta Graph API.
+Provides AI Assistant with tools to post to Facebook and Instagram using the Meta Graph API.
 
 ## Features
 

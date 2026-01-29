@@ -175,7 +175,7 @@ Missing (acceptable):
 ┌─────────────────────────────────────────┐
 │    Reasoning Layer (Orchestrator)       │
 ├─────────────────────────────────────────┤
-│ • Claude/OpenAI AI reasoning            │
+│ • AI/OpenAI AI reasoning            │
 │ • HITL approval workflow                │
 │ • Task routing & execution              │
 └────────────────┬────────────────────────┘
@@ -216,7 +216,7 @@ Missing (acceptable):
 ## Next Steps (Optional Enhancements)
 
 1. **Ralph Wiggum Loop**: Implement explicit multi-step task loop (currently handled by orchestrator logic)
-2. **Odoo Integration Skill**: Create `/skills/odoo-integration.md` for Claude Code
+2. **Odoo Integration Skill**: Create `/skills/odoo-integration.md` for AI Assistant
 3. **Additional Tests**: Add integration tests for Odoo MCP
 4. **Cloud Deployment**: Progress to Platinum Tier (cloud + local split)
 5. **Performance Optimization**: Add caching layer for frequent Odoo queries
@@ -242,5 +242,5 @@ All 11 Gold Tier requirements from instructions.md are COMPLETE or DOCUMENTED:
 
 ---
 
-**Verified by**: Claude Code
+**Verified by**: AI Assistant
 **Date**: 2026-01-28

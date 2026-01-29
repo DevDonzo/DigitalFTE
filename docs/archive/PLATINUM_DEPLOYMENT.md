@@ -13,7 +13,7 @@
 │  ├─ Twitter Watcher                │
 │  ├─ Cloud Orchestrator              │
 │  ├─ Odoo Container (accounting)    │
-│  └─ Draft Generator (Claude/OpenAI)│
+│  └─ Draft Generator (AI/OpenAI)│
 │      ↓                              │
 │  Writes: vault/Updates/             │
 └─────────────┬───────────────────────┘

@@ -10,14 +10,14 @@
 ### Bronze Tier ✅
 - Obsidian vault structure
 - One working watcher (Gmail)
-- Claude Code integration
+- AI Assistant integration
 - Basic folder structure
 - Agent Skills defined
 
 ### Silver Tier ✅
 - Multiple watchers (Gmail, WhatsApp, LinkedIn)
 - LinkedIn auto-posting
-- Claude reasoning loop
+- AI reasoning loop
 - Email MCP server
 - HITL approval workflow
 - Scheduled tasks

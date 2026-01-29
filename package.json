@@ -1,7 +1,7 @@
 {
   "name": "digital-fte",
   "version": "0.1.0",
-  "description": "Personal AI Employee - Autonomous FTE using Claude Code + Obsidian",
+  "description": "Personal AI Employee - Autonomous FTE using AI Assistant + Obsidian",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -17,7 +17,7 @@
     "AI",
     "automation",
     "FTE",
-    "Claude",
+    "AI",
     "Obsidian"
   ],
   "author": "",

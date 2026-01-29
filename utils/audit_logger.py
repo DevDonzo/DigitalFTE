@@ -16,7 +16,7 @@ class AuditLogger:
         log_entry = {
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "action_type": action_type,
-            "actor": "claude_code",
+            "actor": "ai_assistant",
             "target": target,
             "parameters": parameters or {},
             "approval_status": approval_status,

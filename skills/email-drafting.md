@@ -3,11 +3,11 @@
 **Skill ID**: `email-drafting`
 **Type**: Autonomous Reasoning / Email Generation
 **Tier**: Silver/Gold
-**Dependencies**: Claude API, Company_Handbook.md
+**Dependencies**: AI API, Company_Handbook.md
 
 ## Purpose
 
-Enable the AI Employee to autonomously read incoming emails, consult automation rules, and draft intelligent responses using Claude's reasoning engine. This transforms mechanical file processing into genuine intelligence.
+Enable the AI Employee to autonomously read incoming emails, consult automation rules, and draft intelligent responses using AI's reasoning engine. This transforms mechanical file processing into genuine intelligence.
 
 ## Architecture
 
@@ -19,7 +19,7 @@ Email Drafter reads:
   ├─ Company_Handbook.md (automation rules)
   └─ Contact metadata (known/unknown)
     ↓
-Claude generates response:
+AI generates response:
   ├─ Understands email intent
   ├─ Applies business rules
   ├─ Drafts professional reply
@@ -27,7 +27,7 @@ Claude generates response:
     ↓
 Creates Pending_Approval/
   ├─ Original email
-  ├─ Claude's reasoning
+  ├─ AI's reasoning
   ├─ Draft response
   ├─ Auto-approve flag
   └─ Edit suggestions
@@ -54,7 +54,7 @@ Response sent + logged
   - High-value requests (always approval)
 - Apply business rules to response tone/content
 
-### Claude-Powered Drafting
+### AI-Powered Drafting
 - Generate contextually appropriate responses
 - Match business voice/tone
 - Include relevant information
@@ -92,7 +92,7 @@ email_automation:
   # Signature
   ai_signature: |
     ---
-    This reply was drafted by Claude AI Employee.
+    This reply was drafted by AI AI Employee.
     [Human name] reviewed and approved this response.
 ```
 
@@ -100,10 +100,10 @@ email_automation:
 
 1. **Email arrives** → `vault/Needs_Action/EMAIL_*.md`
 2. **Orchestrator detects** → Triggers email drafter
-3. **Claude drafts** → Analyzes email + rules → Generates response
+3. **AI drafts** → Analyzes email + rules → Generates response
 4. **Creates approval file** → `vault/Pending_Approval/EMAIL_DRAFT_*.md`
    - Shows original
-   - Shows Claude's reasoning
+   - Shows AI's reasoning
    - Shows draft response
    - Marks auto-approve status
 5. **Human reviews** (takes 10 seconds for auto-approve, 2 min for approval-required)
@@ -133,7 +133,7 @@ Please review attached Q1 budget proposal...
 
 ---
 
-## Claude's Analysis
+## AI's Analysis
 
 **Email Type**: Inquiry/Request
 **Intent**: Review and approve budget
@@ -154,7 +154,7 @@ Hi,
 
 Thank you for sharing the Q1 budget proposal. I've reviewed the document and have the following observations:
 
-[Claude generates specific, relevant response based on content]
+[AI generates specific, relevant response based on content]
 
 I'll have detailed feedback by EOD tomorrow.
 
@@ -179,14 +179,14 @@ Best regards,
 
 - **Orchestrator**: Triggers drafter on inbox events
 - **Company_Handbook.md**: Source of automation rules
-- **Claude API**: Generates intelligent responses
+- **AI API**: Generates intelligent responses
 - **Gmail API**: Sends final approved responses
 - **Audit Logger**: Records all drafts + approvals
 
 ## Safety Features
 
 1. **AI Disclosure** - Every draft includes signature
-2. **Confidence Scoring** - Claude rates how certain it is
+2. **Confidence Scoring** - AI rates how certain it is
 3. **Reasoning Transparency** - Shows why it drafted that way
 4. **Human Override** - Always reviewable/editable
 5. **Approval Workflow** - Even auto-approves can be overridden
@@ -203,6 +203,6 @@ Best regards,
 
 - Draft generation time (typically <2 seconds)
 - Human approval time per email
-- Claude confidence scores
+- AI confidence scores
 - Auto-approve vs. manual approval ratio
 - Response quality feedback loop

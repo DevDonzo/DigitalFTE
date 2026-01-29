@@ -36,7 +36,7 @@ Local markdown-based knowledge base:
 ├── Business_Goals.md         # KPIs & targets
 ├── Inbox/                    # ← Legacy watcher input (optional)
 ├── Needs_Action/             # ← Primary input for actions
-├── Plans/                    # ← Claude reasoning
+├── Plans/                    # ← AI reasoning
 ├── Pending_Approval/         # ← Awaiting human approval
 ├── Approved/                 # ← Ready to execute
 ├── Rejected/                 # ← Declined by human
@@ -53,14 +53,14 @@ Local markdown-based knowledge base:
 File flow:
 1. Watcher creates file in `/Needs_Action/`
 2. Orchestrator detects change
-3. Claude processes → Creates `/Plans/` reasoning file
-4. Claude determines if action needed
+3. AI processes → Creates `/Plans/` reasoning file
+4. AI determines if action needed
 5. If sensitive → Creates `/Pending_Approval/` for human
 6. Human moves to `/Approved/` or `/Rejected/`
 7. Orchestrator executes → Logs to `/Logs/`
 8. File moves to `/Done/` → Archived
 
-### Reasoning Layer (Claude Code)
+### Reasoning Layer (AI Assistant)
 
 AI decision-making engine:
 
@@ -82,7 +82,7 @@ Model Context Protocol servers handle external actions:
 
 Each MCP:
 - Runs as Node.js subprocess
-- Communicates via stdio with Claude Code
+- Communicates via stdio with AI Assistant
 - Handles authentication & retries
 - Logs actions to audit trail
 
@@ -92,7 +92,7 @@ Master process that coordinates everything:
 
 - Starts all watcher processes (PM2 management)
 - Watches vault folders for changes
-- Triggers Claude Code on new `/Needs_Action/` files
+- Triggers AI Assistant on new `/Needs_Action/` files
 - Executes MCP server actions on approval
 - Maintains process health & auto-restarts failures
 - Routes alerts to human
@@ -115,11 +115,11 @@ Gmail API
   ↓ (Gmail Watcher)
 Creates /Needs_Action/EMAIL_[ID].md
   ↓ (Orchestrator detects)
-Triggers Claude Code
+Triggers AI Assistant
   ↓
-Claude reads /Needs_Action/ file
-Claude consults Company_Handbook.md
-Claude creates /Plans/PLAN_[ID].md
+AI reads /Needs_Action/ file
+AI consults Company_Handbook.md
+AI creates /Plans/PLAN_[ID].md
   ├─ Auto-approvable? → Call Email MCP directly
   └─ Needs approval? → Create /Pending_Approval/[ID].md
       ↓
@@ -139,7 +139,7 @@ Claude creates /Plans/PLAN_[ID].md
 ```
 Bank notification / Manual input
   ↓
-Claude detects payment needed
+AI detects payment needed
   ↓
 Company_Handbook.md says:
 - < $50 recurring known payee? Auto-approve
@@ -194,7 +194,7 @@ Moves to /Done/ when processed
 - Wait for human intervention
 - Never auto-retry
 
-### Logic Errors (Claude Misinterprets)
+### Logic Errors (AI Misinterprets)
 - Move suspicious file to `/vault/Needs_Review/`
 - Alert human for manual verification
 - Don't execute until human approves

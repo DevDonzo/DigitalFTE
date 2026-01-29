@@ -4,7 +4,7 @@ Cloud Orchestrator - Platinum Tier Always-On Agent
 
 Runs on Oracle Cloud VM 24/7:
 - Monitors: Email (Gmail), Social (Twitter, LinkedIn)
-- Generates: Draft replies & posts (via Claude)
+- Generates: Draft replies & posts (via AI)
 - Outputs: /Updates/ folder (synced to local via git)
 - Policy: DRAFT-ONLY (no sending, no posting)
 
@@ -127,7 +127,7 @@ class CloudOrchestrator:
 
                     logger.info(f"Processing email from {sender}: {subject[:50]}")
 
-                    # Draft reply using Claude
+                    # Draft reply using AI
                     if self.email_drafter:
                         try:
                             reply_draft = self.email_drafter.draft_reply(

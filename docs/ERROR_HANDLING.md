@@ -332,7 +332,7 @@ def retry_with_backoff(func, max_attempts=3):
          ▼           ▼ NO → IDLE
     ┌─────────────┐
     │ Read file   │
-    │ Call Claude │
+    │ Call AI │
     └──┬────┬─────┘
        │    │
       OK   FAIL

@@ -1,6 +1,6 @@
 # Hackathon Judge Prompt - DigitalFTE
 
-You are evaluating "DigitalFTE", a local-first Personal AI Employee that turns an Obsidian vault into a working business assistant. The system connects watchers (Gmail + WhatsApp via Twilio) to a Claude-driven orchestrator and MCP servers for external actions, with human-in-the-loop approvals for sensitive steps.
+You are evaluating "DigitalFTE", a local-first Personal AI Employee that turns an Obsidian vault into a working business assistant. The system connects watchers (Gmail + WhatsApp via Twilio) to a AI-driven orchestrator and MCP servers for external actions, with human-in-the-loop approvals for sensitive steps.
 
 ## What to Evaluate
 

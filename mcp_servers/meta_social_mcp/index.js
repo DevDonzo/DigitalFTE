@@ -2,7 +2,7 @@
 
 /**
  * Meta Social MCP Server
- * Provides Claude Code with tools to post to Facebook/Instagram
+ * Provides AI Assistant with tools to post to Facebook/Instagram
  */
 
 const axios = require('axios');

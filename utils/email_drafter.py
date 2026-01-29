@@ -278,7 +278,7 @@ Provide ONLY the email body text. No markdown formatting, no headers."""
 WHO IS HAMZA PARACHA:
 - 2nd year Software Engineering student at University of Guelph (Ontario, Canada)
 - Building autonomous AI systems and Digital FTEs (Full-Time Equivalent AI employees)
-- Technical skills: Python, AI/ML, Claude Code, MCP servers, automation
+- Technical skills: Python, AI/ML, AI Assistant, MCP servers, automation
 - Available for: consulting, freelance projects, AI integration work, research collaborations
 - Email: hparacha@uoguelph.ca
 
@@ -603,7 +603,7 @@ This response was composed with advanced AI assistance and has been reviewed by 
         email_type, auto_approve = self._classify_email_type(email, handbook_rules)
         logger.debug(f"  Type: {email_type}, Auto-approve: {auto_approve}")
 
-        # Generate draft via Claude
+        # Generate draft via AI
         draft_response, confidence = self._generate_draft(email, email_type, handbook_rules)
 
         # Generate thread summary if this is a reply

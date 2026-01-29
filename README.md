@@ -1,6 +1,6 @@
 # 🚀 DigitalFTE - Build Your Own Personal AI Employee
 
-An open-source autonomous AI agent system that works 24/7 like a full-time employee. Built with Claude Code, Obsidian, Python, and MCP servers.
+An open-source autonomous AI agent system that works 24/7 like a full-time employee. Built with AI Assistant, Obsidian, Python, and MCP servers.
 
 **Repository**: https://github.com/DevDonzo/DigitalFTE
 
@@ -243,7 +243,7 @@ The system learns your email style through:
 │    Reasoning Layer (Orchestrator)       │
 ├─────────────────────────────────────────┤
 │ • Reads vault files                     │
-│ • Uses Claude/OpenAI for reasoning      │
+│ • Uses AI/OpenAI for reasoning      │
 │ • Drafts responses with personalization │
 │ • Routes to approval queue              │
 └────────────────┬────────────────────────┘
@@ -588,9 +588,9 @@ A: Yes! Edit `/vault/EmailStyle.md` or modify the drafters in `utils/`.
 ## Credits
 
 Built with:
-- [Claude/OpenAI](https://openai.com) - AI language models
+- [AI/OpenAI](https://openai.com) - AI language models
 - [Obsidian](https://obsidian.md) - Local markdown database
-- [Claude Code](https://claude.com/claude-code) - Development environment
+- [AI Assistant](AI Assistant) - Development environment
 - [Google APIs](https://developers.google.com) - Gmail, Calendar
 - [Twilio](https://twilio.com) - WhatsApp integration
 - [Twitter API v2](https://developer.twitter.com) - Social media
