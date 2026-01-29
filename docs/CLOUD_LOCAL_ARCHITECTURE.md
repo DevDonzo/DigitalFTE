@@ -1,4 +1,4 @@
-# Platinum Tier: Cloud + Local AI Employee Architecture
+# Cloud + Local AI Employee Architecture
 
 **Status**: Phase 1: Architecture & Implementation
 **Estimated**: 60+ hours (Phases 1-3)
@@ -6,7 +6,7 @@
 
 ## Overview
 
-Platinum Tier extends Gold with a **Cloud + Local Split Architecture**:
+Advanced **Cloud + Local Split Architecture**:
 
 - **Cloud VM (Oracle Free Tier)**: 24/7 watchers + draft generation
 - **Local Machine**: Human approvals + final execution + payment processing

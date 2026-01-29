@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cloud Orchestrator - Platinum Tier Always-On Agent
+Cloud Orchestrator - Always-On Agent
 
 Runs on Oracle Cloud VM 24/7:
 - Monitors: Email (Gmail), Social (Twitter, LinkedIn)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Vault Sync Agent - Git-based synchronization for Platinum Tier architecture
+Vault Sync Agent - Git-based synchronization for cloud/local architecture
 
 Syncs vault between Cloud and Local machines using git push/pull.
 Runs on both:

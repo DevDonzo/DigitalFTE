@@ -43,7 +43,6 @@
 
 | Project | Client | Due Date | Budget | Status |
 |---------|--------|----------|--------|--------|
-| Digital FTE Hackathon | Personal | 2026-01-15 | - | In Progress |
 | - | - | - | - | - |
 
 ---
@@ -87,7 +86,7 @@
 1. **University network** - Professors, classmates, research groups
 2. **LinkedIn** - Inbound from posts and profile
 3. **Referrals** - Past clients/contacts
-4. **Hackathons** - Project showcases
+4. **Project showcases** - Open source contributions and demos
 
 ---
 

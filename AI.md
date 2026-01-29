@@ -76,32 +76,30 @@
 
 ## Requirements Verification Checklist
 
-Use this with GOLD_SPEC.md Part I (Requirements Matrix):
+### Core Infrastructure
+- [ ] Obsidian vault with Dashboard.md
+- [ ] Company_Handbook.md
+- [ ] One working Watcher
+- [ ] AI Assistant reads/writes vault
+- [ ] Folder structure (/Needs_Action, /Inbox legacy, /Done)
+- [ ] Agent Skills defined
 
-### Bronze Tier (Should already be done)
-- [ ] B1: Obsidian vault with Dashboard.md
-- [ ] B2: Company_Handbook.md
-- [ ] B3: One working Watcher
-- [ ] B4: AI Assistant reads/writes vault
-- [ ] B5: Folder structure (/Needs_Action, /Inbox legacy, /Done)
-- [ ] B6: Agent Skills defined
+### Enhanced Features
+- [ ] 2+ Watchers (Gmail + WhatsApp + LinkedIn)
+- [ ] LinkedIn auto-posting
+- [ ] AI reasoning loop → Plan.md files
+- [ ] Email MCP server working
+- [ ] HITL approval workflow functional
+- [ ] Scheduled tasks (cron/Task Scheduler)
+- [ ] Agent Skills (6+ defined)
 
-### Silver Tier
-- [ ] S1: 2+ Watchers (Gmail + WhatsApp + LinkedIn)
-- [ ] S2: LinkedIn auto-posting
-- [ ] S3: AI reasoning loop → Plan.md files
-- [ ] S4: Email MCP server working
-- [ ] S5: HITL approval workflow functional
-- [ ] S6: Scheduled tasks (cron/Task Scheduler)
-- [ ] S7: Agent Skills (6+ defined)
-
-### Gold Tier
-- [ ] G1-G2: All Silver + cross-domain integration
-- [ ] G3: Xero MCP + accounting integration
-- [ ] G4: Meta Social MCP (Facebook/Instagram)
-- [ ] G5: Twitter MCP
-- [ ] G6: 5 MCP servers configured
-- [ ] G7: CEO Briefing (weekly audit + briefing)
+### Advanced Integration
+- [ ] Cross-domain integration
+- [ ] Xero MCP + accounting integration
+- [ ] Meta Social MCP (Facebook/Instagram)
+- [ ] Twitter MCP
+- [ ] 5 MCP servers configured
+- [ ] CEO Briefing (weekly audit + briefing)
 - [ ] G8: Error recovery + graceful degradation
 - [ ] G9: Audit logging (90-day retention)
 - [ ] G10: Documentation + lessons learned

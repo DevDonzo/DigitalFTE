@@ -1,10 +1,10 @@
 #!/bin/bash
-# Start Local Orchestrator for Platinum Tier
+# Start Local Orchestrator for Cloud/Local architecture
 # Handles approvals and executes actions
 
 set -e
 
-echo "🚀 Starting Local Orchestrator (Platinum Tier)..."
+echo "🚀 Starting Local Orchestrator..."
 
 # Check if vault exists
 if [ ! -d "vault" ]; then

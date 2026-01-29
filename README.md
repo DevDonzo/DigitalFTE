@@ -4,7 +4,7 @@ An open-source autonomous AI agent system that works 24/7 like a full-time emplo
 
 **Repository**: https://github.com/DevDonzo/DigitalFTE
 
-**Status**: 🏆 Platinum Tier (Phase 1) - Cloud + Local split architecture with 24/7 cloud agent, local approval/execution, Odoo accounting, and git-based vault sync
+**Status**: 🏆 Cloud + Local split architecture with 24/7 cloud agent, local approval/execution, Odoo accounting, and git-based vault sync
 
 ---
 

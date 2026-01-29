@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Local Orchestrator - Platinum Tier Human-in-the-Loop Agent
+Local Orchestrator - Human-in-the-Loop Agent
 
 Runs on local machine:
 - Receives: Draft files from Cloud (/Updates/ via git sync)
