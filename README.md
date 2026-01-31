@@ -2,9 +2,9 @@
 
 An open-source autonomous AI agent system that works 24/7 like a full-time employee. Built with AI Assistant, Obsidian, Python, and MCP servers.
 
-**Repository**: https://github.com/DevDonzo/DigitalFTE
+🏆 **Built at a 48-hour hackathon** — what started as a weekend project to automate my overflowing inbox turned into a full autonomous agent system. The idea was simple: what if I had a digital employee that could handle the repetitive stuff while I focused on what matters?
 
-**Status**: 🏆 Cloud + Local split architecture with 24/7 cloud agent, local approval/execution, Odoo accounting, and git-based vault sync
+**Status**: Cloud + Local split architecture with 24/7 cloud agent, local approval/execution, Odoo accounting, and git-based vault sync
 
 ---
 
