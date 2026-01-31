@@ -22,6 +22,7 @@ DigitalFTE automates personal and business tasks across multiple domains:
 - **📎 File Attachments** - Automatically attach PDFs and documents to outgoing emails
 
 **Core Philosophy**:
+- 💰 **Dirt cheap** - Runs on ~$1/day max. A full-time AI employee for less than a coffee
 - 🔒 **Local-first** (Obsidian vault) + Cloud integrations (Gmail, WhatsApp, social APIs)
 - 👤 **Human-in-the-loop** - You always review sensitive actions before execution
 - 🛡️ **Privacy-focused** - All data stays in your vault, no third-party storage
@@ -582,7 +583,7 @@ Typical resource usage:
 - **Memory**: ~150-200 MB (watchers + orchestrator)
 - **CPU**: <5% idle, <20% during processing
 - **Disk**: ~50-100 MB per month (logs + vault)
-- **Cost**: ~$50-500/month (depends on API usage)
+- **💰 Cost**: ~$1/day max (~$30/month) — a full-time AI employee for less than a cup of coffee
 
 ---
 
