@@ -57,3 +57,4 @@ mypy>=1.7.0
 # Development
 ipython>=8.18.0
 jupyter>=1.0.0
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
