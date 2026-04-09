@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DigitalFTE Control Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <div class="background-grid" aria-hidden="true"></div>
+    <div class="app-shell">
+      <header class="masthead">
+        <div class="masthead-copy">
+          <p class="eyebrow">DigitalFTE / Control Center</p>
+          <h1>Run your AI employee like an operating system, not a folder tree.</h1>
+          <p class="lede">
+            Review work, move approvals, trigger briefings, and see what is actually ready to automate from one local surface.
+          </p>
+          <div class="masthead-actions">
+            <button id="refreshButton" class="button button-primary">Refresh Live State</button>
+            <button id="briefingButton" class="button">Generate Briefing</button>
+            <button id="dashboardButton" class="button">Refresh Vault Dashboard</button>
+          </div>
+        </div>
+        <div class="masthead-kpis" id="heroMetrics"></div>
+      </header>
+
+      <main class="workspace">
+        <section class="overview-strip section">
+          <div class="section-heading">
+            <p class="section-label">Operator Pulse</p>
+            <h2>System readiness, queue pressure, and latest movement.</h2>
+          </div>
+          <div class="overview-grid">
+            <div class="status-column">
+              <div class="queue-bars" id="queueBars"></div>
+            </div>
+            <div class="status-column">
+              <div class="services-list" id="servicesList"></div>
+            </div>
+            <div class="status-column">
+              <div class="actions-list" id="recommendedActions"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="flow-surface section">
+          <div class="section-heading">
+            <p class="section-label">Active Workflow</p>
+            <h2>Move through work without leaving the vault model.</h2>
+          </div>
+          <div class="queue-toolbar">
+            <div class="queue-tabs" id="queueTabs"></div>
+            <input id="queueFilter" class="filter-input" type="search" placeholder="Filter title, sender, or preview" />
+          </div>
+          <div class="flow-grid">
+            <div class="queue-list" id="queueList"></div>
+            <article class="preview-panel">
+              <div class="preview-meta" id="previewMeta">Select a queue item to inspect it.</div>
+              <h3 class="preview-title" id="previewTitle">No item selected</h3>
+              <div class="preview-chips" id="previewChips"></div>
+              <div class="preview-actions">
+                <button class="button button-approve" data-move="approved">Approve</button>
+                <button class="button" data-move="pending_approval">Send To Review</button>
+                <button class="button" data-move="done">Archive Done</button>
+                <button class="button button-danger" data-move="rejected">Reject</button>
+              </div>
+              <pre class="preview-body" id="previewBody">Nothing selected yet.</pre>
+            </article>
+          </div>
+        </section>
+
+        <section class="bottom-grid">
+          <section class="section setup-panel">
+            <div class="section-heading">
+              <p class="section-label">Setup Ladder</p>
+              <h2>See exactly what is configured and what still blocks automation.</h2>
+            </div>
+            <div class="setup-groups" id="setupGroups"></div>
+          </section>
+
+          <section class="section capture-panel">
+            <div class="section-heading">
+              <p class="section-label">Quick Capture</p>
+              <h2>Drop work into the system without touching markdown by hand.</h2>
+            </div>
+            <form id="captureForm" class="capture-form">
+              <div class="field-row">
+                <label>
+                  Title
+                  <input name="title" type="text" maxlength="120" required placeholder="Client follow-up, social post, ops task" />
+                </label>
+                <label>
+                  Type
+                  <select name="capture_type">
+                    <option value="ops">Ops</option>
+                    <option value="email">Email</option>
+                    <option value="social">Social</option>
+                    <option value="finance">Finance</option>
+                  </select>
+                </label>
+                <label>
+                  Priority
+                  <select name="priority">
+                    <option value="high">High</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                </label>
+              </div>
+              <label>
+                Details
+                <textarea name="details" rows="10" required placeholder="Describe the request, context, and expected next step."></textarea>
+              </label>
+              <button class="button button-primary" type="submit">Create Vault Item</button>
+            </form>
+          </section>
+        </section>
+
+        <section class="section recent-section">
+          <div class="section-heading">
+            <p class="section-label">Recent Motion</p>
+            <h2>The latest activity across your vault.</h2>
+          </div>
+          <div class="recent-feed" id="recentFeed"></div>
+        </section>
+      </main>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="/assets/app.js" defer></script>
+  </body>
+</html>
+

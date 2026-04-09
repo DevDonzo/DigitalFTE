@@ -47,6 +47,9 @@ def test(name, result, details=""):
         print(f"   → {details}")
     return result
 
+test_section.__test__ = False
+test.__test__ = False
+
 # ============================================================================
 # SECTION 1: INFRASTRUCTURE CHECKS
 # ============================================================================

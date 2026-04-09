@@ -57,3 +57,4 @@ vault/In_Progress/**/*.md
 *.tmp
 *.temp
 .cache/
+runtime/

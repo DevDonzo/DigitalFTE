@@ -1,0 +1,2 @@
+"""DigitalFTE control center package."""
+

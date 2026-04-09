@@ -2,16 +2,20 @@
   "name": "digital-fte",
   "version": "0.1.0",
   "description": "Personal AI Employee - Autonomous FTE using AI Assistant + Obsidian",
-  "main": "index.js",
+  "main": "scripts/control_center.py",
   "type": "module",
   "scripts": {
     "install:all": "npm install && pip install -r requirements.txt",
-    "start": "node scripts/orchestrator.js",
-    "start:watchers": "node scripts/start-watchers.js",
-    "test": "pytest tests/",
+    "start": "./start_all.sh",
+    "start:control-center": "python3 scripts/control_center.py",
+    "start:orchestrator": "python3 scripts/orchestrator.py",
+    "start:webhook": "python3 scripts/webhook_server.py",
+    "start:watchdog": "python3 scripts/watchdog.py",
+    "briefing": "python3 scripts/weekly_audit.py",
+    "test": "pytest -q",
     "lint": "eslint . && flake8 .",
     "format": "prettier --write . && black .",
-    "dev": "nodemon scripts/orchestrator.js"
+    "dev": "python3 scripts/control_center.py"
   },
   "keywords": [
     "AI",

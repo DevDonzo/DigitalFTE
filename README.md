@@ -1,14 +1,17 @@
-# 🚀 DigitalFTE - Your Personal AI Employee
+# DigitalFTE
 
-An open-source autonomous AI agent that works 24/7 like a full-time employee.
+DigitalFTE is a local-first AI operations system for inbox triage, approvals, social drafting, finance workflows, and weekly briefings.
 
 🏆 **Built at a 48-hour hackathon** — what started as a weekend project to automate my overflowing inbox turned into a full autonomous agent system.
 
-**Why DigitalFTE?**
-- 💰 **Dirt cheap** - ~$1/day max. A full-time AI employee for less than a coffee
-- 🔒 **Local-first** - All data stays in your Obsidian vault
-- 👤 **Human-in-the-loop** - You review before anything gets sent
-- ✍️ **Sounds like YOU** - Learns your writing style across all channels
+## What Changed
+
+This repo now includes a real local control center:
+
+- a polished browser UI for queue review, approvals, setup readiness, and recent activity
+- one-click generation of briefings and vault dashboard refreshes
+- quick capture so you can create new work items without hand-editing markdown
+- repaired startup scripts and compatibility wrappers so the repo launches coherently
 
 ---
 
@@ -61,21 +64,39 @@ You can create separate style guides for each channel, or use one unified voice.
 ## Quick Start
 
 ```bash
-# Clone and configure
-git clone https://github.com/DevDonzo/DigitalFTE.git
-cd DigitalFTE
-cp .env.example .env
-nano .env  # Add your Gmail, OpenAI keys
+# install python deps
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 
-# Start everything
+# configure credentials as needed
+cp .env.example .env
+
+# start the local stack
 ./start_all.sh
 ```
 
-**That's it.** Odoo + PostgreSQL spin up in Docker, agents start running.
+Then open:
 
-- Odoo UI: http://localhost:8069
-- Vault: `open -a Obsidian vault/`
-- Stop: `./stop_all.sh && docker-compose down`
+- Control Center: `http://127.0.0.1:8282`
+- Odoo UI: `http://localhost:8069` if Docker is available
+- Vault dashboard: [vault/Dashboard.md](./vault/Dashboard.md)
+
+Stop everything with:
+
+```bash
+./stop_all.sh
+```
+
+## Control Center
+
+The control center is the main operator surface. It gives you:
+
+- live queue views for `Needs_Action`, `Pending_Approval`, `Approved`, `Rejected`, and `Done`
+- full preview of vault items and one-click moves between stages
+- setup visibility for Gmail, WhatsApp, social, finance, and OpenAI
+- quick capture for new tasks and manual requests
+- briefing generation and dashboard refresh from the UI
 
 ---
 
@@ -86,7 +107,7 @@ Email arrives → Gmail Watcher detects it → AI drafts reply (in your style)
     → You review in vault/Pending_Approval/ → Approve → Sent
 ```
 
-The same flow works for WhatsApp, social media, and everything else. You're always in control.
+The same vault-native flow works for WhatsApp, social media, and manual operator tasks.
 
 ---
 
@@ -121,10 +142,9 @@ The same flow works for WhatsApp, social media, and everything else. You're alwa
 
 ## Requirements
 
-- Docker Desktop
 - Python 3.13+
-- Node.js 24+
-- API keys: Gmail OAuth, OpenAI (optional: Twilio, Twitter, Meta)
+- Docker Desktop for Odoo/Postgres
+- API keys as needed: OpenAI, Gmail OAuth, Twilio, LinkedIn, Twitter/X, Meta
 
 ---
 
@@ -132,14 +152,26 @@ The same flow works for WhatsApp, social media, and everything else. You're alwa
 
 ```
 DigitalFTE/
-├── vault/                 # Your local Obsidian database
-│   ├── EmailStyle.md      # Your writing personality
-│   ├── Needs_Action/      # Incoming tasks
-│   ├── Pending_Approval/  # Awaiting your review
-│   └── Done/              # Completed tasks
-├── agents/                # Watchers & orchestrator
-├── utils/                 # AI drafters (email, tweet, etc.)
+├── control_center/        # Local FastAPI app + polished operator UI
+├── vault/                 # Obsidian-native working memory and approvals
+├── agents/                # Watchers, orchestrators, sync, webhook server
+├── watchers/              # Compatibility imports for legacy paths
+├── scripts/               # Launch entrypoints
+├── utils/                 # AI drafters and helpers
 └── mcp_servers/           # API integrations
+```
+
+## Useful Commands
+
+```bash
+# start only the control center
+python3 scripts/control_center.py
+
+# generate a new weekly briefing
+python3 scripts/weekly_audit.py
+
+# run tests
+pytest -q
 ```
 
 ---
