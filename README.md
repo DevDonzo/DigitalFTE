@@ -1,4 +1,5 @@
 # DigitalFTE
+<!-- this PR was created by layla for integration test -->
 
 DigitalFTE is a local-first AI operations system for inbox triage, approvals, social drafting, finance workflows, and weekly briefings.
 
