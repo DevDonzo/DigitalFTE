@@ -40,11 +40,8 @@ ssh ubuntu@$VM_IP << 'ENDSSH'
     source venv/bin/activate
     pip install -r requirements.txt
 
-    # Install Node dependencies for MCP servers
-    cd mcp_servers/email_mcp && npm install && cd ../..
-    cd mcp_servers/odoo_mcp && npm install && cd ../..
-    cd mcp_servers/twitter_mcp && npm install && cd ../..
-    cd mcp_servers/meta_social_mcp && npm install && cd ../..
+    # Install only the active Odoo adapter dependencies.
+    npm install --omit=dev --ignore-scripts
 
     # Setup PM2 for cloud orchestrator
     pm2 delete cloud-orchestrator 2>/dev/null || true

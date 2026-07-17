@@ -7,6 +7,7 @@ import os
 import re
 import socket
 import subprocess
+from contextlib import asynccontextmanager
 from collections import Counter
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -14,20 +15,34 @@ from typing import Any
 
 import yaml
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from utils.config_loader import load_config
+
 ROOT = Path(__file__).resolve().parents[1]
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 DEFAULT_VAULT = ROOT / "vault"
-DEFAULT_PORT = int(os.getenv("CONTROL_CENTER_PORT", "8282"))
+RUNTIME_CONFIG = load_config()
+DEFAULT_PORT = RUNTIME_CONFIG["CONTROL_CENTER_PORT"]
+PLACEHOLDER_FRAGMENTS = (
+    "your_",
+    "example",
+    "changeme",
+    "replace-me",
+    "replace_me",
+    "todo",
+    "/path/to/",
+)
 
 QUEUE_DIRS = {
     "needs_action": "Needs_Action",
     "pending_approval": "Pending_Approval",
     "approved": "Approved",
     "rejected": "Rejected",
+    "failed": "Failed",
     "done": "Done",
 }
 
@@ -36,6 +51,7 @@ DISPLAY_NAMES = {
     "pending_approval": "Pending Approval",
     "approved": "Approved",
     "rejected": "Rejected",
+    "failed": "Failed",
     "done": "Done",
 }
 
@@ -44,21 +60,20 @@ QUEUE_DESTINATIONS = {
     "pending_approval": "Pending_Approval",
     "approved": "Approved",
     "rejected": "Rejected",
+    "failed": "Failed",
     "done": "Done",
 }
 
 PROCESS_PATTERNS = {
     "control_center": "scripts/control_center.py",
-    "local_orchestrator": "agents/local_orchestrator.py",
-    "orchestrator": "agents/orchestrator.py",
+    "orchestrator": "scripts/orchestrator.py",
     "gmail_watcher": "agents/gmail_watcher.py",
-    "webhook": "agents/webhook_server.py",
-    "watchdog": "agents/watchdog.py",
+    "webhook": "scripts/webhook_server.py",
 }
 
 PORT_CHECKS = {
     "control_center": ("127.0.0.1", DEFAULT_PORT),
-    "webhook": ("127.0.0.1", int(os.getenv("WEBHOOK_PORT", "8001"))),
+    "webhook": ("127.0.0.1", RUNTIME_CONFIG["WEBHOOK_PORT"]),
     "odoo": ("127.0.0.1", 8069),
 }
 
@@ -66,7 +81,8 @@ SETUP_GROUPS = [
     (
         "Core Brain",
         [
-            ("OPENAI_API_KEY", "OpenAI drafting"),
+            ("STRANDS_CHAT_URL", "Strands chat endpoint"),
+            ("MODEL_ID", "Bedrock model id"),
             ("VAULT_PATH", "Vault path"),
         ],
     ),
@@ -132,7 +148,7 @@ def ensure_vault_structure(vault: Path) -> None:
     """Create the minimum vault structure the control center expects."""
     for folder in QUEUE_DIRS.values():
         (vault / folder).mkdir(parents=True, exist_ok=True)
-    for folder in ["Briefings", "Logs", "Accounting", "Inbox", "Plans"]:
+    for folder in ["Logs", "Agent_Transcripts"]:
         (vault / folder).mkdir(parents=True, exist_ok=True)
 
 
@@ -154,6 +170,52 @@ def split_frontmatter(content: str) -> tuple[dict[str, Any], str]:
     except yaml.YAMLError:
         metadata = {}
     return metadata, body
+
+
+def dump_frontmatter(metadata: dict[str, Any], body: str) -> str:
+    """Serialize normalized frontmatter back to markdown."""
+    cleaned_body = body.lstrip("\n")
+    return "\n".join(
+        [
+            "---",
+            yaml.safe_dump(metadata, sort_keys=False).strip(),
+            "---",
+            "",
+            cleaned_body.rstrip(),
+            "",
+        ]
+    )
+
+
+def path_for_display(path: Path) -> str:
+    """Return a stable display path for repo-local and external vault files."""
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
+def is_configured_value(value: Any) -> bool:
+    """Treat obvious placeholder values as missing setup."""
+    if value is None:
+        return False
+    if isinstance(value, Path):
+        return True
+
+    text = str(value).strip()
+    if not text:
+        return False
+
+    lowered = text.lower()
+    if lowered in {"none", "null", "false", "todo"}:
+        return False
+    return not any(fragment in lowered for fragment in PLACEHOLDER_FRAGMENTS)
+
+
+def slugify_filename(value: str, *, fallback: str = "TASK") -> str:
+    """Build readable uppercase filename fragments."""
+    slug = re.sub(r"[^A-Za-z0-9]+", "_", value.upper()).strip("_")
+    return slug[:48] or fallback
 
 
 def scrub_text(value: str) -> str:
@@ -178,6 +240,12 @@ def age_label(modified_at: float) -> str:
         return f"{hours}h ago"
     days = hours // 24
     return f"{days}d ago"
+
+
+def hours_since(modified_at: float) -> float:
+    """Return the age of a file in fractional hours."""
+    delta = datetime.now(timezone.utc) - datetime.fromtimestamp(modified_at, timezone.utc)
+    return round(delta.total_seconds() / 3600, 1)
 
 
 def item_title(path: Path, metadata: dict[str, Any], body: str) -> str:
@@ -234,7 +302,7 @@ def read_item(path: Path, queue_key: str, include_content: bool = True) -> dict[
         "filename": path.name,
         "queue": queue_key,
         "queue_label": DISPLAY_NAMES[queue_key],
-        "path": str(path.relative_to(ROOT)),
+        "path": path_for_display(path),
         "title": title,
         "owner": item_owner(metadata),
         "priority": infer_priority(metadata, body),
@@ -303,8 +371,8 @@ def setup_status() -> list[dict[str, Any]]:
         for key, label in checks:
             value = os.getenv(key)
             if key == "VAULT_PATH":
-                value = str(get_vault_path())
-            ready = bool(value)
+                value = get_vault_path()
+            ready = is_configured_value(value)
             items.append(
                 {
                     "key": key,
@@ -339,12 +407,13 @@ def service_status() -> list[dict[str, Any]]:
                 "port": port,
             }
         )
+    odoo_reachable = port_open(*PORT_CHECKS["odoo"])
     services.append(
         {
             "name": "odoo",
             "label": "Odoo",
-            "running": port_open(*PORT_CHECKS["odoo"]),
-            "reachable": port_open(*PORT_CHECKS["odoo"]),
+            "running": odoo_reachable,
+            "reachable": odoo_reachable,
             "port": PORT_CHECKS["odoo"][1],
         }
     )
@@ -380,6 +449,15 @@ def activity_metrics(vault: Path) -> dict[str, Any]:
         sum(delta.total_seconds() for delta in pending_age) / max(len(pending_age), 1) / 3600,
         1,
     )
+    oldest_pending_hours = max((round(delta.total_seconds() / 3600, 1) for delta in pending_age), default=0)
+    needs_action_ages = [
+        datetime.now(timezone.utc) - datetime.fromtimestamp(path.stat().st_mtime, timezone.utc)
+        for path in queue_path(vault, "needs_action").glob("*.md")
+    ]
+    oldest_needs_action_hours = max(
+        (round(delta.total_seconds() / 3600, 1) for delta in needs_action_ages),
+        default=0,
+    )
 
     return {
         "done_last_7_days": len(recent_done),
@@ -389,6 +467,8 @@ def activity_metrics(vault: Path) -> dict[str, Any]:
             by_prefix.get(prefix, 0) for prefix in ["FACEBOOK", "LINKEDIN", "TWITTER", "POST"]
         ),
         "avg_pending_hours": avg_pending_hours if pending_age else 0,
+        "oldest_pending_hours": oldest_pending_hours,
+        "oldest_needs_action_hours": oldest_needs_action_hours,
         "briefings": len(list((vault / "Briefings").glob("*_briefing.md"))),
     }
 
@@ -401,21 +481,176 @@ def queue_counts(vault: Path) -> dict[str, int]:
     return counts
 
 
-def recommended_actions(vault: Path) -> list[str]:
+def recommended_actions(
+    vault: Path,
+    *,
+    counts: dict[str, int] | None = None,
+    setup: list[dict[str, Any]] | None = None,
+) -> list[str]:
     """Generate short operational recommendations from current state."""
-    counts = queue_counts(vault)
+    if counts is None:
+        counts = queue_counts(vault)
     actions = []
+    if counts["failed"]:
+        actions.append(f"Inspect {counts['failed']} failed action(s) before retrying.")
     if counts["pending_approval"]:
         actions.append(f"Review {counts['pending_approval']} pending approval item(s).")
     if counts["needs_action"]:
         actions.append(f"Triage {counts['needs_action']} incoming task(s) in Needs Action.")
-    setup = setup_status()
+    if counts["approved"]:
+        actions.append(f"Execute {counts['approved']} approved item(s) waiting to run.")
+    if setup is None:
+        setup = setup_status()
     incomplete = [group["name"] for group in setup if not group["ready"]]
     if incomplete:
         actions.append(f"Finish setup for: {', '.join(incomplete[:3])}.")
     if not actions:
         actions.append("Inbox is clear. Use Quick Capture to add your next task.")
     return actions[:3]
+
+
+def recent_audit_entries(vault: Path, limit: int = 8) -> list[dict[str, Any]]:
+    """Read the newest structured audit events from the vault logs directory."""
+    logs_dir = vault / "Logs"
+    if not logs_dir.exists():
+        return []
+
+    entries: list[dict[str, Any]] = []
+    log_files = sorted(
+        [*logs_dir.glob("*.json"), *logs_dir.glob("*.jsonl")],
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+
+    for log_file in log_files:
+        try:
+            for raw_line in reversed(log_file.read_text(encoding="utf-8").splitlines()):
+                line = raw_line.strip()
+                if not line:
+                    continue
+                try:
+                    payload = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                timestamp = str(payload.get("timestamp") or payload.get("created_at") or "")
+                entries.append(
+                    {
+                        "timestamp": timestamp,
+                        "actor": str(payload.get("actor") or "system"),
+                        "action": str(payload.get("action_type") or payload.get("action") or "event"),
+                        "result": str(payload.get("result") or payload.get("status") or "recorded"),
+                        "details": payload.get("details") if isinstance(payload.get("details"), dict) else {},
+                    }
+                )
+                if len(entries) >= limit * 3:
+                    break
+        except OSError:
+            continue
+        if len(entries) >= limit * 3:
+            break
+
+    def parse_timestamp(value: str) -> datetime:
+        if not value:
+            return datetime.fromtimestamp(0, timezone.utc)
+        normalized = value.replace("Z", "+00:00")
+        try:
+            return datetime.fromisoformat(normalized)
+        except ValueError:
+            return datetime.fromtimestamp(0, timezone.utc)
+
+    entries.sort(key=lambda item: parse_timestamp(item["timestamp"]), reverse=True)
+    return entries[:limit]
+
+
+def assistant_brief(
+    vault: Path,
+    *,
+    counts: dict[str, int] | None = None,
+    metrics: dict[str, Any] | None = None,
+    services: list[dict[str, Any]] | None = None,
+    setup: list[dict[str, Any]] | None = None,
+    recommendations: list[str] | None = None,
+) -> dict[str, Any]:
+    """Build a concise assistant-style operational brief from local state."""
+    if counts is None:
+        counts = queue_counts(vault)
+    if metrics is None:
+        metrics = activity_metrics(vault)
+    if services is None:
+        services = service_status()
+    if setup is None:
+        setup = setup_status()
+    if recommendations is None:
+        recommendations = recommended_actions(vault, counts=counts, setup=setup)
+
+    hotspots = []
+    if counts["needs_action"] >= 3:
+        hotspots.append(f"Needs Action is building up with {counts['needs_action']} open items.")
+    if counts["pending_approval"] >= 2:
+        hotspots.append(f"Approval queue has {counts['pending_approval']} items waiting on you.")
+    if counts["approved"] >= 1:
+        hotspots.append(f"{counts['approved']} approved item(s) are ready for execution.")
+    if counts["failed"] >= 1:
+        hotspots.append(f"{counts['failed']} action(s) failed and need review.")
+
+    blockers = [group["name"] for group in setup if not group["ready"]]
+    service_alerts = [
+        service["label"]
+        for service in services
+        if not service["running"] and not service["reachable"]
+    ]
+
+    stale_items = []
+    for queue_key in ("pending_approval", "needs_action", "approved", "failed"):
+        for path in queue_path(vault, queue_key).glob("*.md"):
+            item = read_item(path, queue_key, include_content=False)
+            item["age_hours"] = hours_since(path.stat().st_mtime)
+            stale_items.append(item)
+    stale_items.sort(key=lambda item: item["age_hours"], reverse=True)
+
+    mood = "stable"
+    if blockers or service_alerts or counts["pending_approval"] >= 3 or counts["failed"]:
+        mood = "attention"
+    if counts["needs_action"] >= 6 or counts["approved"] >= 3:
+        mood = "pressure"
+
+    summary_parts = []
+    if counts["pending_approval"]:
+        summary_parts.append(f"{counts['pending_approval']} approval(s) waiting")
+    if counts["approved"]:
+        summary_parts.append(f"{counts['approved']} execution-ready")
+    if counts["failed"]:
+        summary_parts.append(f"{counts['failed']} failed")
+    if counts["done"]:
+        summary_parts.append(f"{counts['done']} completed items on record")
+    if not summary_parts:
+        summary_parts.append("queues are clear")
+
+    return {
+        "mood": mood,
+        "summary": " | ".join(summary_parts),
+        "hotspots": hotspots[:3],
+        "setup_blockers": blockers[:4],
+        "service_alerts": service_alerts[:4],
+        "stale_items": stale_items[:5],
+        "audit_feed": recent_audit_entries(vault, limit=6),
+        "recommended_actions": recommendations,
+        "metrics": {
+            "oldest_pending_hours": metrics["oldest_pending_hours"],
+            "oldest_needs_action_hours": metrics["oldest_needs_action_hours"],
+            "avg_pending_hours": metrics["avg_pending_hours"],
+        },
+    }
+
+
+def update_item_status(path: Path, target_key: str) -> None:
+    """Persist workflow state transitions inside the moved markdown item."""
+    content = path.read_text(encoding="utf-8")
+    metadata, body = split_frontmatter(content)
+    metadata["status"] = target_key
+    metadata["queue"] = target_key
+    metadata["updated"] = datetime.now(timezone.utc).isoformat()
+    path.write_text(dump_frontmatter(metadata, body), encoding="utf-8")
 
 
 def generate_briefing_markdown(vault: Path) -> Path:
@@ -461,6 +696,7 @@ def generate_briefing_markdown(vault: Path) -> Path:
             f"| Needs Action | {counts['needs_action']} |",
             f"| Pending Approval | {counts['pending_approval']} |",
             f"| Approved | {counts['approved']} |",
+            f"| Failed | {counts['failed']} |",
             f"| Done | {counts['done']} |",
             "",
             "*Generated by the DigitalFTE Control Center.*",
@@ -493,6 +729,7 @@ def write_dashboard_markdown(vault: Path) -> Path:
         "|--------|-------|",
         f"| Needs Action | {counts['needs_action']} |",
         f"| Pending Approval | {counts['pending_approval']} |",
+        f"| Failed | {counts['failed']} |",
         f"| Done This Week | {metrics['done_last_7_days']} |",
         f"| Briefings Generated | {metrics['briefings']} |",
         "",
@@ -549,7 +786,15 @@ def overview_payload(vault: Path) -> dict[str, Any]:
     """Build the complete control center overview payload."""
     counts = queue_counts(vault)
     metrics = activity_metrics(vault)
-    backlog = counts["needs_action"] + counts["pending_approval"] + counts["approved"]
+    setup = setup_status()
+    services = service_status()
+    recommendations = recommended_actions(vault, counts=counts, setup=setup)
+    backlog = (
+        counts["needs_action"]
+        + counts["pending_approval"]
+        + counts["approved"]
+        + counts["failed"]
+    )
     queues = [
         {
             "key": queue_key,
@@ -569,23 +814,33 @@ def overview_payload(vault: Path) -> dict[str, Any]:
         },
         "queues": queues,
         "metrics": metrics,
-        "setup": setup_status(),
-        "services": service_status(),
+        "setup": setup,
+        "services": services,
         "recent_activity": recent_activity(vault, limit=8),
-        "recommended_actions": recommended_actions(vault),
+        "recommended_actions": recommendations,
+        "assistant_brief": assistant_brief(
+            vault,
+            counts=counts,
+            metrics=metrics,
+            services=services,
+            setup=setup,
+            recommendations=recommendations,
+        ),
     }
 
 
-app = FastAPI(title="DigitalFTE Control Center", version="1.0.0")
-app.mount("/assets", StaticFiles(directory=STATIC_DIR), name="assets")
-
-
-@app.on_event("startup")
-def startup() -> None:
+@asynccontextmanager
+async def lifespan(_: FastAPI):
     """Ensure the vault exists and refresh the markdown dashboard on boot."""
     vault = get_vault_path()
     ensure_vault_structure(vault)
     write_dashboard_markdown(vault)
+    yield
+
+
+app = FastAPI(title="DigitalFTE Control Center", version="1.0.0", lifespan=lifespan)
+app.add_middleware(GZipMiddleware, minimum_size=500)
+app.mount("/assets", StaticFiles(directory=STATIC_DIR), name="assets")
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -641,6 +896,7 @@ async def api_move(queue_key: str, filename: str, request: MoveRequest) -> dict[
     target_dir.mkdir(parents=True, exist_ok=True)
     destination = target_dir / source.name
     source.rename(destination)
+    update_item_status(destination, target_key)
     write_dashboard_markdown(vault)
     return {
         "ok": True,
@@ -656,24 +912,22 @@ async def api_capture(request: CaptureRequest) -> dict[str, Any]:
     vault = get_vault_path()
     ensure_vault_structure(vault)
 
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    prefix = re.sub(r"[^A-Z]", "", request.capture_type.upper()) or "TASK"
-    filename = f"{prefix}_MANUAL_{timestamp}.md"
+    now = datetime.now()
+    timestamp = now.strftime("%Y%m%d_%H%M%S_%f")
+    prefix = slugify_filename(request.capture_type, fallback="TASK")
+    title_slug = slugify_filename(request.title, fallback="REQUEST")
+    filename = f"{prefix}_MANUAL_{title_slug}_{timestamp}.md"
     target = vault / "Needs_Action" / filename
     metadata = {
         "type": request.capture_type.lower(),
         "title": request.title.strip(),
-        "created": datetime.now(timezone.utc).isoformat(),
+        "created": now.astimezone(timezone.utc).isoformat(),
         "priority": request.priority.lower(),
-        "status": "pending",
+        "status": "needs_action",
         "source": "control_center",
     }
-    content = "\n".join(
+    body = "\n".join(
         [
-            "---",
-            yaml.safe_dump(metadata, sort_keys=False).strip(),
-            "---",
-            "",
             "## Request",
             "",
             request.details.strip(),
@@ -685,7 +939,7 @@ async def api_capture(request: CaptureRequest) -> dict[str, Any]:
             "- [ ] Move to Pending Approval or Done",
         ]
     )
-    target.write_text(content + "\n", encoding="utf-8")
+    target.write_text(dump_frontmatter(metadata, body), encoding="utf-8")
     write_dashboard_markdown(vault)
     return {"ok": True, "filename": filename}
 
@@ -697,7 +951,7 @@ async def api_briefing() -> dict[str, Any]:
     ensure_vault_structure(vault)
     briefing = generate_briefing_markdown(vault)
     write_dashboard_markdown(vault)
-    return {"ok": True, "path": str(briefing.relative_to(ROOT))}
+    return {"ok": True, "path": path_for_display(briefing)}
 
 
 @app.post("/api/actions/dashboard")
@@ -706,7 +960,7 @@ async def api_dashboard_refresh() -> dict[str, Any]:
     vault = get_vault_path()
     ensure_vault_structure(vault)
     dashboard = write_dashboard_markdown(vault)
-    return {"ok": True, "path": str(dashboard.relative_to(ROOT))}
+    return {"ok": True, "path": path_for_display(dashboard)}
 
 
 @app.get("/api/health")

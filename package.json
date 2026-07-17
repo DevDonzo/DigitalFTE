@@ -1,16 +1,18 @@
 {
   "name": "digital-fte",
   "version": "0.1.0",
+  "private": true,
   "description": "Personal AI Employee - Autonomous FTE using AI Assistant + Obsidian",
   "main": "scripts/control_center.py",
   "type": "module",
   "scripts": {
-    "install:all": "npm install && pip install -r requirements.txt",
+    "install:all": "npm install --omit=dev && python3 -m pip install -r requirements.txt",
+    "install:dev": "npm install && python3 -m pip install -r requirements-dev.txt",
     "start": "./start_all.sh",
     "start:control-center": "python3 scripts/control_center.py",
     "start:orchestrator": "python3 scripts/orchestrator.py",
     "start:webhook": "python3 scripts/webhook_server.py",
-    "start:watchdog": "python3 scripts/watchdog.py",
+    "smoke:mcp": "node mcp_servers/odoo_mcp/index.js --legacy-stdio < /dev/null",
     "briefing": "python3 scripts/weekly_audit.py",
     "test": "pytest -q",
     "lint": "eslint . && flake8 .",
@@ -21,23 +23,16 @@
     "AI",
     "automation",
     "FTE",
-    "AI",
     "Obsidian"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.2",
-    "chalk": "^5.3.0",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "node-cron": "^3.0.2",
-    "node-fetch": "^3.3.2",
-    "winston": "^3.11.0"
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
-    "nodemon": "^3.0.2",
     "prettier": "^3.1.1"
   },
   "engines": {

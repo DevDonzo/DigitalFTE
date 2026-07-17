@@ -1,5 +1,10 @@
 # Watchdog Process Manager Setup
 
+> **Legacy, opt-in supervisor:** do not run this watchdog alongside `./start_all.sh`.
+> It owns a separate process registry and can start duplicate workers. The supported,
+> lightweight default is `./start_all.sh`; use this guide only after replacing that
+> launcher with the watchdog as the sole process owner.
+
 ## Overview
 
 The Watchdog monitors critical DigitalFTE processes and automatically restarts them if they crash. It provides:

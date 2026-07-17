@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" data-theme="quiet">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="DigitalFTE is a local-first AI operations system for inbox triage, approvals, social drafting, finance workflows, and weekly briefings."
+    />
+    <title>DigitalFTE — Local-first AI operations</title>
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <script src="assets/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <header class="site-header">
+      <nav class="site-nav shell" aria-label="Primary navigation">
+        <a class="wordmark" href="#top" aria-label="DigitalFTE home">
+          <span class="wordmark-mark" aria-hidden="true">DF</span>
+          <span>DigitalFTE</span>
+        </a>
+        <a
+          class="nav-action"
+          href="https://github.com/DevDonzo/DigitalFTE"
+          target="_blank"
+          rel="noreferrer"
+        >
+          View repository <span aria-hidden="true">↗</span>
+        </a>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <section class="hero shell" id="top">
+        <div class="hero-copy">
+          <p class="context-line">Local-first AI operations</p>
+          <h1>A local control room for work that waits.</h1>
+          <p class="hero-lede">
+            DigitalFTE turns incoming messages into structured work, drafts the next move,
+            and pauses sensitive actions for your approval. The queue stays in your Obsidian
+            vault, where every decision remains readable.
+          </p>
+          <div class="hero-actions" aria-label="Get started">
+            <a class="button button-primary" href="#install">Install locally</a>
+            <a class="text-link" href="#workflow">See the workflow <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+
+        <aside class="hero-proof" aria-labelledby="flow-title">
+          <div class="proof-heading">
+            <p id="flow-title">One task, visible end to end</p>
+            <span>Markdown queue</span>
+          </div>
+          <ol class="file-flow">
+            <li>
+              <code>/Needs_Action</code>
+              <span>New input lands as a readable file.</span>
+            </li>
+            <li>
+              <code>/Plans</code>
+              <span>Context and a proposed next step are added.</span>
+            </li>
+            <li>
+              <code>/Pending_Approval</code>
+              <span>Sensitive work waits for a human decision.</span>
+            </li>
+            <li>
+              <code>/Done</code>
+              <span>The result and audit trail stay together.</span>
+            </li>
+          </ol>
+        </aside>
+      </section>
+
+      <div class="principle-strip shell" aria-label="Core principles">
+        <p><strong>Five</strong> operating loops</p>
+        <p><strong>Local</strong> markdown memory</p>
+        <p><strong>Human</strong> approval before sensitive actions</p>
+      </div>
+
+      <section class="workflow shell" id="workflow">
+        <header class="section-heading">
+          <h2>Five loops keep the system moving.</h2>
+          <p>
+            Each loop has one job. Together they take work from an external signal to an
+            approved, auditable action without hiding the handoffs.
+          </p>
+        </header>
+
+        <ol class="workflow-list">
+          <li class="workflow-step">
+            <span class="stage-number">1.0</span>
+            <div>
+              <h3>Perceive</h3>
+              <p>Watchers turn Gmail, WhatsApp, and social activity into markdown tasks.</p>
+            </div>
+            <code>input → /Needs_Action</code>
+          </li>
+          <li class="workflow-step">
+            <span class="stage-number">2.0</span>
+            <div>
+              <h3>Reason</h3>
+              <p>The agent reads your handbook and writing style before drafting a plan.</p>
+            </div>
+            <code>context → /Plans</code>
+          </li>
+          <li class="workflow-step">
+            <span class="stage-number">3.0</span>
+            <div>
+              <h3>Review</h3>
+              <p>Email, payment, and real-time social actions wait for explicit approval.</p>
+            </div>
+            <code>draft → /Pending_Approval</code>
+          </li>
+          <li class="workflow-step">
+            <span class="stage-number">4.0</span>
+            <div>
+              <h3>Execute</h3>
+              <p>Focused adapters carry out approved work across communication and finance tools.</p>
+            </div>
+            <code>approval → action</code>
+          </li>
+          <li class="workflow-step">
+            <span class="stage-number">5.0</span>
+            <div>
+              <h3>Recover</h3>
+              <p>Health checks and retry rules surface failures without erasing their history.</p>
+            </div>
+            <code>result → /Logs</code>
+          </li>
+        </ol>
+      </section>
+
+      <section class="vault-section shell" id="security">
+        <div class="vault-statement">
+          <h2>Your vault remains the source of truth.</h2>
+          <p>
+            DigitalFTE uses files you can open, move, diff, and back up. Automation stays
+            legible instead of disappearing into a remote dashboard.
+          </p>
+        </div>
+        <dl class="principles-list">
+          <div>
+            <dt>Local records</dt>
+            <dd>Drafts, plans, and logs stay in your own vault.</dd>
+          </div>
+          <div>
+            <dt>Explicit control</dt>
+            <dd>Moving a file is the approval boundary for sensitive work.</dd>
+          </div>
+          <div>
+            <dt>Readable history</dt>
+            <dd>Every action has a plain-text trail you can inspect later.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="extension-section shell" id="extend">
+        <header class="section-heading compact-heading">
+          <h2>Extend the system without rebuilding it.</h2>
+          <p>Add one small module at the layer where it belongs.</p>
+        </header>
+        <dl class="extension-list">
+          <div>
+            <dt>Watchers</dt>
+            <dd>Connect a new source and turn its events into the same vault-native queue.</dd>
+          </div>
+          <div>
+            <dt>Skills</dt>
+            <dd>Describe a workflow in markdown so the agent can follow your operating rules.</dd>
+          </div>
+          <div>
+            <dt>MCP servers</dt>
+            <dd>Give approved actions a focused adapter for the service that must execute them.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="install-section" id="install">
+        <div class="install-inner shell">
+          <div>
+            <h2>Run it where your work already lives.</h2>
+            <p>Clone the repository, configure only the integrations you need, and start locally.</p>
+          </div>
+          <div class="command-row" aria-label="Installation command">
+            <code id="install-command" tabindex="-1">git clone https://github.com/DevDonzo/DigitalFTE.git</code>
+            <button
+              class="copy-button"
+              id="copy-button"
+              type="button"
+              data-command="git clone https://github.com/DevDonzo/DigitalFTE.git"
+            >
+              <span aria-live="polite">Copy command</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer shell">
+      <p class="wordmark footer-wordmark">DigitalFTE</p>
+      <p>Local-first AI operations · MIT licensed</p>
+      <p>© 2026 Hamza Paracha</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "date": "2026-07-17",
+  "target": "public/",
+  "framework": "vanilla-html",
+  "font_stack": "Google Fonts: Unbounded + IBM Plex Mono",
+  "palette": "near-black with purple accent",
+  "motion": "handwritten mousemove, scroll, and intersection effects",
+  "spacing": "ad hoc rem values",
+  "preserved": ["product intent", "section information architecture", "primary install action"]
+}

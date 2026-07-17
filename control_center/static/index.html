@@ -4,16 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DigitalFTE Control Center</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="/assets/styles.css" />
   </head>
   <body>
-    <div class="background-grid" aria-hidden="true"></div>
+    <a class="skip-link" href="#workspace">Skip to workspace</a>
     <div class="app-shell">
       <header class="masthead">
         <div class="masthead-copy">
@@ -22,19 +16,22 @@
           <p class="lede">
             Review work, move approvals, trigger briefings, and see what is actually ready to automate from one local surface.
           </p>
+          <div class="live-rail">
+            <div class="live-status" id="systemLive">Syncing control room state…</div>
+            <button id="autoRefreshButton" class="button button-ghost" type="button" aria-pressed="true">Auto-refresh: on</button>
+          </div>
           <div class="masthead-actions">
-            <button id="refreshButton" class="button button-primary">Refresh Live State</button>
-            <button id="briefingButton" class="button">Generate Briefing</button>
-            <button id="dashboardButton" class="button">Refresh Vault Dashboard</button>
+            <button id="refreshButton" class="button button-primary" type="button">Refresh Live State</button>
+            <button id="briefingButton" class="button" type="button">Generate Briefing</button>
+            <button id="dashboardButton" class="button" type="button">Refresh Vault Dashboard</button>
           </div>
         </div>
         <div class="masthead-kpis" id="heroMetrics"></div>
       </header>
 
-      <main class="workspace">
+      <main class="workspace" id="workspace">
         <section class="overview-strip section">
           <div class="section-heading">
-            <p class="section-label">Operator Pulse</p>
             <h2>System readiness, queue pressure, and latest movement.</h2>
           </div>
           <div class="overview-grid">
@@ -50,26 +47,56 @@
           </div>
         </section>
 
+        <section class="assistant-grid">
+          <section class="section assistant-panel">
+            <div class="section-heading">
+              <h2>What the assistant thinks needs attention right now.</h2>
+            </div>
+            <div class="assistant-mood" id="assistantMood"></div>
+            <div class="assistant-summary" id="assistantSummary"></div>
+            <div class="assistant-list" id="assistantHotspots"></div>
+            <div class="assistant-metrics" id="assistantMetrics"></div>
+          </section>
+
+          <section class="section assistant-panel">
+            <div class="section-heading">
+              <h2>The oldest work sitting in the system.</h2>
+            </div>
+            <div class="stale-list" id="staleRadar"></div>
+          </section>
+
+          <section class="section assistant-panel">
+            <div class="section-heading">
+              <h2>Recent system actions and outcomes.</h2>
+            </div>
+            <div class="audit-feed" id="auditFeed"></div>
+          </section>
+        </section>
+
         <section class="flow-surface section">
           <div class="section-heading">
             <p class="section-label">Active Workflow</p>
             <h2>Move through work without leaving the vault model.</h2>
           </div>
           <div class="queue-toolbar">
-            <div class="queue-tabs" id="queueTabs"></div>
+            <div class="queue-tabs" id="queueTabs" aria-label="Workflow queue"></div>
+            <label class="sr-only" for="queueFilter">Filter queue items</label>
             <input id="queueFilter" class="filter-input" type="search" placeholder="Filter title, sender, or preview" />
           </div>
           <div class="flow-grid">
+            <p class="sr-only" id="queueStatus" role="status" aria-live="polite" aria-atomic="true"></p>
             <div class="queue-list" id="queueList"></div>
             <article class="preview-panel">
               <div class="preview-meta" id="previewMeta">Select a queue item to inspect it.</div>
+              <div class="preview-path" id="previewPath"></div>
               <h3 class="preview-title" id="previewTitle">No item selected</h3>
               <div class="preview-chips" id="previewChips"></div>
               <div class="preview-actions">
-                <button class="button button-approve" data-move="approved">Approve</button>
-                <button class="button" data-move="pending_approval">Send To Review</button>
-                <button class="button" data-move="done">Archive Done</button>
-                <button class="button button-danger" data-move="rejected">Reject</button>
+                <button class="button button-approve" type="button" data-move="approved">Approve</button>
+                <button class="button" type="button" data-move="pending_approval">Send To Review</button>
+                <button class="button" type="button" data-move="done">Archive Done</button>
+                <button class="button button-danger" type="button" data-move="rejected">Reject</button>
+                <button class="button" type="button" id="copyMarkdownButton">Copy Markdown</button>
               </div>
               <pre class="preview-body" id="previewBody">Nothing selected yet.</pre>
             </article>
@@ -79,7 +106,6 @@
         <section class="bottom-grid">
           <section class="section setup-panel">
             <div class="section-heading">
-              <p class="section-label">Setup Ladder</p>
               <h2>See exactly what is configured and what still blocks automation.</h2>
             </div>
             <div class="setup-groups" id="setupGroups"></div>
@@ -87,7 +113,6 @@
 
           <section class="section capture-panel">
             <div class="section-heading">
-              <p class="section-label">Quick Capture</p>
               <h2>Drop work into the system without touching markdown by hand.</h2>
             </div>
             <form id="captureForm" class="capture-form">
@@ -125,15 +150,13 @@
 
         <section class="section recent-section">
           <div class="section-heading">
-            <p class="section-label">Recent Motion</p>
             <h2>The latest activity across your vault.</h2>
           </div>
           <div class="recent-feed" id="recentFeed"></div>
         </section>
       </main>
     </div>
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
     <script src="/assets/app.js" defer></script>
   </body>
 </html>
-

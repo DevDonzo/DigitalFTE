@@ -165,9 +165,7 @@ After credentials are configured:
 
 ```bash
 # Start the system
-python scripts/orchestrator.py &
-python watchers/gmail_watcher.py &
-python scripts/watchdog.py &
+./start_all.sh
 ```
 
-For production deployment, use launchd configuration in `AUTONOMY_GUIDE.md`.
+The legacy watchdog is an alternative process owner; do not run it alongside the default launcher.

@@ -1,4 +1,7 @@
 """WhatsApp Webhook Server - FastAPI (supports Twilio and Meta)"""
+import base64
+import hashlib
+import hmac
 import os
 import json
 import logging
@@ -21,10 +24,9 @@ app = FastAPI(title="DigitalFTE WhatsApp Webhook")
 
 # Config
 VAULT_PATH = Path(os.getenv('VAULT_PATH', './vault'))
-VERIFY_TOKEN = os.getenv('WHATSAPP_WEBHOOK_VERIFY_TOKEN', 'digitalfte_verify')
+VERIFY_TOKEN = os.getenv('WHATSAPP_WEBHOOK_VERIFY_TOKEN', '')
 NEEDS_ACTION = VAULT_PATH / 'Needs_Action'
 NEEDS_ACTION.mkdir(parents=True, exist_ok=True)
-INCOMING_STORE = VAULT_PATH / '.whatsapp_incoming.json'
 
 # Keyword classifications for message urgency
 URGENT_KEYWORDS = ['urgent', 'asap', 'emergency', 'help', 'problem', 'crisis', 'down', 'broken', 'critical', 'immediately']
@@ -41,6 +43,36 @@ def _load_processed_messages():
     return set()
 
 PROCESSED_MESSAGES = _load_processed_messages()
+
+
+def validate_twilio_signature(url: str, form_data, signature: str) -> bool:
+    """Validate Twilio's HMAC-SHA1 signature without adding its full SDK."""
+    auth_token = os.getenv('TWILIO_AUTH_TOKEN', '')
+    if not auth_token or not signature:
+        return False
+
+    values_by_key = {}
+    items = form_data.multi_items() if hasattr(form_data, 'multi_items') else form_data.items()
+    for key, value in items:
+        values_by_key.setdefault(str(key), []).append(str(value))
+
+    signed = url
+    for key in sorted(values_by_key):
+        for value in sorted(set(values_by_key[key])):
+            signed += key + value
+
+    digest = hmac.new(auth_token.encode(), signed.encode(), hashlib.sha1).digest()
+    expected = base64.b64encode(digest).decode()
+    return hmac.compare_digest(expected, signature)
+
+
+def validate_meta_signature(body: bytes, signature: str) -> bool:
+    """Validate Meta's X-Hub-Signature-256 HMAC over the exact request body."""
+    app_secret = os.getenv('META_APP_SECRET') or os.getenv('FACEBOOK_APP_SECRET') or ''
+    if not app_secret or not signature.startswith('sha256='):
+        return False
+    expected = hmac.new(app_secret.encode(), body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, signature.removeprefix('sha256='))
 
 
 def classify_urgency(message_text: str) -> str:
@@ -90,17 +122,27 @@ async def receive_webhook(request: Request):
         if "application/x-www-form-urlencoded" in content_type:
             # Twilio webhook
             form_data = await request.form()
+            public_url = os.getenv('WEBHOOK_PUBLIC_URL') or str(request.url)
+            signature = request.headers.get('X-Twilio-Signature', '')
+            if not validate_twilio_signature(public_url, form_data, signature):
+                raise HTTPException(status_code=403, detail="Invalid Twilio signature")
             await handle_twilio_webhook(form_data)
             return PlainTextResponse("")
         else:
             # Meta webhook
-            payload = await request.json()
+            body = await request.body()
+            signature = request.headers.get('X-Hub-Signature-256', '')
+            if not validate_meta_signature(body, signature):
+                raise HTTPException(status_code=403, detail="Invalid Meta signature")
+            payload = json.loads(body)
             await handle_meta_webhook(payload)
             return {"status": "ok"}
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Webhook error: {e}")
-        return {"status": "error", "message": str(e)}
+        raise HTTPException(status_code=500, detail="Webhook processing failed") from e
 
 
 async def handle_twilio_webhook(form_data):
@@ -130,14 +172,17 @@ async def handle_twilio_webhook(form_data):
     logger.info(f"📱 Incoming message from {from_number}: {message_text[:50]}")
     logger.debug(f"Message ID: {msg_id}")
 
-    # Mark as processed BEFORE creating file (prevent race condition)
-    PROCESSED_MESSAGES.add(msg_id)
-    with open(PROCESSED_FILE, 'a') as f:
-        f.write(msg_id + '\n')
-
-    logger.info(f"✓ Message {msg_id} marked as processed")
     urgency = classify_urgency(message_text)
-    enqueue_incoming_message(msg_id, from_number, from_number, message_text, urgency)
+    create_whatsapp_action_file(
+        msg_id,
+        from_number,
+        from_number,
+        message_text,
+        datetime.now(timezone.utc).isoformat(),
+        urgency,
+    )
+    mark_processed(msg_id)
+    logger.info(f"✓ Message {msg_id} converted to a vault action")
 
 
 async def handle_meta_webhook(payload):
@@ -155,6 +200,9 @@ async def handle_meta_webhook(payload):
 
     for msg in messages:
         msg_id = msg.get('id', '')
+        if not msg_id:
+            logger.warning("Meta message did not include an id; skipping")
+            continue
         sender_id = msg.get('from', '')
         sender_name = contact_map.get(sender_id, sender_id)
         msg_type = msg.get('type', 'text')
@@ -175,37 +223,28 @@ async def handle_meta_webhook(payload):
 
         logger.info(f"Message from {sender_name} ({sender_id}): {text_content[:50]}")
 
-        # Mark as processed
-        PROCESSED_MESSAGES.add(msg_id)
-        with open(PROCESSED_FILE, 'a') as f:
-            f.write(msg_id + '\n')
-
         urgency = classify_urgency(text_content)
-        enqueue_incoming_message(msg_id, sender_id, sender_name, text_content, urgency)
+        create_whatsapp_action_file(
+            msg_id,
+            sender_id,
+            sender_name,
+            text_content,
+            datetime.now(timezone.utc).isoformat(),
+            urgency,
+        )
+        mark_processed(msg_id)
+        logger.info(f"✓ Message {msg_id} converted to a vault action")
 
 
-def enqueue_incoming_message(msg_id: str, sender_id: str, sender_name: str,
-                             text: str, urgency: str) -> None:
-    """Append a message to the inbound queue for WhatsAppWatcher."""
-    entry = {
-        "id": msg_id,
-        "from": sender_id,
-        "sender_name": sender_name,
-        "text": {"body": text},
-        "urgency": urgency,
-        "received_at": datetime.now(timezone.utc).isoformat()
-    }
-
-    payload = {"messages": []}
-    if INCOMING_STORE.exists():
-        try:
-            payload = json.loads(INCOMING_STORE.read_text())
-        except Exception:
-            payload = {"messages": []}
-
-    payload.setdefault("messages", []).append(entry)
-    INCOMING_STORE.write_text(json.dumps(payload, indent=2))
-    logger.info(f"Queued WhatsApp message {msg_id} for watcher processing")
+def mark_processed(msg_id: str) -> None:
+    """Persist successful message processing without masking write failures."""
+    PROCESSED_MESSAGES.add(msg_id)
+    try:
+        with open(PROCESSED_FILE, 'a', encoding='utf-8') as processed_file:
+            processed_file.write(msg_id + '\n')
+    except Exception:
+        PROCESSED_MESSAGES.discard(msg_id)
+        raise
 
 
 def create_whatsapp_action_file(msg_id: str, sender_id: str, sender_name: str,
@@ -214,7 +253,8 @@ def create_whatsapp_action_file(msg_id: str, sender_id: str, sender_name: str,
     import hashlib
 
     unique_id = hashlib.md5(f"{msg_id}{sender_id}".encode()).hexdigest()[:12]
-    filename = f"WHATSAPP_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{unique_id}.md"
+    received_at = datetime.fromisoformat(timestamp) if timestamp else datetime.now(timezone.utc)
+    filename = f"WHATSAPP_{unique_id}.md"
     filepath = NEEDS_ACTION / filename
 
     # Add urgency indicator to filename for easier sorting
@@ -227,10 +267,10 @@ def create_whatsapp_action_file(msg_id: str, sender_id: str, sender_name: str,
 
     content = f"""---
 type: whatsapp_message
-from: {sender_id}
-from_name: {sender_name}
-received: {datetime.now().isoformat()}
-message_id: {msg_id}
+from: {json.dumps(sender_id)}
+from_name: {json.dumps(sender_name)}
+received: {received_at.isoformat()}
+message_id: {json.dumps(msg_id)}
 urgency: {urgency}
 priority: {'HIGH' if urgency == 'URGENT' else 'MEDIUM' if urgency in ['BUSINESS', 'INFO'] else 'NORMAL'}
 ---
@@ -238,7 +278,7 @@ priority: {'HIGH' if urgency == 'URGENT' else 'MEDIUM' if urgency in ['BUSINESS'
 ## WhatsApp Message
 
 **From**: {sender_name} ({sender_id})
-**Time**: {datetime.now().isoformat()}
+**Time**: {received_at.isoformat()}
 **Urgency**: {urgency_indicator} {urgency}
 
 ## Message
@@ -251,7 +291,9 @@ priority: {'HIGH' if urgency == 'URGENT' else 'MEDIUM' if urgency in ['BUSINESS'
 - [ ] Approve and send
 """
 
-    filepath.write_text(content)
+    temporary = filepath.with_suffix('.tmp')
+    temporary.write_text(content, encoding='utf-8')
+    temporary.replace(filepath)
     logger.info(f"✓ Created: {filename} [{urgency_indicator} {urgency}]")
 
 

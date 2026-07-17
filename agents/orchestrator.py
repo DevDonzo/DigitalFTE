@@ -9,6 +9,8 @@ import subprocess
 import sys
 import base64
 import threading
+import importlib.util
+import site
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -17,9 +19,41 @@ from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 # Avoid local scripts/watchdog.py shadowing watchdog package when running as script.
-scripts_dir = Path(__file__).resolve().parent
-if sys.path and Path(sys.path[0]).resolve() == scripts_dir:
-    sys.path.pop(0)
+agents_dir = Path(__file__).resolve().parent
+scripts_dir = agents_dir.parent / "scripts"
+sys.path[:] = [
+    path for path in sys.path
+    if path and Path(path).resolve() not in {agents_dir, scripts_dir}
+]
+
+# Defensive fix: if a local watchdog.py was previously imported, remove it.
+existing_watchdog = sys.modules.get("watchdog")
+if existing_watchdog is not None and not hasattr(existing_watchdog, "__path__"):
+    del sys.modules["watchdog"]
+
+watchdog_spec = importlib.util.find_spec("watchdog")
+if watchdog_spec and watchdog_spec.origin and watchdog_spec.origin.endswith("watchdog.py"):
+    sys.path[:] = [
+        path for path in sys.path
+        if Path(path).resolve() not in {agents_dir, scripts_dir}
+    ]
+    watchdog_spec = importlib.util.find_spec("watchdog")
+
+if not watchdog_spec or not watchdog_spec.submodule_search_locations:
+    for site_dir in [*site.getsitepackages(), site.getusersitepackages()]:
+        init_file = Path(site_dir) / "watchdog" / "__init__.py"
+        if not init_file.exists():
+            continue
+        package_spec = importlib.util.spec_from_file_location(
+            "watchdog",
+            init_file,
+            submodule_search_locations=[str(init_file.parent)],
+        )
+        if package_spec and package_spec.loader:
+            watchdog_module = importlib.util.module_from_spec(package_spec)
+            sys.modules["watchdog"] = watchdog_module
+            package_spec.loader.exec_module(watchdog_module)
+            break
 
 from watchdog.observers import Observer as _Observer
 from watchdog.observers.polling import PollingObserver
@@ -113,35 +147,36 @@ class VaultHandler(FileSystemEventHandler):
         self.approved = self.vault / 'Approved'
         self.pending = self.vault / 'Pending_Approval'
         self.done = self.vault / 'Done'
+        self.failed = self.vault / 'Failed'
 
         # Initialize Gmail service
         self.gmail_service = self._init_gmail_service()
 
-        # Initialize Email Drafter (OpenAI-powered response generation)
+        # Initialize Email Drafter (Strands/Bedrock response generation)
         if HAS_EMAIL_DRAFTER:
             self.email_drafter = EmailDrafter(str(vault_path))
-            logger.info("✓ Email Drafter initialized (OpenAI-powered)")
+            logger.info("✓ Email Drafter initialized (Strands/Bedrock-powered)")
         else:
             self.email_drafter = None
 
-        # Initialize Tweet Drafter (OpenAI-powered tweet generation)
+        # Initialize Tweet Drafter (Strands/Bedrock tweet generation)
         if HAS_TWEET_DRAFTER:
             self.tweet_drafter = TweetDrafter(str(vault_path))
-            logger.info("✓ Tweet Drafter initialized (OpenAI-powered)")
+            logger.info("✓ Tweet Drafter initialized (Strands/Bedrock-powered)")
         else:
             self.tweet_drafter = None
 
-        # Initialize WhatsApp Drafter (OpenAI-powered response generation)
+        # Initialize WhatsApp Drafter (Strands/Bedrock response generation)
         if HAS_WHATSAPP_DRAFTER:
             self.whatsapp_drafter = WhatsAppDrafter(str(vault_path))
-            logger.info("✓ WhatsApp Drafter initialized (OpenAI-powered)")
+            logger.info("✓ WhatsApp Drafter initialized (Strands/Bedrock-powered)")
         else:
             self.whatsapp_drafter = None
 
-        # Initialize Social Post Drafter (OpenAI-powered multi-platform posts)
+        # Initialize Social Post Drafter (Strands/Bedrock multi-platform posts)
         if HAS_SOCIAL_DRAFTER:
             self.social_drafter = SocialPostDrafter(str(vault_path))
-            logger.info("✓ Social Post Drafter initialized (OpenAI-powered)")
+            logger.info("✓ Social Post Drafter initialized (Strands/Bedrock-powered)")
         else:
             self.social_drafter = None
 
@@ -265,8 +300,6 @@ class VaultHandler(FileSystemEventHandler):
             logger.info(f"Found {len(approved_files)} existing file(s) in Approved")
             for filepath in approved_files:
                 try:
-                    # Mark as executed before executing to prevent watcher events from re-executing
-                    self.executed_files.add(filepath.name)
                     self._execute_action(filepath)
                 except Exception as e:
                     logger.error(f"Error executing {filepath.name}: {e}")
@@ -326,9 +359,6 @@ class VaultHandler(FileSystemEventHandler):
                     logger.debug(f"Skipping already-executed file: {filepath.name}")
                     return
 
-                # Mark as executed immediately to prevent ANY re-execution
-                self.executed_files.add(filepath.name)
-
             # Queue outside lock to avoid holding it during batch processing
             # But don't process the batch here - let the queue handler do it
             # to avoid double-execution if the batch is already being processed
@@ -371,15 +401,7 @@ class VaultHandler(FileSystemEventHandler):
             else:
                 logger.debug(f"Removing duplicate from queue: {filepath.name}")
 
-        # For approved files, also skip if already executed
-        if queue_type == 'approved':
-            filtered_queue = []
-            for filepath in unique_queue:
-                if filepath.name in self.executed_files:
-                    logger.debug(f"Batch: Skipping already-executed file: {filepath.name}")
-                else:
-                    filtered_queue.append(filepath)
-            unique_queue = filtered_queue
+        # No need to filter here since _execute_action checks self.executed_files
 
         logger.info(f"Processing batch of {len(unique_queue)} {queue_type} files")
         for filepath in unique_queue:
@@ -696,16 +718,15 @@ status: pending_approval
     
     def _execute_action(self, filepath):
         """Approved action detected → Execute"""
-        # Skip if already executed (deduplication)
-        if filepath.name in self.executed_files:
-            logger.debug(f"Skipping already-executed file: {filepath.name}")
-            return
+        # Atomically reserve the action before any worker can execute it.
+        with self.dedup_lock:
+            if filepath.name in self.executed_files:
+                logger.debug(f"Skipping already-executed file: {filepath.name}")
+                return
+            self.executed_files.add(filepath.name)
 
         try:
             content = filepath.read_text()
-
-            # Mark as executed immediately to prevent double-processing
-            self.executed_files.add(filepath.name)
 
             # Extract urgency and priority from frontmatter
             urgency = 'NORMAL'
@@ -742,7 +763,7 @@ status: pending_approval
             elif any(platform in filepath.name.upper() for platform in ['POST', 'TWITTER', 'FACEBOOK', 'LINKEDIN', 'INSTAGRAM']):
                 self._execute_post(filepath, content)
             else:
-                logger.warning(f"Unknown action type: {filepath.name}")
+                raise ValueError(f"Unknown action type: {filepath.name}")
 
             # Move to done (gracefully handle if file already gone)
             if filepath.exists():
@@ -754,6 +775,22 @@ status: pending_approval
                 logger.warning(f"File already moved or deleted: {filepath.name}")
                 self._log_action('action_executed', filepath.name, 'success', f"urgency={urgency} (file already moved)")
         except Exception as e:
+            moved_to_failed = False
+            if filepath.exists():
+                try:
+                    self.failed.mkdir(parents=True, exist_ok=True)
+                    failed_file = self.failed / filepath.name
+                    if failed_file.exists():
+                        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                        failed_file = self.failed / f"{filepath.stem}_{timestamp}{filepath.suffix}"
+                    filepath.rename(failed_file)
+                    moved_to_failed = True
+                    logger.error(f"Moved failed action to {failed_file}")
+                except OSError as move_error:
+                    logger.error(f"Could not move failed action: {move_error}")
+            if moved_to_failed:
+                with self.dedup_lock:
+                    self.executed_files.discard(filepath.name)
             logger.error(f"Action error: {e}")
             self._log_action('action_error', filepath.name, 'failure', str(e))
     
@@ -1254,7 +1291,7 @@ status: pending_approval
             logger.info(f"   Account: {account}")
 
             # Call Odoo MCP to log transaction
-            self._call_odoo_mcp_log_transaction(
+            transaction_id = self._call_odoo_mcp_log_transaction(
                 float(amount),
                 description,
                 account,
@@ -1262,7 +1299,7 @@ status: pending_approval
                 bank_account_code=bank_account_code
             )
 
-            logger.info(f"✅ Payment logged successfully")
+            logger.info(f"✅ Payment logged successfully (ID: {transaction_id})")
 
         except Exception as e:
             logger.error(f"Payment execution failed: {e}")
@@ -1277,92 +1314,35 @@ status: pending_approval
         bank_account_code: str = ''
     ):
         """Log transaction via Odoo MCP server"""
-        import os
-        import json
-        import subprocess
-
-        try:
-            odoo_url = os.getenv('ODOO_URL', 'http://localhost:8069')
-            odoo_db = os.getenv('ODOO_DB', 'gte')
-            odoo_username = os.getenv('ODOO_USERNAME')
-            odoo_password = os.getenv('ODOO_PASSWORD')
-
-            if not odoo_username or not odoo_password:
-                logger.warning("Odoo credentials not configured")
-                return
-
-            # Create request for Odoo MCP
-            mcp_path = Path(__file__).parent.parent / 'mcp_servers' / 'odoo_mcp' / 'index.js'
-
-            tool_request = {
-                'tool': 'log_transaction',
-                'input': {
-                    'amount': amount,
-                    'description': description,
-                    'account': account,
-                    'transaction_type': transaction_type,
-                    'bank_account_code': bank_account_code,
-                    'date': datetime.now().strftime('%Y-%m-%d')
-                }
-            }
-
-            # Execute via Node.js subprocess
-            env = os.environ.copy()
-            env['ODOO_URL'] = odoo_url
-            env['ODOO_DB'] = odoo_db
-            env['ODOO_USERNAME'] = odoo_username
-            env['ODOO_PASSWORD'] = odoo_password
-
-            process = subprocess.Popen(
-                ['node', str(mcp_path), '--legacy-stdio'],
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                env=env,
-                text=True
-            )
-
-            stdout, stderr = process.communicate(input=json.dumps(tool_request), timeout=30)
-
-            if process.returncode != 0 or not stdout.strip():
-                logger.warning(f"Odoo MCP returned non-zero status: {stderr}")
-                return
-
-            response = json.loads(stdout.strip())
-
-            if not response.get('status') or response.get('status') == 'error':
-                error = response.get('error', 'Unknown error')
-                detail = response.get('detail')
-                if detail:
-                    logger.warning(f"Odoo transaction logging returned: {error} ({detail})")
-                else:
-                    logger.warning(f"Odoo transaction logging returned: {error}")
-                return
-
-            transaction_id = response.get('transaction_id', 'unknown')
-            logger.info(f"✅ Transaction logged in Odoo (ID: {transaction_id})")
-
-            # Log the transaction
-            log_file = self.vault / 'Logs' / 'odoo_transactions.jsonl'
-            log_file.parent.mkdir(parents=True, exist_ok=True)
-
-            txn_log = {
+        response = self._call_odoo_adapter(
+            'log_transaction',
+            {
                 'amount': amount,
                 'description': description,
                 'account': account,
                 'transaction_type': transaction_type,
-                'timestamp': datetime.now(timezone.utc).isoformat(),
-                'status': 'logged',
-                'transaction_id': transaction_id
-            }
+                'bank_account_code': bank_account_code,
+                'date': datetime.now().strftime('%Y-%m-%d'),
+            },
+        )
+        transaction_id = response.get('transaction_id')
+        if response.get('status') != 'logged' or not transaction_id:
+            raise RuntimeError("Odoo did not confirm the transaction")
 
-            with open(log_file, 'a') as f:
-                f.write(json.dumps(txn_log) + '\n')
-
-        except subprocess.TimeoutExpired:
-            logger.error("Odoo MCP request timed out")
-        except Exception as e:
-            logger.warning(f"Failed to log transaction via Odoo MCP: {e}")
+        log_file = self.vault / 'Logs' / 'odoo_transactions.jsonl'
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+        txn_log = {
+            'amount': amount,
+            'description': description,
+            'account': account,
+            'transaction_type': transaction_type,
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'status': 'logged',
+            'transaction_id': transaction_id,
+        }
+        with open(log_file, 'a') as f:
+            f.write(json.dumps(txn_log) + '\n')
+        return transaction_id
 
     def _execute_invoice(self, filepath, content):
         """Execute invoice action - Create invoice in Odoo MCP"""
@@ -1396,8 +1376,10 @@ status: pending_approval
             amount = float(amount_raw)
             logger.info(f"🧾 Creating Odoo invoice for {contact_name} ({amount:.2f})")
 
-            self._call_odoo_mcp_create_invoice(contact_name, amount, description, due_date)
-            logger.info("✅ Invoice created successfully")
+            invoice_id = self._call_odoo_mcp_create_invoice(
+                contact_name, amount, description, due_date
+            )
+            logger.info(f"✅ Invoice created successfully (ID: {invoice_id})")
 
         except Exception as e:
             logger.error(f"Invoice execution failed: {e}")
@@ -1405,70 +1387,68 @@ status: pending_approval
 
     def _call_odoo_mcp_create_invoice(self, contact_name, amount, description, due_date):
         """Create invoice via Odoo MCP server"""
-        import os
-        import json
-        import subprocess
+        response = self._call_odoo_adapter(
+            'create_invoice',
+            {
+                'contact_name': contact_name,
+                'amount': amount,
+                'description': description,
+                'due_date': due_date
+                or (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d'),
+            },
+        )
+        invoice_id = response.get('invoice_id')
+        if response.get('status') != 'created' or not invoice_id:
+            raise RuntimeError("Odoo did not confirm the invoice")
+        return invoice_id
+
+    def _call_odoo_adapter(self, tool: str, tool_input: dict) -> dict:
+        """Call the local Odoo adapter and require a structured success response."""
+        odoo_username = os.getenv('ODOO_USERNAME')
+        odoo_password = os.getenv('ODOO_PASSWORD')
+        if not odoo_username or not odoo_password:
+            raise RuntimeError("Odoo credentials are not configured")
+
+        mcp_path = Path(__file__).parent.parent / 'mcp_servers' / 'odoo_mcp' / 'index.js'
+        env = os.environ.copy()
+        env.update(
+            {
+                'ODOO_URL': os.getenv('ODOO_URL', 'http://localhost:8069'),
+                'ODOO_DB': os.getenv('ODOO_DB', 'gte'),
+                'ODOO_USERNAME': odoo_username,
+                'ODOO_PASSWORD': odoo_password,
+            }
+        )
 
         try:
-            odoo_url = os.getenv('ODOO_URL', 'http://localhost:8069')
-            odoo_db = os.getenv('ODOO_DB', 'gte')
-            odoo_username = os.getenv('ODOO_USERNAME')
-            odoo_password = os.getenv('ODOO_PASSWORD')
-
-            if not odoo_username or not odoo_password:
-                logger.warning("Odoo credentials not configured")
-                return
-
-            mcp_path = Path(__file__).parent.parent / 'mcp_servers' / 'odoo_mcp' / 'index.js'
-
-            tool_request = {
-                'tool': 'create_invoice',
-                'input': {
-                    'contact_name': contact_name,
-                    'amount': amount,
-                    'description': description,
-                    'due_date': due_date or (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
-                }
-            }
-
-            env = os.environ.copy()
-            env['ODOO_URL'] = odoo_url
-            env['ODOO_DB'] = odoo_db
-            env['ODOO_USERNAME'] = odoo_username
-            env['ODOO_PASSWORD'] = odoo_password
-
-            process = subprocess.Popen(
+            result = subprocess.run(
                 ['node', str(mcp_path), '--legacy-stdio'],
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                input=json.dumps({'tool': tool, 'input': tool_input}) + '\n',
+                capture_output=True,
+                text=True,
                 env=env,
-                text=True
+                timeout=30,
+                check=False,
             )
+        except subprocess.TimeoutExpired as error:
+            raise RuntimeError("Odoo adapter request timed out") from error
 
-            stdout, stderr = process.communicate(input=json.dumps(tool_request), timeout=30)
+        if result.returncode != 0:
+            detail = result.stderr.strip() or f"exit status {result.returncode}"
+            raise RuntimeError(f"Odoo adapter failed: {detail}")
+        if not result.stdout.strip():
+            raise RuntimeError("Odoo adapter returned no response")
 
-            if process.returncode != 0 or not stdout.strip():
-                logger.warning(f"Odoo MCP returned non-zero status: {stderr}")
-                return
-
-            response = json.loads(stdout.strip())
-            if response.get('status') != 'created':
-                error = response.get('error', 'Unknown error')
-                detail = response.get('detail')
-                if detail:
-                    logger.warning(f"Odoo invoice creation returned: {error} ({detail})")
-                else:
-                    logger.warning(f"Odoo invoice creation returned: {error}")
-                return
-
-            invoice_id = response.get('invoice_id', 'unknown')
-            logger.info(f"✅ Invoice created in Odoo (ID: {invoice_id})")
-
-        except subprocess.TimeoutExpired:
-            logger.error("Odoo MCP request timed out")
-        except Exception as e:
-            logger.warning(f"Failed to create invoice via Odoo MCP: {e}")
+        try:
+            response = json.loads(result.stdout.strip().splitlines()[-1])
+        except json.JSONDecodeError as error:
+            raise RuntimeError("Odoo adapter returned invalid JSON") from error
+        if not isinstance(response, dict):
+            raise RuntimeError("Odoo adapter returned an invalid response")
+        if response.get('status') == 'error':
+            detail = response.get('detail') or response.get('error') or 'unknown error'
+            raise RuntimeError(f"Odoo adapter rejected the request: {detail}")
+        return response
     
     def _execute_post(self, filepath, content):
         """Execute social post action - Post to Twitter/X or Facebook"""
@@ -1525,7 +1505,9 @@ status: pending_approval
             if not post_text:
                 raise ValueError("No post text found")
 
-            # Route to all specified platforms
+            # Route to all specified platforms. Partial failures are surfaced and
+            # moved to Failed rather than silently archiving the action as complete.
+            platform_failures = []
             for platform in platforms:
                 try:
                     if platform == 'twitter':
@@ -1556,10 +1538,14 @@ status: pending_approval
                         logger.info(f"✅ Instagram post successful")
 
                     else:
-                        logger.warning(f"Unknown platform: {platform}, skipping")
+                        raise ValueError(f"Unknown platform: {platform}")
 
                 except Exception as e:
                     logger.error(f"Failed to post to {platform}: {e}")
+                    platform_failures.append(f"{platform}: {e}")
+
+            if platform_failures:
+                raise RuntimeError("; ".join(platform_failures))
 
         except Exception as e:
             logger.error(f"Post execution failed: {e}")
@@ -1585,10 +1571,20 @@ status: pending_approval
 def start_orchestrator():
     """Start vault monitoring with batching optimization"""
     vault_path = Path(os.getenv('VAULT_PATH', './vault'))
-
-    if not vault_path.exists():
-        print(f"ERROR: Vault path {vault_path} doesn't exist")
-        exit(1)
+    for folder in (
+        'Inbox',
+        'Needs_Action',
+        'Plans',
+        'Pending_Approval',
+        'Approved',
+        'Rejected',
+        'Failed',
+        'Done',
+        'Logs',
+        'Briefings',
+        'Agent_Transcripts',
+    ):
+        (vault_path / folder).mkdir(parents=True, exist_ok=True)
 
     handler = VaultHandler(str(vault_path))
     observer = Observer()
@@ -1603,7 +1599,7 @@ def start_orchestrator():
 
     # Track last approved folder scan
     last_approved_scan = time.time()
-    approved_scan_interval = 5  # Scan every 5 seconds
+    approved_scan_interval = 30  # Filesystem events are primary; this is a fallback scan.
 
     # Track last briefing generation (Monday 9 AM)
     last_briefing_check = time.time()
@@ -1642,7 +1638,7 @@ def start_orchestrator():
                         logger.error(f"Error executing {filepath.name}: {e}")
                 last_approved_scan = current_time
 
-            time.sleep(0.5)
+            time.sleep(1)
     except KeyboardInterrupt:
         logger.info("Stopping orchestrator...")
         # Flush any remaining batches

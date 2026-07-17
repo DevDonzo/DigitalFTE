@@ -1,10 +1,9 @@
 #!/bin/bash
-# Start Local Orchestrator for Cloud/Local architecture
-# Handles approvals and executes actions
+# Start the real orchestrator with the legacy vault-sync loop.
 
 set -e
 
-echo "🚀 Starting Local Orchestrator..."
+echo "🚀 Starting DigitalFTE orchestrator..."
 
 # Check if vault exists
 if [ ! -d "vault" ]; then
@@ -29,18 +28,18 @@ echo "🔄 Starting vault sync daemon..."
 SYNC_PID=$!
 echo "✅ Vault sync daemon running (PID: $SYNC_PID)"
 
-# Start local orchestrator
-echo "🤖 Starting local orchestrator..."
-python3 agents/local_orchestrator.py &
-LOCAL_PID=$!
+# Start the sole approval executor.
+echo "🤖 Starting orchestrator..."
+python3 scripts/orchestrator.py &
+ORCHESTRATOR_PID=$!
 
 echo ""
-echo "✅ Local Orchestrator running!"
-echo "📊 Monitor: tail -f vault/Logs/local_orchestrator.log"
-echo "🛑 Stop: kill $LOCAL_PID $SYNC_PID"
+echo "✅ Orchestrator running!"
+echo "📊 Monitor the current terminal output"
+echo "🛑 Stop: kill $ORCHESTRATOR_PID $SYNC_PID"
 echo ""
 echo "Waiting for approvals in: vault/Pending_Approval/"
 echo "Review in Obsidian, then move files to vault/Approved/"
 
 # Wait
-wait $LOCAL_PID
+wait $ORCHESTRATOR_PID

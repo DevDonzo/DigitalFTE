@@ -19,9 +19,12 @@ fi
 
 pkill -f "scripts/control_center.py" >/dev/null 2>&1 || true
 pkill -f "agents/local_orchestrator.py" >/dev/null 2>&1 || true
+pkill -f "scripts/orchestrator.py" >/dev/null 2>&1 || true
 pkill -f "agents/orchestrator.py" >/dev/null 2>&1 || true
 pkill -f "agents/gmail_watcher.py" >/dev/null 2>&1 || true
+pkill -f "scripts/webhook_server.py" >/dev/null 2>&1 || true
 pkill -f "agents/webhook_server.py" >/dev/null 2>&1 || true
+pkill -f "scripts/watchdog.py" >/dev/null 2>&1 || true
 pkill -f "agents/watchdog.py" >/dev/null 2>&1 || true
 
 docker compose down >/dev/null 2>&1 || docker-compose down >/dev/null 2>&1 || true

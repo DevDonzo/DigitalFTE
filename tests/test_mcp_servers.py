@@ -1,28 +1,25 @@
-"""Static tests for MCP server wiring"""
+"""Static tests for the active adapter wiring."""
+
 import json
 from pathlib import Path
 
 
-def test_mcp_servers_use_sdk():
-    root = Path(__file__).resolve().parents[1]
-    # Test that modern MCP servers use SDK
-    servers = [
-        root / 'mcp_servers' / 'email_mcp' / 'index.js',
-        root / 'mcp_servers' / 'browser_mcp' / 'index.js',
-        root / 'mcp_servers' / 'meta_social_mcp' / 'index.js',
-        root / 'mcp_servers' / 'twitter_mcp' / 'index.js'
-    ]
-
-    for server in servers:
-        text = server.read_text()
-        assert '@anthropic-sdk/mcp-sdk' in text, f"{server.name} missing SDK import"
+ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_mcp_config_env_alignment():
-    root = Path(__file__).resolve().parents[1]
-    config = json.loads((root / 'config/mcp_config.json').read_text())
-    envs = {s['name']: s.get('env', {}) for s in config.get('servers', [])}
+def test_legacy_mcp_prototypes_are_not_registered():
+    """Do not advertise prototypes that depend on a nonexistent SDK package."""
+    config = json.loads((ROOT / "config" / "mcp_config.json").read_text(encoding="utf-8"))
 
-    assert 'GMAIL_CLIENT_ID' in envs.get('email', {})
-    # Odoo integration now uses ODOO_URL, ODOO_DB, ODOO_USERNAME, ODOO_PASSWORD
-    assert 'ODOO_URL' in envs.get('odoo', {}) or True  # Optional check
+    assert config == {"servers": []}
+
+
+def test_odoo_adapter_has_supported_runtime_wiring():
+    package = json.loads(
+        (ROOT / "mcp_servers" / "odoo_mcp" / "package.json").read_text(encoding="utf-8")
+    )
+    orchestrator = (ROOT / "agents" / "orchestrator.py").read_text(encoding="utf-8")
+
+    assert {"axios", "dotenv"} <= set(package["dependencies"])
+    assert "mcp_servers' / 'odoo_mcp' / 'index.js" in orchestrator
+    assert "'--legacy-stdio'" in orchestrator

@@ -1,0 +1,18 @@
+[
+  {
+    "date": "2026-07-17",
+    "target": "public/",
+    "macrostructure": "Narrative Workflow",
+    "theme": "Quiet",
+    "enrichment": "none",
+    "brief": "Make the DigitalFTE landing page visually and technically lighter"
+  },
+  {
+    "date": "2026-07-17",
+    "target": "control_center/static/",
+    "macrostructure": "Existing operator dashboard, flattened",
+    "theme": "Quiet",
+    "enrichment": "none",
+    "brief": "Reduce visual chrome and preserve keyboard-accessible operating controls"
+  }
+]

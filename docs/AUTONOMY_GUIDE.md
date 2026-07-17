@@ -155,6 +155,9 @@ Watchdog (30s check interval)
 
 **File**: `agents/watchdog.py`
 
+**Compatibility**: Legacy opt-in mode only. Do not run it alongside `./start_all.sh`,
+which already owns the local worker processes.
+
 **Configuration**: `scripts/com.digitalfte.watchdog.plist` (macOS launchd)
 
 **Startup**: Loads at system boot via launchd

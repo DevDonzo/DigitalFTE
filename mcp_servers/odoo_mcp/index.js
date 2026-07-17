@@ -9,6 +9,7 @@
 
 import axios from 'axios';
 import { config } from 'dotenv';
+import readline from 'node:readline';
 
 // Load environment variables
 config();
@@ -622,24 +623,21 @@ async function handleStdioRequest(line) {
 // Check for --legacy-stdio flag (used by orchestrator.py)
 const legacyStdio = process.argv.includes('--legacy-stdio');
 
-if (legacyStdio) {
-  // Read from stdin line-by-line
-  const readline = require('readline');
+async function runLegacyStdio() {
   const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout,
     terminal: false
   });
 
-  rl.on('line', async (line) => {
+  for await (const line of rl) {
     if (line.trim()) {
       await handleStdioRequest(line);
     }
-  });
+  }
+}
 
-  rl.on('close', () => {
-    process.exit(0);
-  });
+if (legacyStdio) {
+  await runLegacyStdio();
 } else {
   // Print available tools and exit (for testing/documentation)
   console.error('Odoo MCP Server');
@@ -648,5 +646,4 @@ if (legacyStdio) {
     console.error(`  - ${tool.name}: ${tool.description}`);
   });
   console.error('\nUsage: node index.js --legacy-stdio');
-  process.exit(0);
 }
